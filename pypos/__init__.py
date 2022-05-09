@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template, url_for, redirect
 
 
 def create_app(test_config=None):
@@ -29,17 +29,16 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
     
-    
-    @app.route('/index')
-    @app.route('/')
-    def index():
-        return 'Index'
-    
     # Register blueprint
     from . import auth, product
     app.register_blueprint(auth.bp)
     app.register_blueprint(product.bp)
 
+    @app.route('/index')
+    @app.route('/')
+    def index():
+        return redirect(url_for('product.index'))
+    
     from . import db
     db.init_app(app)
     

@@ -60,6 +60,4 @@ class AuthActions(object):
 def auth(client):
     return AuthActions(client)
 
-# Procuts fixture
-
-# TODO
+# Products fixture
