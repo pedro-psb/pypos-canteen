@@ -28,6 +28,17 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+    
+    
+    @app.route('/index')
+    @app.route('/')
+    def index():
+        return 'Index'
+    
+    # Register blueprint
+    from . import auth, product
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(product.bp)
 
     from . import db
     db.init_app(app)
