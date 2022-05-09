@@ -1,0 +1,4 @@
+include pypos/schema.sql
+graft pypos/static
+graft pypos/templates
+global-exclude *.pyc
