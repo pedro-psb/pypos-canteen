@@ -1,4 +1,4 @@
-import functools
+hhimport functools
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -46,3 +46,4 @@ def remove_category():
     db = get_db()
     products = db.execute()
     return redirect(url_for('product.dashboard'))
+e
