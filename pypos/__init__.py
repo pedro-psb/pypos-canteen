@@ -18,28 +18,53 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
-    # ensure the instance folder exists
+    # Ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    
+    register_views(app)
+    register_blueprints(app)
+    # Database config
+    from . import db
+    db.init_app(app)
 
+    return app
+
+
+def register_blueprints(app):
+    from . import auth, product
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(product.bp)
+    return None
+
+
+def register_views(app):
     # a simple page that says hello
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
-    
-    # Register blueprint
-    from . import auth, product
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(product.bp)
 
     @app.route('/index')
     @app.route('/')
     def index():
-        return redirect(url_for('product.index'))
-    
-    from . import db
-    db.init_app(app)
-    
-    return app
+        links = []
+        for rule in app.url_map.iter_rules():
+            # Filter out rules we can't navigate to in a browser
+            # and rules that require parameters
+            if "GET" in rule.methods and has_no_empty_params(rule):
+                url = url_for(rule.endpoint, **(rule.defaults or {}))
+                links.append((url, rule.endpoint))
+            else:
+                pass
+        return render_template("public/index.html", links=links)
+
+        # links is now a list of url, endpoint tuples
+
+
+# Sitemap helper
+def has_no_empty_params(rule):
+    defaults = rule.defaults if rule.defaults is not None else ()
+    arguments = rule.arguments if rule.arguments is not None else ()
+    return len(defaults) >= len(arguments)

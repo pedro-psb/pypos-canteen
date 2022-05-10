@@ -27,8 +27,12 @@ def close_db(e=None):
 
 def init_db():
     db = get_db()
-
     with current_app.open_resource('schema.sql') as f:
+        db.executescript(f.read().decode('utf8'))
+
+def populate_db():
+    db = get_db()
+    with current_app.open_resource('sample_data.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
 
@@ -40,6 +44,15 @@ def init_db_command():
     click.echo('Initialized the database.')
 
 
+@click.command('populate-db')
+@with_appcontext
+def populate_db_command():
+    """Populate the database."""
+    populate_db()
+    click.echo('Populated the database.')
+
+
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(populate_db_command)

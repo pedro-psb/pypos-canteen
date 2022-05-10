@@ -1,0 +1,4 @@
+# Refactor
+
+* Extract long functions
+* 
