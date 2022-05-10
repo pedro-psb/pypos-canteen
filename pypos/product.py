@@ -1,5 +1,6 @@
-hhimport functools
+import functools
 
+from unicodedata import category
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -23,27 +24,42 @@ def dashboard():
 @bp.route("/add_product", methods=['POST'])
 def add_product():
     db = get_db()
-    products = db.execute()
+
+    name = request.form.get("name")
+    price = request.form.get("price")
+    category = request.form.get("category")
+    if not category:
+        category = 1
+    
+    products = {
+        "name":name,
+        "price":price,
+        "category":category
+    }
+    
+    db.execute(
+        "INSERT INTO product(name, price, category) "
+        "VALUES (?,?,?);",
+        (tuple([*products.values()])))
     return redirect(url_for('product.dashboard'))
 
 
-@bp.route("/remove_product", methods=['POST'])
-def remove_product():
-    db = get_db()
-    products = db.execute()
-    return redirect(url_for('product.dashboard'))
+# @bp.route("/remove_product", methods=['POST'])
+# def remove_product():
+#     db = get_db()
+#     products = db.execute()
+#     return redirect(url_for('product.dashboard'))
 
 
-@bp.route("/add_category", methods=['POST'])
-def add_category():
-    db = get_db()
-    products = db.execute()
-    return redirect(url_for('product.dashboard'))
+# @bp.route("/add_category", methods=['POST'])
+# def add_category():
+#     db = get_db()
+#     products = db.execute()
+#     return redirect(url_for('product.dashboard'))
 
 
-@bp.route("/remove_category", methods=['POST'])
-def remove_category():
-    db = get_db()
-    products = db.execute()
-    return redirect(url_for('product.dashboard'))
-e
+# @bp.route("/remove_category", methods=['POST'])
+# def remove_category():
+#     db = get_db()
+#     products = db.execute()
+#     return redirect(url_for('product.dashboard'))
