@@ -30,6 +30,10 @@ def test_add_product(client, app):
     )
 )
 def test_add_product_validation(client, app, name, price, category, message):
+    # TODO: Fix the assert the message is in the page
+    #   * Currently, the response is a redirect page
+    #   * I can't programatically acess the redirect destination to check it's content
+    
     with app.app_context():
         db = get_db()
         product_count_before = db.execute(
@@ -40,9 +44,6 @@ def test_add_product_validation(client, app, name, price, category, message):
             "SELECT COUNT(*) FROM product").fetchone()[0]
         
         assert response.status_code == 302
-        # TODO: Fix the assert the message is in the page
-        #   * Currently, the response is a redirect page
-        #   * I can't programatically acess the redirect destination to check it's content
         # assert message in response.text
         assert product_count_after == product_count_before
 

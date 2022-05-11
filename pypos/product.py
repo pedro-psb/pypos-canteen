@@ -24,16 +24,40 @@ def dashboard():
 
 @bp.route("/add_product", methods=['POST'])
 def add_product():
-    error = None
+    error = []
     db = get_db()
 
     name = request.form.get("name")
     price = request.form.get("price")
     category = request.form.get("category")
-    if not category:
-        category = 1
 
-    # Regular Validation
+    # Name
+    if not name:
+        error = "Name can't be empty"
+    
+    # Price
+    if not price:
+        error = "Price can't be empty"
+    try:
+        price = float(price)
+    except ValueError:
+        error = "Price value is invalid"
+    if price < 0:
+        error = "Price must be a positive real number"
+    
+    # Category
+    '''
+    I don't know if it is best to catch the error in the DB or before sending the query.
+    The example in the Flask Tutorial catches the error in the DB with the IntegrityError exception,
+    but catching it early can save a query.
+    '''
+    try:
+        category = int(category)
+    except ValueError:
+        error = "Category is invalid"
+    if category <= 0:
+        error = "Category is invalid"
+    
 
     # Database Dependent Validation
     if error is None:
