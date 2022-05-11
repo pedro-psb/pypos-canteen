@@ -6,6 +6,7 @@ from flask import (
 )
 
 from pypos.db import get_db
+from pypos.errors import *
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 
@@ -23,6 +24,7 @@ def dashboard():
 
 @bp.route("/add_product", methods=['POST'])
 def add_product():
+    error = None
     db = get_db()
 
     name = request.form.get("name")
@@ -30,19 +32,27 @@ def add_product():
     category = request.form.get("category")
     if not category:
         category = 1
-    
-    products = {
-        "name":name,
-        "price":price,
-        "category":category
-    }
-    
-    db.execute(
-        "INSERT INTO product(name, price, category) "
-        "VALUES (?,?,?);",
-        (tuple([*products.values()])))
-    return redirect(url_for('product.dashboard'))
 
+    # Regular Validation
+
+    # Database Dependent Validation
+    if error is None:
+        products = {
+            "name": name,
+            "price": price,
+            "category": category
+        }
+        try:
+            db.execute(
+                "INSERT INTO product(name, price, category) "
+                "VALUES (?,?,?);",
+                (tuple([*products.values()])))
+        except db.IntegrityError:
+            error = ADD_PRODUCT_INTEGRITY_ERROR
+        else:
+            return redirect(url_for('product.dashboard'))
+    flash(error)
+    return redirect(url_for('index'))
 
 # @bp.route("/remove_product", methods=['POST'])
 # def remove_product():
@@ -63,3 +73,10 @@ def add_product():
 #     db = get_db()
 #     products = db.execute()
 #     return redirect(url_for('product.dashboard'))
+
+
+# Unknown syntax error with sqlite
+# def dump_db(db, table="user"):
+#     query = db.execute("SELECT * FROM ?", (table,)).fetchall()
+#     for row in query:
+#         print(dict(row))
