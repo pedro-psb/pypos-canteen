@@ -24,7 +24,7 @@ def dashboard():
 
 @bp.route("/add_product", methods=['POST'])
 def add_product():
-    error = []
+    error = None
     db = get_db()
 
     name = request.form.get("name")
@@ -33,17 +33,18 @@ def add_product():
 
     # Name
     if not name:
-        error = "Name can't be empty"
+        error = ADD_PRODUCT_NOT_EMPTY_NAME_ERROR
     
     # Price
     if not price:
-        error = "Price can't be empty"
+        error = ADD_PRODUCT_NOT_EMPTY_PRICE_ERROR
     try:
         price = float(price)
-    except ValueError:
-        error = "Price value is invalid"
-    if price < 0:
-        error = "Price must be a positive real number"
+    except:
+        error = ADD_PRODUCT_INVALID_PRICE_ERROR
+    else:
+        if price < 0:
+            error = ADD_PRODUCT_NOT_POSTIIVE_REAL_ERROR
     
     # Category
     '''
@@ -54,9 +55,10 @@ def add_product():
     try:
         category = int(category)
     except ValueError:
-        error = "Category is invalid"
-    if category <= 0:
-        error = "Category is invalid"
+        error = ADD_PRODUCT_INVALID_CATEGORY_ERROR
+    else:
+        if category <= 0:
+            error = ADD_PRODUCT_INVALID_CATEGORY_ERROR
     
 
     # Database Dependent Validation
