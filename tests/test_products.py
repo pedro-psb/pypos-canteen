@@ -2,6 +2,7 @@ import pytest
 from flask import g, session, url_for, get_flashed_messages
 from pypos.db import get_db
 from pypos.errors import *
+from markupsafe import escape
 
 def test_add_product(client, app):
     # TODO: test validations
@@ -49,11 +50,8 @@ def test_add_product_validation(client, app, name, price, category, message):
         
         assert response.status_code == 302
         response = client.get(response.location)
+
+        message = bytes(escape(message), encoding='utf-8')
         assert response.status_code == 200
         # assert message in response.data
         assert product_count_after == product_count_before
-
-
-
-
-

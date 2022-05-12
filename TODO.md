@@ -18,7 +18,7 @@
 ## product.py
 
 - [ ] Refactor Database acess with GEneral purpose DAO
-- [ ] Refactor validationss with some Pattern.
+- [ ] Refactor validationss with some Pattern. Ex: Make custom error handling classes (rever Alura)
 - [ ] Add auth restriction to the product management.
 
 ## erros.py and dependencies

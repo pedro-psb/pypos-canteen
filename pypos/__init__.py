@@ -60,8 +60,6 @@ def register_views(app):
                 pass
         return render_template("public/index.html", links=links)
 
-        # links is now a list of url, endpoint tuples
-
 
 # Sitemap helper
 def has_no_empty_params(rule):
