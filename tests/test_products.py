@@ -55,3 +55,15 @@ def test_add_product_validation(client, app, name, price, category, message):
         assert response.status_code == 200
         # assert message in response.data
         assert product_count_after == product_count_before
+
+def test_remove_product(client, app):
+    with app.app_context():
+        db = get_db()
+        is_active_before = db.execute('SELECT active FROM product WHERE id=1').fetchone()[0]
+        response = client.post('/product/remove_product', data={'product_id':1})
+        is_active_after = db.execute('SELECT active FROM product WHERE id=1').fetchone()[0]
+        
+        assert response.status_code == 302
+        assert is_active_before
+        assert not is_active_after
+

@@ -12,7 +12,8 @@ CREATE TABLE product (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
   price NUMBER NOT NULL,
-  category NUMBER NOT NULL
+  category NUMBER NOT NULL,
+  active INTEGER DEFAULT 1 NOT NULL 
 );
 
 CREATE TABLE product_category (

@@ -5,7 +5,6 @@ VALUES
 
 INSERT INTO product_category (name)
 VALUES
-  ("Sem categoria"),
   ("Lanche"),
   ("Almoço")
   ;

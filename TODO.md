@@ -30,4 +30,5 @@
 ### tests/test_products.py::test_add_product_validation
 
 - [x] Assert message in request.text (it shows the redirect content, not it destination)
-- [ ] Not finding error message in response data for encoding reasons.
+- [x] Not finding error message in response data for encoding reasons.
+- [ ] Not finding error message in response data for validation order reasons.

@@ -60,7 +60,6 @@ def add_product():
         if category <= 0:
             error = ADD_PRODUCT_INVALID_CATEGORY_ERROR
     
-
     # Database Dependent Validation
     if error is None:
         products = {
@@ -80,11 +79,12 @@ def add_product():
     flash(error)
     return redirect(url_for('index'))
 
-# @bp.route("/remove_product", methods=['POST'])
-# def remove_product():
-#     db = get_db()
-#     products = db.execute()
-#     return redirect(url_for('product.dashboard'))
+@bp.route("/remove_product", methods=['POST'])
+def remove_product():
+    product_id = request.form.get('product_id')
+    db = get_db()
+    db.execute('UPDATE product SET active=0 WHERE id=?', (product_id,))
+    return redirect(url_for('index'))
 
 
 # @bp.route("/add_category", methods=['POST'])
