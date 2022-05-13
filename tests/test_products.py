@@ -4,6 +4,7 @@ from pypos.db import get_db
 from pypos.errors import *
 from markupsafe import escape
 
+
 def test_add_product(client, app):
     # TODO: test validations
     form_data = {
@@ -21,7 +22,7 @@ def test_add_product(client, app):
 
         product_count_after = db.execute(
             "SELECT COUNT(*) FROM product").fetchone()[0]
-        
+
         assert response.status_code == 302
         assert product_count_after == product_count_before + 1
 
@@ -44,10 +45,10 @@ def test_add_product_validation(client, app, name, price, category, message):
         product_count_before = db.execute(
             "SELECT COUNT(*) FROM product").fetchone()[0]
         response = client.post(
-            '/product/add_product',data={'name': name, 'price': price, 'category': category})
+            '/product/add_product', data={'name': name, 'price': price, 'category': category})
         product_count_after = db.execute(
             "SELECT COUNT(*) FROM product").fetchone()[0]
-        
+
         assert response.status_code == 302
         response = client.get(response.location)
 
@@ -56,14 +57,46 @@ def test_add_product_validation(client, app, name, price, category, message):
         # assert message in response.data
         assert product_count_after == product_count_before
 
+
 def test_remove_product(client, app):
     with app.app_context():
         db = get_db()
-        is_active_before = db.execute('SELECT active FROM product WHERE id=1').fetchone()[0]
-        response = client.post('/product/remove_product', data={'product_id':1})
-        is_active_after = db.execute('SELECT active FROM product WHERE id=1').fetchone()[0]
-        
+        is_active_before = db.execute(
+            'SELECT active FROM product WHERE id=1').fetchone()[0]
+        response = client.post('/product/remove_product',
+                               data={'product_id': 1})
+        is_active_after = db.execute(
+            'SELECT active FROM product WHERE id=1').fetchone()[0]
+
         assert response.status_code == 302
         assert is_active_before
         assert not is_active_after
+
+
+def test_add_product_category(app, client):
+    with app.app_context():
+        db = get_db()
+        rows_before = db.execute(
+            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+        response = client.post('/product/add_category',
+                               data={'category_name': 'Sobremesa'})
+        rows_after = db.execute(
+            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+
+        assert response.status_code == 302
+        assert rows_after == rows_before + 1
+
+
+def test_remove_product_category(app, client):
+    with app.app_context():
+        db = get_db()
+        rows_before = db.execute(
+            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+        response = client.post('/product/remove_category',
+                               data={'category_id': '1'})
+        rows_after = db.execute(
+            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+
+        assert response.status_code == 302
+        assert rows_after == rows_before - 1
 

@@ -87,18 +87,30 @@ def remove_product():
     return redirect(url_for('index'))
 
 
-# @bp.route("/add_category", methods=['POST'])
-# def add_category():
-#     db = get_db()
-#     products = db.execute()
-#     return redirect(url_for('product.dashboard'))
+@bp.route("/add_category", methods=['POST'])
+def add_category():
+    name = request.form.get('category_name').strip()
+    error = ''
+    if not name:
+        error = 'Category must have a name'
+
+    db = get_db()
+    db.execute('INSERT INTO product_category(name) VALUES (?);', (name,))
+    flash("Sucefully added product category")
+    return redirect(url_for('index'))
 
 
-# @bp.route("/remove_category", methods=['POST'])
-# def remove_category():
-#     db = get_db()
-#     products = db.execute()
-#     return redirect(url_for('product.dashboard'))
+@bp.route("/remove_category", methods=['POST'])
+def remove_category():
+    category_id = request.form.get('category_id').strip()
+    error = ''
+    if not category_id:
+        error = 'Invalid operation'
+
+    db = get_db()
+    db.execute('DELETE FROM product_category WHERE id=?', (category_id,))
+    flash("Sucefully deleted product category")
+    return redirect(url_for('index'))
 
 
 # Unknown syntax error with sqlite
