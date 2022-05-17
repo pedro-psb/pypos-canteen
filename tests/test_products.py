@@ -39,7 +39,6 @@ def test_add_product(client, app):
     )
 )
 def test_add_product_validation(client, app, name, price, category, message):
-    message = bytes(message, encoding='utf-8')
     with app.app_context():
         db = get_db()
         product_count_before = db.execute(
@@ -54,7 +53,7 @@ def test_add_product_validation(client, app, name, price, category, message):
 
         message = bytes(escape(message), encoding='utf-8')
         assert response.status_code == 200
-        # assert message in response.data
+        assert message in response.data
         assert product_count_after == product_count_before
 
 

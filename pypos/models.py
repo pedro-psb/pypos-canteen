@@ -23,11 +23,6 @@ class Product:
                 return ADD_PRODUCT_NOT_POSTIIVE_REAL_ERROR
         
         # Category
-        '''
-        I don't know if it is best to catch the error in the DB or before sending the query.
-        The example in the Flask Tutorial catches the error in the DB with the IntegrityError exception,
-        but catching it early can save a query.
-        '''
         try:
             self.category = int(self.category)
         except ValueError:

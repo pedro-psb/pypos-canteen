@@ -19,5 +19,6 @@ CREATE TABLE product (
 CREATE TABLE product_category (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
+  active INTEGER DEFAULT 1 NOT NULL,
   FOREIGN KEY (id) REFERENCES product(category)
 );
