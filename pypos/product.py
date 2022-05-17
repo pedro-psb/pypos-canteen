@@ -51,9 +51,19 @@ def add_product():
 
 @bp.route("/remove_product", methods=['POST'])
 def remove_product():
+    error = None
     product_id = request.form.get('product_id')
     db = get_db()
-    db.execute('UPDATE product SET active=0 WHERE id=?', (product_id,))
+    # sqlite3 doesn't raise error if the id doesn't exit.
+    # How do I catch the error here? (without using another query)
+    id_exist = db.execute('SELECT id FROM product WHERE id=?', (product_id,)).fetchall()
+    id_exist = len(id_exist)
+    if id_exist:
+        db.execute('UPDATE product SET active=0 WHERE id=?', (product_id,))
+    else:
+        error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
+    
+    flash(error)
     return redirect(url_for('index'))
 
 

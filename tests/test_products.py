@@ -73,6 +73,19 @@ def test_remove_product(client, app):
         assert not is_active_after
 
 
+def test_remove_product_validation(client, app):
+    with app.app_context():
+        db = get_db()
+        response = client.post('/product/remove_product',
+                               data={'product_id': 50})
+        assert response.status_code == 302
+        response = client.get(response.location)
+        assert response.status_code == 200
+
+        message = bytes(escape(REMOVE_PRODUCT_INVALID_PRODUCT_ID), encoding='utf-8')
+        assert message in response.data
+
+
 def test_add_product_category(app, client):
     with app.app_context():
         db = get_db()
@@ -99,4 +112,3 @@ def test_remove_product_category(app, client):
 
         assert response.status_code == 302
         assert rows_after == rows_before - 1
-
