@@ -7,6 +7,7 @@ from flask import (
 
 from pypos.db import get_db
 from pypos.errors import *
+from pypos.models import Product
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 
@@ -24,60 +25,29 @@ def dashboard():
 
 @bp.route("/add_product", methods=['POST'])
 def add_product():
-    error = None
     db = get_db()
 
-    name = request.form.get("name")
-    price = request.form.get("price")
-    category = request.form.get("category")
+    product = Product(
+        request.form.get("name"),
+        request.form.get("price"),
+        request.form.get("category")
+    )
+    error = product.validate()
 
-    # Name
-    if not name:
-        error = ADD_PRODUCT_NOT_EMPTY_NAME_ERROR
-    
-    # Price
-    if not price:
-        error = ADD_PRODUCT_NOT_EMPTY_PRICE_ERROR
-    try:
-        price = float(price)
-    except:
-        error = ADD_PRODUCT_INVALID_PRICE_ERROR
-    else:
-        if price < 0:
-            error = ADD_PRODUCT_NOT_POSTIIVE_REAL_ERROR
-    
-    # Category
-    '''
-    I don't know if it is best to catch the error in the DB or before sending the query.
-    The example in the Flask Tutorial catches the error in the DB with the IntegrityError exception,
-    but catching it early can save a query.
-    '''
-    try:
-        category = int(category)
-    except ValueError:
-        error = ADD_PRODUCT_INVALID_CATEGORY_ERROR
-    else:
-        if category <= 0:
-            error = ADD_PRODUCT_INVALID_CATEGORY_ERROR
-    
     # Database Dependent Validation
     if error is None:
-        products = {
-            "name": name,
-            "price": price,
-            "category": category
-        }
         try:
             db.execute(
                 "INSERT INTO product(name, price, category) "
                 "VALUES (?,?,?);",
-                (tuple([*products.values()])))
+                (product.name, product.price, product.category))
         except db.IntegrityError:
             error = ADD_PRODUCT_INTEGRITY_ERROR
         else:
             return redirect(url_for('product.dashboard'))
     flash(error)
     return redirect(url_for('index'))
+
 
 @bp.route("/remove_product", methods=['POST'])
 def remove_product():
