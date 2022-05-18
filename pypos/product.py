@@ -88,13 +88,6 @@ def remove_category():
         error = 'Invalid operation'
 
     db = get_db()
-    db.execute('DELETE FROM product_category WHERE id=?', (category_id,))
+    db.execute('UPDATE product_category SET active=0 WHERE id=?', (category_id,))
     flash("Sucefully deleted product category")
     return redirect(url_for('index'))
-
-
-# Unknown syntax error with sqlite
-# def dump_db(db, table="user"):
-#     query = db.execute("SELECT * FROM ?", (table,)).fetchall()
-#     for row in query:
-#         print(dict(row))

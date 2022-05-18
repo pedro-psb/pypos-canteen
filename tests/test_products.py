@@ -60,16 +60,15 @@ def test_add_product_validation(client, app, name, price, category, message):
 def test_remove_product(client, app):
     with app.app_context():
         db = get_db()
-        is_active_before = db.execute(
-            'SELECT active FROM product WHERE id=1').fetchone()[0]
+        rows_before = db.execute(
+            'SELECT COUNT(*) FROM product WHERE active=1 AND id=1;').fetchone()[0]
         response = client.post('/product/remove_product',
                                data={'product_id': 1})
-        is_active_after = db.execute(
-            'SELECT active FROM product WHERE id=1').fetchone()[0]
+        rows_after = db.execute(
+            'SELECT COUNT(*) FROM product WHERE active=1 AND id=1;').fetchone()[0]
 
         assert response.status_code == 302
-        assert is_active_before
-        assert not is_active_after
+        assert rows_after == rows_before - 1
 
 
 def test_remove_product_validation(client, app):
@@ -103,11 +102,11 @@ def test_remove_product_category(app, client):
     with app.app_context():
         db = get_db()
         rows_before = db.execute(
-            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+            'SELECT COUNT(*) FROM product_category WHERE active=1;').fetchone()[0]
         response = client.post('/product/remove_category',
                                data={'category_id': '1'})
         rows_after = db.execute(
-            'SELECT COUNT(*) FROM product_category;').fetchone()[0]
+            'SELECT COUNT(*) FROM product_category WHERE active=1;').fetchone()[0]
 
         assert response.status_code == 302
         assert rows_after == rows_before - 1
