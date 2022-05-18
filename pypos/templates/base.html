@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .navbar li {
-            display:inline;
+            display: inline;
         }
     </style>
     <title>{% block title %}{% endblock %}</title>
 </head>
+
 <body>
-    <ul class="navbar">
-        <li><a href="{{ url_for('index') }}">Home</a></li>
-        <li><a href="{{ url_for('product.dashboard') }}">Products</a></li>
-        <li><a href="{{ url_for('index') }}">Login</a></li>
-        <li><a href="{{ url_for('index') }}">Register</a></li>
-    </ul>
+    <div class="navbar">
+        <ul class="navbar">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('product.dashboard') }}">Products</a></li>
+            <li><a href="{{ url_for('index') }}">Login</a></li>
+            <li><a href="{{ url_for('index') }}">Register</a></li>
+        </ul>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="navbar">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
     {% block content %}{% endblock %}
 </body>
+
 </html>

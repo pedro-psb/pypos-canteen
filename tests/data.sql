@@ -5,14 +5,13 @@ VALUES
 
 INSERT INTO product_category (name)
 VALUES
-  ("Sem categoria"),
   ("Lanche"),
   ("Almoço")
   ;
 
 INSERT INTO product (name,price,category)
 VALUES
-  ("Torta de Maçã", 15.5, 1),
+  ("torta", 15.5, 1),
   ("Pão de Queijo", 10, 1),
   ("Prato Feito", 10, 2)
   ;
