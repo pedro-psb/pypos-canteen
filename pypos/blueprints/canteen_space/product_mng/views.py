@@ -1,13 +1,13 @@
 import functools
 
-from unicodedata import category
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
 from pypos.db import get_db
-from pypos.errors import *
-from pypos.models import Product
+from .errors import *
+from .models import Product
+from . import bp
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 
@@ -44,7 +44,7 @@ def add_product():
         except db.IntegrityError:
             error = ADD_PRODUCT_INTEGRITY_ERROR
         else:
-            return redirect(url_for('product.dashboard'))
+            return redirect(url_for('canteen.product.dashboard'))
     flash(error)
     return redirect(url_for('index'))
 
@@ -56,13 +56,14 @@ def remove_product():
     db = get_db()
     # sqlite3 doesn't raise error if the id doesn't exit.
     # How do I catch the error here? (without using another query)
-    id_exist = db.execute('SELECT id FROM product WHERE id=?', (product_id,)).fetchall()
+    id_exist = db.execute(
+        'SELECT id FROM product WHERE id=?', (product_id,)).fetchall()
     id_exist = len(id_exist)
     if id_exist:
         db.execute('UPDATE product SET active=0 WHERE id=?', (product_id,))
     else:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-    
+
     flash(error)
     return redirect(url_for('index'))
 
