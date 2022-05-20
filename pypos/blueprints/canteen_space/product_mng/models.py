@@ -1,11 +1,15 @@
+from datetime import date
 from unicodedata import name
 from .errors import *
 
 
-class Category:
+class ProductCategory:
     def __init__(self, name, id=None) -> None:
         self.id = id
         self.name = name
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Product:
@@ -14,7 +18,7 @@ class Product:
         self.name = name
         self.price = price
         self.category = category
-    
+
     def validate(self):
         # Name
         if not self.name:
@@ -30,7 +34,7 @@ class Product:
         else:
             if self.price < 0:
                 return ADD_PRODUCT_NOT_POSTIIVE_REAL_ERROR
-        
+
         # Category
         try:
             self.category = int(self.category)
@@ -39,3 +43,6 @@ class Product:
         else:
             if self.category <= 0:
                 return ADD_PRODUCT_INVALID_CATEGORY_ERROR
+
+    def __str__(self) -> str:
+        return self.name

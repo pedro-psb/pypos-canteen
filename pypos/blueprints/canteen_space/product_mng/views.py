@@ -92,3 +92,9 @@ def remove_category():
     db.execute('UPDATE product_category SET active=0 WHERE id=?', (category_id,))
     flash("Sucefully deleted product category")
     return redirect(url_for('index'))
+
+
+@bp.route("/update_product")
+def update_product():
+    '''Allows updating price, category, name, etc'''
+    pass

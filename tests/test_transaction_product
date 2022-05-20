@@ -1,0 +1,17 @@
+import pytest
+from flask import g, session, url_for, get_flashed_messages
+from pypos.db import get_db
+from pypos.blueprints.canteen_space.point_of_sale.errors import *
+from markupsafe import escape
+
+
+def test_valid_transaction(app, client):
+    pass
+
+@pytest.mark.parametrize(
+    ('date', 'total_value', 'products'),(
+        ('123', '12', ['1', '2', '3'])
+    )
+)
+def test_invalid_transactions(app, client):
+    pass

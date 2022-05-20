@@ -1,0 +1,1 @@
+POS_INVALID_TRANSACTON_ERROR = 'The transaction is not valid'
