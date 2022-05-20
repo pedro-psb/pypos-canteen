@@ -1,7 +1,16 @@
+from unicodedata import name
 from .errors import *
 
+
+class Category:
+    def __init__(self, name, id=None) -> None:
+        self.id = id
+        self.name = name
+
+
 class Product:
-    def __init__(self, name, price, category, id=None):
+    def __init__(self, name, price, category=None, id=None):
+        self.id = id
         self.name = name
         self.price = price
         self.category = category
