@@ -37,13 +37,14 @@ CREATE TABLE product_category_item (
 CREATE TABLE transaction_product (
   id INTEGER PRIMARY KEY,
   date TEXT NOT NULL,
+  active INTEGER DEFAULT 1 NOT NULL,
   total_value NUMBER NOT NULL
 );
 
 CREATE TABLE transaction_product_item (
   product_id INTEGER NOT NULL,
-  product_transaction_id NOT NULL,
-  active INTEGER DEFAULT 1 NOT NULL,
+  transaction_product_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
   FOREIGN KEY (product_id) REFERENCES product(id),
-  FOREIGN KEY (product_transaction_id) REFERENCES transaction_product(id)
+  FOREIGN KEY (transaction_product_id) REFERENCES transaction_product(id)
 );

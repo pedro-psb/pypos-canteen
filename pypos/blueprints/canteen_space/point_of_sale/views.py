@@ -1,12 +1,40 @@
-from crypt import methods
+from flask import request, url_for, redirect, flash
+from pypos.db import get_db
 from . import bp
-from models import TransactionProduct
+from .models import TransactionProduct
 
-@bp.route('add_transaction_product', methods=['POST'])
+
+@bp.route('/add_transaction_product', methods=['POST'])
 def add_transaction_product():
-    pass
+    transaction_product = TransactionProduct(
+        request.form.get('products')
+    )
+    
+    # Create transaction
+    db = get_db()
+    db.execute(
+            'INSERT INTO transaction_product'
+            '(date, total_value) VALUES (?,?);',
+            (transaction_product.date,
+            transaction_product.total_value
+            ))
+    transaction_id = db.execute("SELECT last_insert_rowid() as id;").fetchone()
+    transaction_id = int(transaction_id['id'])
+
+    # Create transaction items for each product
+    for product in transaction_product.products:
+        product_id = product['product_id']
+        quantity = product['quantity']
+        db.execute(
+            'INSERT INTO transaction_product_item'
+            '(product_id, quantity, transaction_product_id) VALUES (?,?,?);',
+            (product_id, quantity, transaction_id))
+    
+    # Redirect
+    flash("Sucefully added transaction")
+    return redirect(url_for('index'))
 
 
-@bp.route('remove_transaction_product', methods=['POST'])
+@bp.route('/remove_transaction_product', methods=['POST'])
 def remove_transaction_product():
     pass
