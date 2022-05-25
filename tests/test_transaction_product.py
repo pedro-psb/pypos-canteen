@@ -15,14 +15,21 @@ def test_valid_transaction(app, client):
         ]
         transactions_before = db.execute(
             'SELECT count(*) FROM transaction_product;').fetchone()[0]
+        transactions_items_before = db.execute(
+        'SELECT count(*) FROM transaction_product_item;').fetchone()[0]
         # Posting JSON!
+        
         response = client.post(
             url_for('canteen.point_of_sale.add_transaction_product'),
             json=form_data)
+
         transactions_after = db.execute(
             'SELECT count(*) FROM transaction_product;').fetchone()[0]
+        transactions_items_after = db.execute(
+            'SELECT count(*) FROM transaction_product_item;').fetchone()[0]
         assert response.status_code == 302
         assert transactions_after == transactions_before + 1
+        assert transactions_items_after == transactions_items_before + 2
 
 
 @ pytest.mark.parametrize(
@@ -37,8 +44,7 @@ def test_valid_transaction(app, client):
         ([{'product_id': '1', 'quantity': '1'},
          {'product_id': '4', 'quantity': '2'}], POS_INVALID_PRODUCT_ID_ERROR),
         ([{'invalid_key': '1', 'quantity': 'asd'}],
-         POS_INVALID_TRANSACTION_REQUEST_ERROR),
-    )
+         POS_INVALID_TRANSACTION_REQUEST_ERROR),)
 )
 def test_invalid_transactions(app, client, products, error_msg):
     with app.app_context(), app.test_request_context():

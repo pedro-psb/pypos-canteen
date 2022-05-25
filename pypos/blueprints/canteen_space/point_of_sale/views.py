@@ -27,7 +27,7 @@ def add_transaction_product():
         # Create transaction items for each product
         for product in transaction_product.products:
             product_id = product['product_id']
-            quantity = product['quantity']
+            quantity = int(product['quantity'])
             db.execute(
                 'INSERT INTO transaction_product_item'
                 '(product_id, quantity, transaction_product_id) VALUES (?,?,?);',
