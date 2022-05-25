@@ -7,8 +7,36 @@ DROP TABLE IF EXISTS transaction_product_item;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE,
   username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  phone_number TEXT,
+  active INTEGER DEFAULT 1 NOT NULL
+);
+
+CREATE TABLE role (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL,
+  description TEXT NOT NULL
+);
+
+CREATE TABLE permission (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE user_role (
+  user_id INTEGER NOT NULL,
+  role_id INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (role_id) REFERENCES role(id)
+);
+
+CREATE TABLE role_permission (
+  role_id INTEGER NOT NULL,
+  permission_id INTEGER NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES role(id),
+  FOREIGN KEY (permission_id) REFERENCES permission(id)
 );
 
 CREATE TABLE product (

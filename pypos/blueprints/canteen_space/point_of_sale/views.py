@@ -41,4 +41,13 @@ def add_transaction_product():
 
 @bp.route('/remove_transaction_product', methods=['POST'])
 def remove_transaction_product():
-    pass
+    '''Soft delete of transaction'''
+    errors = None
+    transaction_id = request.form.get('transaction_id')
+    db = get_db()
+    db.execute(
+        'UPDATE transaction_product SET active=0 WHERE id=?',
+        (transaction_id))
+    
+    flash(errors)
+    return redirect(url_for('index'))

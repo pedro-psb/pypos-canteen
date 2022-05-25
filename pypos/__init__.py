@@ -33,8 +33,7 @@ def create_app(test_config=None):
 
 
 def register_blueprints(app):
-    from . import auth
-    from .blueprints import canteen_space
+    from .blueprints import auth, canteen_space
     
     app.register_blueprint(auth.bp)
     app.register_blueprint(canteen_space.bp)

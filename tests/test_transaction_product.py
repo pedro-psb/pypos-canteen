@@ -62,3 +62,31 @@ def test_invalid_transactions(app, client, products, error_msg):
         assert transactions_after == transactions_before
         error_msg = bytes(escape(error_msg), encoding='utf-8')
         assert error_msg in response.data
+
+
+def test_remove_transaction_product(app, client):
+    with app.app_context(), app.test_request_context():
+        db = get_db()
+        add_form_data = [
+            {'product_id': '1', 'quantity': '1'},
+            {'product_id': '2', 'quantity': '2'},
+        ]
+        remove_form_data = {'transaction_id': '1'}
+        # add product
+        client.post(
+            url_for('canteen.point_of_sale.add_transaction_product'),
+            json=add_form_data)
+        
+        transactions_before = db.execute(
+            'SELECT count(*) FROM transaction_product '
+            'WHERE active=1;').fetchone()[0]   
+        # remove product     
+        response = client.post(
+            url_for('canteen.point_of_sale.remove_transaction_product'),
+            data=remove_form_data)
+
+        transactions_after = db.execute(
+            'SELECT count(*) FROM transaction_product '
+            'WHERE active=1;').fetchone()[0]
+        assert response.status_code == 302
+        assert transactions_after == transactions_before -1
