@@ -11,6 +11,7 @@ CREATE TABLE user (
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   phone_number TEXT,
+  role_name TEXT NOT NULL,
   active INTEGER DEFAULT 1 NOT NULL
 );
 
@@ -33,10 +34,10 @@ CREATE TABLE user_role (
 );
 
 CREATE TABLE role_permission (
-  role_id INTEGER NOT NULL,
-  permission_id INTEGER NOT NULL,
-  FOREIGN KEY (role_id) REFERENCES role(id),
-  FOREIGN KEY (permission_id) REFERENCES permission(id)
+  role_name TEXT NOT NULL,
+  permission_slug TEXT NOT NULL,
+  FOREIGN KEY (role_name) REFERENCES role(name),
+  FOREIGN KEY (permission_slug) REFERENCES permission(slug)
 );
 
 CREATE TABLE product (

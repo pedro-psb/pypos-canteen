@@ -36,7 +36,7 @@ def add_transaction_product():
         flash("Sucefully added transaction")
     else:
         flash(errors)
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))
 
 
 @bp.route('/remove_transaction_product', methods=['POST'])
@@ -50,4 +50,4 @@ def remove_transaction_product():
         (transaction_id))
     
     flash(errors)
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))

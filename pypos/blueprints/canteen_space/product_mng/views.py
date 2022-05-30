@@ -11,18 +11,6 @@ from . import bp
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 
-
-@bp.route("/")
-def dashboard():
-    db = get_db()
-    products = db.execute(
-        "SELECT product.name, product.price, product.id, product_category.name as category_name "
-        "FROM product JOIN product_category "
-        "ON product.category = product_category.id;"
-    ).fetchall()
-    return render_template("product/dashboard.html", products=products)
-
-
 @bp.route("/add_product", methods=['POST'])
 def add_product():
     db = get_db()
@@ -44,9 +32,9 @@ def add_product():
         except db.IntegrityError:
             error = ADD_PRODUCT_INTEGRITY_ERROR
         else:
-            return redirect(url_for('canteen.product.dashboard'))
+            return redirect(url_for('page.index'))
     flash(error)
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))
 
 
 @bp.route("/remove_product", methods=['POST'])
@@ -65,7 +53,7 @@ def remove_product():
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
 
     flash(error)
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))
 
 
 @bp.route("/add_category", methods=['POST'])
@@ -78,7 +66,7 @@ def add_category():
     db = get_db()
     db.execute('INSERT INTO product_category(name) VALUES (?);', (name,))
     flash("Sucefully added product category")
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))
 
 
 @bp.route("/remove_category", methods=['POST'])
@@ -91,7 +79,7 @@ def remove_category():
     db = get_db()
     db.execute('UPDATE product_category SET active=0 WHERE id=?', (category_id,))
     flash("Sucefully deleted product category")
-    return redirect(url_for('index'))
+    return redirect(url_for('page.index'))
 
 
 @bp.route("/update_product")

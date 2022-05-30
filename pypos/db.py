@@ -29,6 +29,8 @@ def init_db():
     db = get_db()
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
+    with current_app.open_resource('initial_data.sql') as f:
+        db.executescript(f.read().decode('utf8'))
 
 def populate_db():
     db = get_db()

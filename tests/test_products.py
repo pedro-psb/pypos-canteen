@@ -4,12 +4,6 @@ from pypos.db import get_db
 from pypos.blueprints.canteen_space.product_mng.errors import *
 from markupsafe import escape
 
-def test_dashboard(client, app):
-    with app.app_context(), app.test_request_context():
-        response = client.get(url_for('canteen.product.dashboard'))
-        assert response.status_code == 200
-
-
 def test_add_product(client, app):
     # TODO: test validations
     form_data = {

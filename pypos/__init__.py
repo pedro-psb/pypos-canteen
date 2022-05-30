@@ -33,11 +33,11 @@ def create_app(test_config=None):
 
 
 def register_blueprints(app):
-    from .blueprints import auth, canteen_space
+    from .blueprints import auth, canteen_space, frontend
     
     app.register_blueprint(auth.bp)
     app.register_blueprint(canteen_space.bp)
-    return None
+    app.register_blueprint(frontend.bp)
 
 
 def register_views(app):
@@ -45,20 +45,6 @@ def register_views(app):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
-
-    @app.route('/index')
-    @app.route('/')
-    def index():
-        links = []
-        for rule in app.url_map.iter_rules():
-            # Filter out rules we can't navigate to in a browser
-            # and rules that require parameters
-            if "GET" in rule.methods and has_no_empty_params(rule):
-                url = url_for(rule.endpoint, **(rule.defaults or {}))
-                links.append((url, rule.endpoint))
-            else:
-                pass
-        return render_template("public/index.html", links=links)
 
 
 # Sitemap helper

@@ -16,10 +16,10 @@
 <body>
     <div class="navbar">
         <ul class="navbar">
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('canteen.product.dashboard') }}">Products</a></li>
-            <li><a href="{{ url_for('index') }}">Login</a></li>
-            <li><a href="{{ url_for('index') }}">Register</a></li>
+            <li><a href="{{ url_for('page.index') }}">Home</a></li>
+            <li><a href="{{ url_for('page.index') }}">Products</a></li>
+            <li><a href="{{ url_for('page.index') }}">Login</a></li>
+            <li><a href="{{ url_for('page.index') }}">Register</a></li>
         </ul>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
