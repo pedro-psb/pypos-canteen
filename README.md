@@ -27,5 +27,3 @@ The project is build with Flask, a python micro-framework made for wep app devel
 # Deploy and Usage
 
 You can deploy where you prefer, but it is aimed to work on Heroku, which is easy to setup and has a free tier.
-
-TODO tutorial on deploying and using
