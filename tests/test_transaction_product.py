@@ -1,4 +1,3 @@
-from msilib.schema import Error
 import pytest
 from flask import g, got_request_exception, session, url_for, get_flashed_messages
 from pypos.db import get_db

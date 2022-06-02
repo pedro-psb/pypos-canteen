@@ -18,6 +18,9 @@ VALUES
 
 INSERT INTO role_permission (role_name, permission_slug)
 VALUES
+  ("owner", "acess_product_management"),
+  ("owner", "acess_reports"),
+  ("owner", "acess_pos"),
   ("manager", "acess_product_management"),
   ("manager", "acess_reports"),
   ("cashier", "acess_reports"),

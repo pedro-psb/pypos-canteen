@@ -48,7 +48,7 @@ def register():
         return redirect(url_for('page.index'))
 
 
-@bp.route('/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -59,20 +59,23 @@ def login():
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
-        role_name = user['role_name']
-
-        user_permissions = db.execute(
-            'SELECT * FROM role_permission rp INNER JOIN permission p ON rp.permission_slug = p.slug WHERE rp.role_name = ?',
-            (role_name,)).fetchall()
-        user_permissions = [perm['permission_slug'] for perm in user_permissions]
-
+        
+        # Check password
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-        elif not user_permissions:
+
+        # Check role and save permission to sesson
+        role_name = user['role_name']
+        if not role_name:
             error = 'Invalid role'
-        
+        user_permissions = db.execute(
+            'SELECT p.slug FROM permission p INNER JOIN role_permission rp '
+            'ON p.slug = rp.permission_slug WHERE rp.role_name=?;', 
+            (role_name,)).fetchall()
+        user_permissions = [perm[0] for perm in user_permissions]
+        # Record to session
         if error is None:
             session.clear()
             session['user_id'] = user['id']
@@ -85,7 +88,6 @@ def login():
 
 
 @bp.route('/logout')
-@login_required(permissions=['bar'])
 def logout():
     session.clear()
     return redirect(url_for('page.index'))

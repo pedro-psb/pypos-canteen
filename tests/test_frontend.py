@@ -1,5 +1,5 @@
 import pytest
-from flask import g, session, url_for, get_flashed_messages
+from flask import g, session, url_for
 from pypos.db import get_db
 from pypos.blueprints.frontend.errors import *
 from markupsafe import escape
@@ -41,8 +41,8 @@ def test_pages_require_auth_witht_right_login(client, auth, app, page, username)
 
 @pytest.mark.parametrize(
     ('page', 'username'), (
-    ('page.product_management', 'fake_client'),
     ('page.pos_interface', 'fake_manager'),
+    ('page.product_management', 'fake_client'),
     ('page.client_dashboard', 'fake_cashier'),
 ))
 def test_pages_require_auth_witht_wrong_login(client, auth, app, page, username):
