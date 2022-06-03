@@ -17,9 +17,9 @@ def test_pages_dont_require_auth(client, app, page):
 
 @pytest.mark.parametrize(
     ('page'), (
-    ('page.product_management'),
-    ('page.pos_interface'),
-    ('page.client_dashboard'),
+    ('page.manage_products'),
+    ('page.pos_main'),
+    ('page.client_index'),
 ))
 def test_pages_require_auth_with_no_login(client, auth, app, page):
     with app.test_request_context():
@@ -29,9 +29,9 @@ def test_pages_require_auth_with_no_login(client, auth, app, page):
 
 @pytest.mark.parametrize(
     ('page', 'username'), (
-    ('page.product_management', 'fake_manager'),
-    ('page.pos_interface', 'fake_cashier'),
-    ('page.client_dashboard', 'fake_client'),
+    ('page.manage_products', 'fake_manager'),
+    ('page.pos_main', 'fake_cashier'),
+    ('page.client_index', 'fake_client'),
 ))
 def test_pages_require_auth_witht_right_login(client, auth, app, page, username):
     with app.test_request_context():
@@ -41,9 +41,9 @@ def test_pages_require_auth_witht_right_login(client, auth, app, page, username)
 
 @pytest.mark.parametrize(
     ('page', 'username'), (
-    ('page.pos_interface', 'fake_manager'),
-    ('page.product_management', 'fake_client'),
-    ('page.client_dashboard', 'fake_cashier'),
+    ('page.manage_products', 'fake_cashier'),
+    ('page.pos_main', 'fake_client'),
+    ('page.client_index', 'fake_cashier'),
 ))
 def test_pages_require_auth_witht_wrong_login(client, auth, app, page, username):
     with app.test_request_context():
