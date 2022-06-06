@@ -23,7 +23,13 @@ def login():
 def user_settings():
     return render_template("user/settings_user.html")
 
-# Owner
+# Canteen
+@bp.route('/canteen')
+# @login_required(permissions=['acess_product_management'])
+def canteen_index():
+    return render_template("user/canteen_index.html")
+
+## Owner
 @bp.route('/canteen/manage-employees')
 @login_required(permissions=['acess_product_management'])
 def manage_emplyess():
@@ -34,13 +40,13 @@ def manage_emplyess():
 def canteen_settings():
     return render_template("user/settings_canteen.html")
 
-# Manager
+## Manager
 @bp.route('/canteen/manage-products')
 @login_required(permissions=['acess_product_management'])
 def manage_products():
     return render_template("user/management_products.html")
 
-# Cashier
+## Cashier
 @bp.route('/canteen/point-of-sale')
 @login_required(permissions=['acess_pos'])
 def pos_main():

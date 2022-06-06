@@ -33,7 +33,7 @@ def test_pages_require_auth_with_no_login(client, auth, app, page):
     ('page.pos_main', 'fake_cashier'),
     ('page.client_index', 'fake_client'),
 ))
-def test_pages_require_auth_witht_right_login(client, auth, app, page, username):
+def test_pages_require_auth_with_right_login(client, auth, app, page, username):
     with app.test_request_context():
         login_response = auth.login(username=username)
         response = client.get(url_for(page))
