@@ -29,6 +29,7 @@ def test_pages_require_auth_with_no_login(client, auth, app, page):
 
 @pytest.mark.parametrize(
     ('page', 'username'), (
+    ('page.manage_products', 'fake_owner'),
     ('page.manage_products', 'fake_manager'),
     ('page.pos_main', 'fake_cashier'),
     ('page.client_index', 'fake_client'),

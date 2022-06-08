@@ -23,16 +23,20 @@ def login():
 def user_settings():
     return render_template("user/settings_user.html")
 
+@bp.route('/unauthorized')
+def unauthorized():
+    return render_template("user/unauthorized.html")
+
 # Canteen
 @bp.route('/canteen')
-# @login_required(permissions=['acess_product_management'])
+@login_required(permissions=['acess_canteen_index'])
 def canteen_index():
     return render_template("user/canteen_index.html")
 
 ## Owner
 @bp.route('/canteen/manage-employees')
 @login_required(permissions=['acess_product_management'])
-def manage_emplyess():
+def manage_employees():
     return render_template("user/management_employees.html")
 
 @bp.route('/canteen/settings')
@@ -53,12 +57,12 @@ def pos_main():
     return render_template("user/pos_main.html")
 
 @bp.route('/canteen/reports')
-@login_required(permissions=['acess_pos'])
+@login_required(permissions=['acess_reports'])
 def pos_reports():
     return render_template("user/pos_reports.html")
 
 @bp.route('/canteen/manage-clients')
-@login_required(permissions=['acess_pos'])
+@login_required(permissions=['acess_client_management'])
 def manage_clients():
     return render_template("user/management_clients.html")
 

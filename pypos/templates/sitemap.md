@@ -24,5 +24,5 @@
 /canteen/manage-products
 /canteen/manage-employees
 /canteen/manage-clients
-/canteen/pos
+/canteen/point-of-sale
 /canteen/reports

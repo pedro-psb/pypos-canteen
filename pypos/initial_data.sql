@@ -10,20 +10,33 @@ VALUES
 
 INSERT INTO permission (slug)
 VALUES
+  ("acess_canteen_index"),
   ("acess_product_management"),
+  ("acess_employee_management"),
+  ("acess_client_management"),
   ("acess_reports"),
   ("acess_pos"),
-  ("acess_client_dashboard")
+  ("acess_client_dashboard"),
+  ("acess_client_account_management")
   ;
 
 INSERT INTO role_permission (role_name, permission_slug)
 VALUES
+  ("owner", "acess_canteen_index"),
   ("owner", "acess_product_management"),
+  ("owner", "acess_client_management"),
+  ("owner", "acess_employee_management"),
   ("owner", "acess_reports"),
   ("owner", "acess_pos"),
+  ("manager", "acess_canteen_index"),
   ("manager", "acess_product_management"),
+  ("manager", "acess_client_management"),
   ("manager", "acess_reports"),
+  ("cashier", "acess_canteen_index"),
+  ("cashier", "acess_client_management"),
   ("cashier", "acess_reports"),
   ("cashier", "acess_pos"),
-  ("client", "acess_client_dashboard")
+  ("client", "acess_client_dashboard"),
+  ("client", "acess_client_account_management"),
+  ("client_dependent", "acess_client_dashboard")
   ;

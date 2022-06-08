@@ -45,10 +45,22 @@
                 <a class="p-2 text-decoration-none text-dark nav-link active" href="#">Home</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="#">Getting Started</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="#">Demo</a>
+                {% if not g.user %}
                 <div class="d-flex flex-column text-center">
-                    <a class="btn btn-primary" href="#">Sign up</a>
-                    <a class="text-dark small" href="#">or Log in</a>
+                    <a class="btn btn-primary" href="{{ url_for('page.register') }}">Sign up</a>
+                    <a class="text-dark small" href="{{ url_for('page.login') }}">or Log in</a>
                 </div>
+                {% elif 'acess_client_dashboard' in session['permissions'] %}
+                <div class="d-flex flex-column text-center">
+                    <a class="btn btn-primary" href="{{ url_for('page.client_index') }}">User Area</a>
+                    <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
+                </div>
+                {% else %}
+                <div class="d-flex flex-column text-center">
+                    <a class="btn btn-primary" href="{{ url_for('page.canteen_index') }}">User Area</a>
+                    <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
+                </div>
+                {% endif %}
             </nav>
         </div>
     </div>

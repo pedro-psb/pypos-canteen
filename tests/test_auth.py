@@ -36,7 +36,7 @@ def test_login(client, auth):
     with client:
         client.get('/')
         # breakpoint()
-        assert session['user_id'] == 1
+        assert session.get('user_id') == 1
         assert g.user['username'] == 'test'
         assert g.user['role_name'] == 'owner'
 

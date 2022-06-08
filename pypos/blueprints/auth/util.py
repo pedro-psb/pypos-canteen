@@ -21,12 +21,11 @@ def login_required(permissions=None):
         @functools.wraps(view)
         def wrapped_view(*args,**kwargs):
             if g.user is None:
-                return redirect(url_for('auth.login'))
+                return redirect(url_for('page.login'))
             user_permissions = session['permissions']
-            # breakpoint()
             for required_perm in permissions:
                 if required_perm not in user_permissions:
-                    return redirect(url_for('auth.login'))
+                    return redirect(url_for('page.unauthorized'))
             return view(*args, **kwargs)
         return wrapped_view
     return decorator

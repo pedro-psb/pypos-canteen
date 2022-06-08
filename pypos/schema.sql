@@ -4,6 +4,9 @@ DROP TABLE IF EXISTS product_category;
 DROP TABLE IF EXISTS product_category_item;
 DROP TABLE IF EXISTS transaction_product;
 DROP TABLE IF EXISTS transaction_product_item;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS permission;
+DROP TABLE IF EXISTS role_permission;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,12 +29,6 @@ CREATE TABLE permission (
   slug TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE user_role (
-  user_id INTEGER NOT NULL,
-  role_id INTEGER NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES user(id),
-  FOREIGN KEY (role_id) REFERENCES role(id)
-);
 
 CREATE TABLE role_permission (
   role_name TEXT NOT NULL,

@@ -1,5 +1,65 @@
 {% extends "base_public.html" %}
+
+<!-- custom style -->
+{% block custom_style %}
+.form-body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+{% endblock %}
+
+<!-- title -->
 {% block title %}Point of Sale Dashboard{% endblock %}
+
+<!-- content -->
 {% block content %}
-<h1>Point of Sale</h1>
+<div class="container text-center">
+    <div class="form-body text-center">
+        <div class="form-signin w-100 m-auto">
+            <form data-bitwarden-watching="1" action="{{ url_for('auth.login') }}" method="post">
+                <h1 class="mb-3 p-3 fw-normal">Login</h1>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInput" name="username" placeholder="name@example.com or user123">
+                    <label for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Log in</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
