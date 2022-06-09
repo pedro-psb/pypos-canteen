@@ -1,0 +1,25 @@
+{% extends "base_user.html" %}
+{% block title %}Manage Products{% endblock %}
+{% block content %}
+<h1>Manage Products</h1>
+<hr class="p-3">
+</hr>
+<div class="container text-center">
+    <h2>Update Category</h2>
+    <div class="form-body text-center">
+        <div class="form-add-category w-100 m-auto">
+            <form class="" method="post" action="">
+                <div class="form-floating mb-3">
+                    <input type="text" id="category_name" name="category_name" class="form-control">
+                    <label class=" form-label" for="category_name">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <textarea id="category_description" name="category_description" class="form-control" style="height:200px;"></textarea>
+                    <label class="form-label" for="category_description">Description</label>
+                </div>
+                <button class="btn btn-primary" type="submit">Add category</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

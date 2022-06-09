@@ -8,7 +8,9 @@
     <!-- categories -->
     <div class="row mb-4">
         <div class="mb-3">
-            <h2>Categories <button type="button" class="btn btn-primary">+</button> </h2>
+            <h2>Categories
+                <a class="btn btn-primary" href="{{ url_for('page.manage_products_add_category') }}">+</a>
+            </h2>
         </div>
         <table class="table align-middle">
             <theader>
@@ -26,7 +28,7 @@
                     <td>3</td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-success">Update</button>
+                            <a class="btn btn-sm btn-outline-success" href="{{ url_for('page.manage_products_update_category') }}">Update</a>
                             <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
                         </div>
                     </td>
@@ -34,11 +36,13 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- products -->
     <div class="row mb-4">
         <div class="mb-3">
-            <h2>Products <button type="button" class="btn btn-primary">+</button></h2>
+            <h2>Products
+                <a class="btn btn-primary" href="{{ url_for('page.manage_products_add_product') }}">+</a>
+            </h2>
         </div>
         <table class="table align-middle">
             <theader>
@@ -68,7 +72,7 @@
                     <td>Lanche</td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-success">Update</button>
+                            <a class="btn btn-sm btn-outline-success" href="{{ url_for('page.manage_products_update_product') }}">Update</a>
                             <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
                         </div>
                     </td>

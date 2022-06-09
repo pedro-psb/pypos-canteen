@@ -1,0 +1,51 @@
+{% extends "base_user.html" %}
+{% block title %}Manage Products{% endblock %}
+{% block content %}
+<h1>Manage Products</h1>
+<hr class="p-3">
+</hr>
+<div class="container">
+    <h2 class="text-center mb-3">Update Product</h2>
+    <form method="post" action="" class="row g-5">
+        <!-- img -->
+        <div class="col-3">
+            <svg class="bd-placeholder-img card-img-top mb-3" width="100" height="325"
+                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                preserveAspectRatio="xMidYMid slice" focusable="false">
+                <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+            </svg>
+            <div class="">
+                <input type="file" class="form-control" id="description" name="Category" placeholder="bar">
+            </div>
+        </div>
+        <!-- fields -->
+        <div class="col-9 w-50">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="Name" placeholder="bar">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="price" name="Price" placeholder="bar">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected>None</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                        <option value="3">-- Add a category-- </option>
+                    </select>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary w-auto align-bottom" type="submit">Add Product</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

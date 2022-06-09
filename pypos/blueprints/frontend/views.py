@@ -50,6 +50,26 @@ def canteen_settings():
 def manage_products():
     return render_template("user/management_products.html")
 
+@bp.route('/canteen/manage-products/add_product')
+@login_required(permissions=['acess_product_management'])
+def manage_products_add_product():
+    return render_template("user/management_products_add_product.html")
+
+@bp.route('/canteen/manage-products/add_category')
+@login_required(permissions=['acess_product_management'])
+def manage_products_add_category():
+    return render_template("user/management_products_add_category.html")
+
+@bp.route('/canteen/manage-products/update_product')
+@login_required(permissions=['acess_product_management'])
+def manage_products_update_product():
+    return render_template("user/management_products_update_product.html")
+
+@bp.route('/canteen/manage-products/update_category')
+@login_required(permissions=['acess_product_management'])
+def manage_products_update_category():
+    return render_template("user/management_products_update_category.html")
+
 ## Cashier
 @bp.route('/canteen/point-of-sale')
 @login_required(permissions=['acess_pos'])
