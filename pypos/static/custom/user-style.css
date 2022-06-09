@@ -3,7 +3,7 @@
 }
 
 body {
-    min-height: 100vh;
+    /* min-height: 100vh; */
     min-height: -webkit-fill-available;
 }
 
@@ -12,9 +12,9 @@ html {
 }
 
 main {
-    height: 100vh;
+    /* height: 100vh; */
     height: -webkit-fill-available;
-    max-height: 100vh;
+    /* max-height: 100vh; */
     overflow-x: auto;
     overflow-y: hidden;
 }

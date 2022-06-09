@@ -22,17 +22,20 @@
                 </tr>
             </theader>
             <tbody>
+                {% for category in data.categories %}
                 <tr>
-                    <td>1</td>
-                    <td>Lanche</td>
-                    <td>3</td>
+                    <td>{{ category.id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.products_inside }}</td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <a class="btn btn-sm btn-outline-success" href="{{ url_for('page.manage_products_update_category') }}">Update</a>
+                            <a class="btn btn-sm btn-outline-success"
+                                href="{{ url_for('page.manage_products_update_category') }}">Update</a>
                             <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
                         </div>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -56,8 +59,10 @@
                 </tr>
             </theader>
             <tbody>
+                {% for product in data.products %}
                 <tr>
                     <td>
+                        {% if not product.image %}
                         <svg class="bd-placeholder-img card-img-top" width="60" height="80"
                             xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
                             preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -65,18 +70,29 @@
                             <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
                                 dy=".3em">img</text>
                         </svg>
+                        {% else %}
+                        <svg class="bd-placeholder-img card-img-top" width="60" height="80"
+                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                            preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
+                                dy=".3em">loaded</text>
+                        </svg>
+                        {% endif %}
                     </td>
-                    <td>1</td>
-                    <td>Pão de Queijo</td>
-                    <td>R$8,50</td>
-                    <td>Lanche</td>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.category_name }}</td>
                     <td class="text-end">
                         <div class="btn-group">
-                            <a class="btn btn-sm btn-outline-success" href="{{ url_for('page.manage_products_update_product') }}">Update</a>
+                            <a class="btn btn-sm btn-outline-success"
+                                href="{{ url_for('page.manage_products_update_product') }}">Update</a>
                             <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
                         </div>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
