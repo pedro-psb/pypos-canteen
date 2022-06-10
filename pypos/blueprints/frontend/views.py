@@ -104,10 +104,14 @@ def manage_products_add_category():
 @login_required(permissions=['acess_product_management'])
 def manage_products_update_product(id):
     db = get_db()
-    get_product_query = "SELECT id, name, price, category FROM product WHERE id=?;"
+    get_product_query = "SELECT id, name, price, category FROM product WHERE id=?"
+    get_category_query = "SELECT id, name FROM product_category WHERE active=1;"
+    
     product = db.execute(get_product_query, (id,)).fetchone()
+    all_categories = db.execute(get_category_query).fetchall()
     data = {
-        'product': dict(product)
+        'product': dict(product),
+        'categories': [dict(cat) for cat in all_categories],
     }
     return render_template("user/management_products_update_product.html", data=data)
 

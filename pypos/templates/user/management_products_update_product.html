@@ -35,9 +35,11 @@
                 <div class="col-12 mb-3">
                     <label for="category" class="form-label">Category</label>
                     <select class="form-select" aria-label="Default select example" name="category">
-                        <option selected value="{{ data.product.category }}">{{ data.product.category }}</option>
+                        <option selected>None</option>
                         {% for category in data.categories %}
-                        {% if category.active == 1 %}
+                        {% if category.id == data.product.category %}
+                        <option selected value="{{ category.id }}">{{ category.name }}</option>
+                        {% else %}
                         <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endif %}
                         {% endfor %}

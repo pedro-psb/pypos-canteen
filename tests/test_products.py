@@ -120,7 +120,7 @@ def test_remove_product_category(app, client):
 
 @pytest.mark.parametrize(
     ('name', 'price', 'category'), [
-        ('foo', '1.2', '1'),
+        ('foo', '1.2', '2'),
         ('foo', '1.2', 'None'),
     ]
 )
