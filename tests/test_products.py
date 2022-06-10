@@ -65,7 +65,7 @@ def test_remove_product(client, app):
         rows_before = db.execute(
             'SELECT COUNT(*) FROM product WHERE active=1 AND id=1;').fetchone()[0]
         response = client.post(url_for('canteen.product.remove_product'),
-                               data={'product_id': 1})
+                               data={'id': 1})
         rows_after = db.execute(
             'SELECT COUNT(*) FROM product WHERE active=1 AND id=1;').fetchone()[0]
 
@@ -78,7 +78,7 @@ def test_remove_product_validation(client, app):
     with app.app_context(), app.test_request_context():
         db = get_db()
         response = client.post(url_for('canteen.product.remove_product'),
-                               data={'product_id': 50})
+                               data={'id': 50})
         assert response.status_code == 302
         response = client.get(response.location)
         assert response.status_code == 200
@@ -94,7 +94,7 @@ def test_add_product_category(app, client):
         rows_before = db.execute(
             'SELECT COUNT(*) FROM product_category;').fetchone()[0]
         response = client.post(url_for('canteen.product.add_category'),
-                               data={'category_name': 'Sobremesa'})
+                               data={'name': 'Sobremesa'})
         rows_after = db.execute(
             'SELECT COUNT(*) FROM product_category;').fetchone()[0]
 
@@ -108,7 +108,7 @@ def test_remove_product_category(app, client):
         rows_before = db.execute(
             'SELECT COUNT(*) FROM product_category WHERE active=1;').fetchone()[0]
         response = client.post(url_for('canteen.product.remove_category'),
-                               data={'category_id': '1'})
+                               data={'id': '1'})
         rows_after = db.execute(
             'SELECT COUNT(*) FROM product_category WHERE active=1;').fetchone()[0]
 

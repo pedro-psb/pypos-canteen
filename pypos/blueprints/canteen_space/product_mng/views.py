@@ -52,7 +52,7 @@ def remove_product():
     
     if not id_exist:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-
+    
     if not error:
         try:
             db.execute('UPDATE product SET active=0 WHERE id=?', (id,))
