@@ -63,11 +63,16 @@ def canteen_settings():
 @login_required(permissions=['acess_product_management'])
 def manage_products():
     db = get_db()
-    products_query = "SELECT p.id, p.name, p.price, pc.name as category_name " \
+    products_query = "SELECT p.id, p.name, p.price, p.active, pc.name as category_name " \
         "FROM product p LEFT JOIN product_category pc ON p.category = pc.id;"
-    categories_query = "SELECT pc.id, pc.name, COUNT(*) as products_inside " \
-        "FROM product p INNER JOIN product_category pc ON p.category = pc.id " \
-        "GROUP BY pc.id"
+    categories_query = '''
+        SELECT pc.id, pc.name, pc.description, pc.active, COUNT(*) as products_inside
+        FROM product_category pc INNER JOIN product p ON p.category = pc.id
+        GROUP BY pc.id UNION
+        SELECT pc.id, pc.name, pc.description, pc.active, '0' as products_inside
+        FROM product_category pc LEFT JOIN product p ON p.category = pc.id
+        WHERE p.id IS NULL;
+    '''
     all_products = db.execute(products_query)
     all_categories = db.execute(categories_query)
     data = {
@@ -80,7 +85,13 @@ def manage_products():
 @bp.route('/canteen/manage-products/add_product')
 @login_required(permissions=['acess_product_management'])
 def manage_products_add_product():
-    return render_template("user/management_products_add_product.html")
+    db = get_db()
+    categories_query = "SELECT name, id FROM product_category;"
+    all_categories = db.execute(categories_query)
+    data = {
+        'categories': [dict(cat) for cat in all_categories],
+    }
+    return render_template("user/management_products_add_product.html", data=data)
 
 
 @bp.route('/canteen/manage-products/add_category')

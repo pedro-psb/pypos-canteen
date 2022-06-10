@@ -15,7 +15,7 @@ VALUES
 
 INSERT INTO product (name,price,category)
 VALUES
-  ("torta de banana", 15, None),
+  ("torta de banana", 15, NULL),
   ("torta de maçã", 15, 1),
   ("biscoito de Queijo", 10, 1),
   ("Pão de Queijo", 10, 1),

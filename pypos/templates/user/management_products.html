@@ -17,24 +17,34 @@
                 <tr>
                     <th>Id</th>
                     <th>Category Name</th>
+                    <th>Category Description</th>
                     <th>Products in Category</th>
+                    <th>Active</th>
                     <th></th>
                 </tr>
             </theader>
             <tbody>
                 {% for category in data.categories %}
+                {{ category.active }}
+                {% if category.active == 1 %}
                 <tr>
                     <td>{{ category.id }}</td>
                     <td>{{ category.name }}</td>
+                    <td>{{ category.description }}</td>
                     <td>{{ category.products_inside }}</td>
+                    <td>{{ category.active }}</td>
                     <td class="text-end">
                         <div class="btn-group">
                             <a class="btn btn-sm btn-outline-success"
                                 href="{{ url_for('page.manage_products_update_category') }}">Update</a>
-                            <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
+                            <form method="post" action="{{ url_for('canteen.product.remove_category') }}">
+                                <input type="hidden" name="id" value="{{ category.id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
                         </div>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -55,11 +65,14 @@
                     <th>Product Name</th>
                     <th>Price</th>
                     <th>Category Name</th>
+                    <th>Active</th>
                     <th></th>
                 </tr>
             </theader>
             <tbody>
                 {% for product in data.products %}
+                {{ product.active }}
+                {% if product.active == 1 %}
                 <tr>
                     <td>
                         {% if not product.image %}
@@ -84,14 +97,19 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price }}</td>
                     <td>{{ product.category_name }}</td>
+                    <td>{{ product.active }}</td>
                     <td class="text-end">
                         <div class="btn-group">
                             <a class="btn btn-sm btn-outline-success"
                                 href="{{ url_for('page.manage_products_update_product') }}">Update</a>
-                            <button type="button" class="btn btn-sm btn-outline-danger">Delete</button>
+                            <form method="post" action="{{ url_for('canteen.product.remove_product') }}">
+                                <input type="hidden" name="id" value="{{ product.id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
                         </div>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>

@@ -4,10 +4,17 @@ from .errors import *
 
 
 class ProductCategory:
-    def __init__(self, name, id=None) -> None:
+    def __init__(self, name, description, id=None) -> None:
         self.id = id
-        self.name = name
-
+        self.name = name.strip()
+        self.description = description
+    def validate(self):
+        if not self.name:
+            return ADD_PRODUCT_GENERIC_ERROR
+        if isinstance(self.description, str):
+            self.description = self.description.strip()
+            
+        
     def __str__(self) -> str:
         return self.name
 

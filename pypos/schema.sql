@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS product;
-DROP TABLE IF EXISTS product_category;
 DROP TABLE IF EXISTS product_category_item;
-DROP TABLE IF EXISTS transaction_product;
 DROP TABLE IF EXISTS transaction_product_item;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS permission;
+DROP TABLE IF EXISTS transaction_product;
 DROP TABLE IF EXISTS role_permission;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS product_category;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS permission;
 
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,6 +48,7 @@ CREATE TABLE product (
 CREATE TABLE product_category (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT UNIQUE NOT NULL,
+  description TEXT DEFAULT '',
   active INTEGER DEFAULT 1 NOT NULL,
   FOREIGN KEY (id) REFERENCES product(category)
 );

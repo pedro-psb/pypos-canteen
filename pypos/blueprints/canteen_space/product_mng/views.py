@@ -1,4 +1,5 @@
 import functools
+from re import L
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -6,10 +7,11 @@ from flask import (
 
 from pypos.db import get_db
 from .errors import *
-from .models import Product
+from .models import Product, ProductCategory
 from . import bp
 
 bp = Blueprint('product', __name__, url_prefix='/product')
+
 
 @bp.route("/add_product", methods=['POST'])
 def add_product():
@@ -21,7 +23,6 @@ def add_product():
         request.form.get("category")
     )
     error = product.validate()
-
     # Database Dependent Validation
     if error is None:
         try:
@@ -29,57 +30,88 @@ def add_product():
                 "INSERT INTO product(name, price, category) "
                 "VALUES (?,?,?);",
                 (product.name, product.price, product.category))
-        except db.IntegrityError:
+            db.commit()
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error ocurred')
             error = ADD_PRODUCT_INTEGRITY_ERROR
-        else:
-            return redirect(url_for('page.index'))
     flash(error)
-    return redirect(url_for('page.index'))
+    return redirect(url_for('page.manage_products_add_product'))
 
 
 @bp.route("/remove_product", methods=['POST'])
 def remove_product():
     error = None
-    product_id = request.form.get('product_id')
+    id = request.form.get('id')
     db = get_db()
     # sqlite3 doesn't raise error if the id doesn't exit.
     # How do I catch the error here? (without using another query)
     id_exist = db.execute(
-        'SELECT id FROM product WHERE id=?', (product_id,)).fetchall()
+        'SELECT id FROM product WHERE id=?', (id,)).fetchall()
     id_exist = len(id_exist)
-    if id_exist:
-        db.execute('UPDATE product SET active=0 WHERE id=?', (product_id,))
-    else:
+    
+    if not id_exist:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
 
+    if not error:
+        try:
+            db.execute('UPDATE product SET active=0 WHERE id=?', (id,))
+            db.commit()
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error has ocurred')
+            error = ADD_PRODUCT_GENERIC_ERROR
     flash(error)
-    return redirect(url_for('page.index'))
+    return redirect(url_for('page.manage_products'))
 
 
 @bp.route("/add_category", methods=['POST'])
 def add_category():
-    name = request.form.get('category_name').strip()
-    error = ''
-    if not name:
-        error = 'Category must have a name'
+    category = ProductCategory(
+        request.form.get('name'),
+        request.form.get('description')
+    )
+    error = category.validate()
+    if not error:
+        try:
+            db = get_db()
+            db.execute('INSERT INTO product_category(name, description) VALUES (?,?);',
+                       (category.name, category.description))
+            db.commit()
+            flash("Sucefully added product category")
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error ocurred')
+            error = ADD_PRODUCT_GENERIC_ERROR
 
-    db = get_db()
-    db.execute('INSERT INTO product_category(name) VALUES (?);', (name,))
-    flash("Sucefully added product category")
-    return redirect(url_for('page.index'))
+    flash(error)
+    return redirect(url_for('page.manage_products_add_category'))
 
 
 @bp.route("/remove_category", methods=['POST'])
 def remove_category():
-    category_id = request.form.get('category_id').strip()
-    error = ''
-    if not category_id:
-        error = 'Invalid operation'
-
+    error = None
+    id = request.form.get('id')
+    id = int(id)
     db = get_db()
-    db.execute('UPDATE product_category SET active=0 WHERE id=?', (category_id,))
-    flash("Sucefully deleted product category")
-    return redirect(url_for('page.index'))
+    # sqlite3 doesn't raise error if the id doesn't exit.
+    # How do I catch the error here? (without using another query)
+    id_exist = db.execute(
+        'SELECT id FROM product_category WHERE id=?', (id,)).fetchall()
+    id_exist = len(id_exist)
+    if not id_exist:
+        error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
+    
+    if not error:
+        try:
+            db.execute('UPDATE product_category SET active=0 WHERE id=?', (id,))
+            db.commit()
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error has ocurred')
+            error = ADD_PRODUCT_GENERIC_ERROR
+    flash(error)
+    return redirect(url_for('page.manage_products'))
 
 
 @bp.route("/update_product")

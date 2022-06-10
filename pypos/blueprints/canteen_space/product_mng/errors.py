@@ -1,3 +1,4 @@
+ADD_PRODUCT_GENERIC_ERROR = "Some error ocurred"
 ADD_PRODUCT_INTEGRITY_ERROR = "Product already exists"
 ADD_PRODUCT_NOT_EMPTY_NAME_ERROR = "Name can't be empty"
 ADD_PRODUCT_NOT_EMPTY_PRICE_ERROR = "Price can't be empty"
