@@ -25,7 +25,6 @@
             </theader>
             <tbody>
                 {% for category in data.categories %}
-                {{ category.active }}
                 {% if category.active == 1 %}
                 <tr>
                     <td>{{ category.id }}</td>
@@ -71,7 +70,6 @@
             </theader>
             <tbody>
                 {% for product in data.products %}
-                {{ product.active }}
                 {% if product.active == 1 %}
                 <tr>
                     <td>
@@ -101,7 +99,7 @@
                     <td class="text-end">
                         <div class="btn-group">
                             <a class="btn btn-sm btn-outline-success"
-                                href="{{ url_for('page.manage_products_update_product') }}">Update</a>
+                                href="{{ url_for('page.manage_products_update_product', id=product.id) }}">Update</a>
                             <form method="post" action="{{ url_for('canteen.product.remove_product') }}">
                                 <input type="hidden" name="id" value="{{ product.id }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

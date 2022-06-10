@@ -44,12 +44,12 @@ class Product:
 
         # Category
         try:
-            self.category = int(self.category)
+            if self.category != 'None':
+                self.category = int(self.category)
+                if self.category <= 0:
+                    return ADD_PRODUCT_INVALID_CATEGORY_ERROR
         except ValueError:
             return ADD_PRODUCT_INVALID_CATEGORY_ERROR
-        else:
-            if self.category <= 0:
-                return ADD_PRODUCT_INVALID_CATEGORY_ERROR
 
     def __str__(self) -> str:
         return self.name

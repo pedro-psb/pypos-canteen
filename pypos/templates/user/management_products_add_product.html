@@ -36,7 +36,9 @@
                     <select class="form-select" aria-label="Default select example" name="category">
                         <option selected>None</option>
                         {% for category in data.categories %}
+                        {% if category.active == 1 %}
                         <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endif %}
                         {% endfor %}
                         <option>-- Add a category--</option>
                     </select>

@@ -6,7 +6,7 @@
 </hr>
 <div class="container">
     <h2 class="text-center mb-3">Update Product</h2>
-    <form method="post" action="" class="row g-5">
+    <form method="post" action="{{ url_for('canteen.product.update_product') }}" class="row g-5">
         <!-- img -->
         <div class="col-3">
             <svg class="bd-placeholder-img card-img-top mb-3" width="100" height="325"
@@ -17,32 +17,35 @@
                     dy=".3em">Thumbnail</text>
             </svg>
             <div class="">
-                <input type="file" class="form-control" id="description" name="Category" placeholder="bar">
+                <input type="file" class="form-control" id="description" name="file" placeholder="bar">
             </div>
         </div>
         <!-- fields -->
         <div class="col-9 w-50">
             <div class="row">
+                <input type="hidden" name="id" value="{{ data.product.id }}">
                 <div class="col-12 mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="Name" placeholder="bar">
+                    <input type="text" class="form-control" id="name" name="name" value="{{ data.product.name }}">
                 </div>
                 <div class="col-12 mb-3">
                     <label for="price" class="form-label">Price</label>
-                    <input type="number" class="form-control" id="price" name="Price" placeholder="bar">
+                    <input type="text" class="form-control" id="price" name="price" value="{{ data.product.price }}">
                 </div>
                 <div class="col-12 mb-3">
                     <label for="category" class="form-label">Category</label>
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected>None</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                        <option value="3">-- Add a category-- </option>
+                    <select class="form-select" aria-label="Default select example" name="category">
+                        <option selected value="{{ data.product.category }}">{{ data.product.category }}</option>
+                        {% for category in data.categories %}
+                        {% if category.active == 1 %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                        <option>-- Add a category--</option>
                     </select>
                 </div>
                 <div class="text-center">
-                    <button class="btn btn-primary w-auto align-bottom" type="submit">Add Product</button>
+                    <button class="btn btn-primary w-auto align-bottom" type="submit">Update Product</button>
                 </div>
             </div>
         </div>

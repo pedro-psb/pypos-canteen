@@ -49,10 +49,10 @@ def remove_product():
     id_exist = db.execute(
         'SELECT id FROM product WHERE id=?', (id,)).fetchall()
     id_exist = len(id_exist)
-    
+
     if not id_exist:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-    
+
     if not error:
         try:
             db.execute('UPDATE product SET active=0 WHERE id=?', (id,))
@@ -101,7 +101,7 @@ def remove_category():
     id_exist = len(id_exist)
     if not id_exist:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-    
+
     if not error:
         try:
             db.execute('UPDATE product_category SET active=0 WHERE id=?', (id,))
@@ -114,7 +114,35 @@ def remove_category():
     return redirect(url_for('page.manage_products'))
 
 
-@bp.route("/update_product")
+@bp.route("/update_product", methods=['POST'])
 def update_product():
     '''Allows updating price, category, name, etc'''
-    pass
+    db = get_db()
+    product_id = int(request.form.get("id"))
+    product = Product(
+        request.form.get("name"),
+        request.form.get("price"),
+        request.form.get("category"),
+        id=id
+    )
+    error = product.validate()
+    # Database Dependent Validation
+    if error is None:
+        try:
+            if product.category != "None":
+                # breakpoint()
+                db.execute(
+                    "UPDATE product SET name=?, price=?, category=? WHERE id=?;",
+                    (product.name, product.price, product.category, product.id))
+            else:
+                db.execute(
+                    "UPDATE product SET name=?, price=?, category=NULL WHERE id=?;",
+                    (product.name, product.price, product.id))
+
+            db.commit()
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error ocurred')
+            error = ADD_PRODUCT_INTEGRITY_ERROR
+    flash(error)
+    return redirect(url_for('page.manage_products_update_product', id=product_id))

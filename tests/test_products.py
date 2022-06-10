@@ -1,8 +1,10 @@
 import pytest
 from flask import g, session, url_for, get_flashed_messages
+from pypos.blueprints.canteen_space.product_mng.models import Product
 from pypos.db import get_db
 from pypos.blueprints.canteen_space.product_mng.errors import *
 from markupsafe import escape
+
 
 def test_add_product(client, app):
     # TODO: test validations
@@ -114,3 +116,44 @@ def test_remove_product_category(app, client):
 
         assert response.status_code == 302
         assert rows_after == rows_before - 1
+
+
+@pytest.mark.parametrize(
+    ('name', 'price', 'category'), [
+        ('foo', '1.2', '1'),
+        ('foo', '1.2', 'None'),
+    ]
+)
+def test_update_product(client, app, name, price, category):
+    # TODO: test validations
+    foo_id = 1
+    form_data = {
+        'id': foo_id,
+        'name': name,
+        'price': price,
+        'category': category,
+    }
+
+    with app.app_context(), app.test_request_context():
+        db = get_db()
+        get_product_query ="SELECT name, price, category FROM product WHERE id=?"
+        product_before_query = db.execute(get_product_query, (1,)).fetchone()
+        product_before = Product(
+            name=product_before_query['name'],
+            price=product_before_query['price'],
+            category=product_before_query['category']
+        )
+        response = client.post(
+            url_for('canteen.product.update_product'), data=form_data)
+
+        product_after_query = db.execute(get_product_query, (foo_id,)).fetchone()
+        product_after = Product(
+            name=product_after_query['name'],
+            price=product_after_query['price'],
+            category=product_after_query['category']
+        )
+
+        assert response.status_code == 302
+        assert product_before.name != product_after.name
+        assert product_before.price != product_after.price
+        assert product_before.category != product_after.category

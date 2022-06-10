@@ -86,7 +86,7 @@ def manage_products():
 @login_required(permissions=['acess_product_management'])
 def manage_products_add_product():
     db = get_db()
-    categories_query = "SELECT name, id FROM product_category;"
+    categories_query = "SELECT name, id, active FROM product_category;"
     all_categories = db.execute(categories_query)
     data = {
         'categories': [dict(cat) for cat in all_categories],
@@ -100,10 +100,16 @@ def manage_products_add_category():
     return render_template("user/management_products_add_category.html")
 
 
-@bp.route('/canteen/manage-products/update_product')
+@bp.route('/canteen/manage-products/update_product/<int:id>')
 @login_required(permissions=['acess_product_management'])
-def manage_products_update_product():
-    return render_template("user/management_products_update_product.html")
+def manage_products_update_product(id):
+    db = get_db()
+    get_product_query = "SELECT id, name, price, category FROM product WHERE id=?;"
+    product = db.execute(get_product_query, (id,)).fetchone()
+    data = {
+        'product': dict(product)
+    }
+    return render_template("user/management_products_update_product.html", data=data)
 
 
 @bp.route('/canteen/manage-products/update_category')
