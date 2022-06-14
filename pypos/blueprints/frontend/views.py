@@ -1,3 +1,4 @@
+from unicodedata import category
 from flask import request, redirect, render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db
@@ -106,7 +107,7 @@ def manage_products_update_product(id):
     db = get_db()
     get_product_query = "SELECT id, name, price, category FROM product WHERE id=?"
     get_category_query = "SELECT id, name FROM product_category WHERE active=1;"
-    
+
     product = db.execute(get_product_query, (id,)).fetchone()
     all_categories = db.execute(get_category_query).fetchall()
     data = {
@@ -116,10 +117,16 @@ def manage_products_update_product(id):
     return render_template("user/management_products_update_product.html", data=data)
 
 
-@bp.route('/canteen/manage-products/update_category')
+@bp.route('/canteen/manage-products/update_category/<int:id>')
 @login_required(permissions=['acess_product_management'])
-def manage_products_update_category():
-    return render_template("user/management_products_update_category.html")
+def manage_products_update_category(id):
+    db = get_db()
+    get_category_query = "SELECT id, name, description FROM product_category WHERE id=?"
+    category = db.execute(get_category_query, (id,)).fetchone()
+    data = {
+        'category': dict(category),
+    }
+    return render_template("user/management_products_update_category.html", data=data)
 
 # Cashier
 

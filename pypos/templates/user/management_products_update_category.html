@@ -8,16 +8,18 @@
     <h2>Update Category</h2>
     <div class="form-body text-center">
         <div class="form-add-category w-100 m-auto">
-            <form class="" method="post" action="">
+            <form class="" method="post" action="{{ url_for('canteen.product.update_category') }}">
+                <input type="hidden" value="{{ data.category.id }}" name="id">
                 <div class="form-floating mb-3">
-                    <input type="text" id="category_name" name="category_name" class="form-control">
-                    <label class=" form-label" for="category_name">Name</label>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ data.category.name }}">
+                    <label class="form-label" for="category_name">Name</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <textarea id="category_description" name="category_description" class="form-control" style="height:200px;"></textarea>
+                    <textarea id="category_description" name="description" class="form-control" style="height:200px;"
+                        value="{{ data.category.description }}">{{ data.category.description }}</textarea>
                     <label class="form-label" for="category_description">Description</label>
                 </div>
-                <button class="btn btn-primary" type="submit">Add category</button>
+                <button class="btn btn-primary" type="submit">Update category</button>
             </form>
         </div>
     </div>

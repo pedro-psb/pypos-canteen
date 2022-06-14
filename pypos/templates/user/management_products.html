@@ -35,7 +35,7 @@
                     <td class="text-end">
                         <div class="btn-group">
                             <a class="btn btn-sm btn-outline-success"
-                                href="{{ url_for('page.manage_products_update_category') }}">Update</a>
+                                href="{{ url_for('page.manage_products_update_category', id=category.id) }}">Update</a>
                             <form method="post" action="{{ url_for('canteen.product.remove_category') }}">
                                 <input type="hidden" name="id" value="{{ category.id }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>

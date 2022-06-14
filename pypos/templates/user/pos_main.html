@@ -1,28 +1,160 @@
 {% extends "base_user.html" %}
 {% block title %}Point of Sale Dashboard{% endblock %}
 {% block content %}
-<h1>Point of Sale Dashboard</h1>
-<div class="row g-3">
-    <div class="col">
-        <div class="card shadow-sm" style="width: 18rem;">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
-                role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-                <title>Placeholder</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                    dy=".3em">Thumbnail</text>
-            </svg>
-
-            <div class="card-body">
-                <h3 class="card-title text-muted">Pão de Queijo</h3>
-                <p class="card-text">Category</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-outline-success">Add</button>
-                        <button type="button" class="btn btn-sm btn-outline-danger">Reset</button>
-                    </div>
-                    <p class="h4 text-muted"><span class="badge bg-secondary">R$5,00</span></p>
+<div class="container-fluid">
+    <h1>Point of Sale Dashboard</h1>
+    <hr>
+    <div class="row">
+        <div class="col-12 col-lg-7">
+            <!-- searchbar -->
+            <div class="row">
+                <div class="mb-3 col-4">
+                    <input type="text" class="form-control" id="searchbar" placeholder="ex: product x">
                 </div>
+                <div class="d-flex align-items-stretch col-8 mb-3">
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
+                            checked>
+                        <label class="btn btn-secondary btn-sm" for="exampleRadios1">
+                            All
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                        <label class="btn btn-secondary btn-sm" for="exampleRadios2">
+                            Lunch
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                        <label class="btn btn-secondary btn-sm" for="exampleRadios3">
+                            Breakfast
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                        <label class="btn btn-secondary btn-sm" for="exampleRadios3">
+                            Drinks
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- products -->
+            <div class="row g-3 justify-content-start">
+                <h2>Lunch</h2>
+                {% for item in range(4) %}
+                <div class="col-auto">
+                    <div class="card shadow-sm" style="width: 12rem;">
+                        <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
+                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                            preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
+                                dy=".3em">Thumbnail</text>
+                        </svg>
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h3 class="h6 card-title text-muted">Pão de Queijo</h3>
+                            <span class="fs-6 badge bg-secondary">R$5,00</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <h2>Breakfast</h2>
+                {% for item in range(2) %}
+                <div class="col-auto">
+                    <div class="card shadow-sm" style="width: 12rem;">
+                        <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
+                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                            preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
+                                dy=".3em">Thumbnail</text>
+                        </svg>
+
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h3 class="h6 card-title text-muted">Pão de Queijo</h3>
+                            <span class="fs-6 badge bg-secondary">R$5,00</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- order -->
+        <div class="col-12 col-lg-5">
+            <h2>Order</h2>
+            <h3 class="h4">Items</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="w-50">Item</th>
+                        <th class="w-auto">Price</th>
+                        <th class="w-auto">Qtd</th>
+                        <th class="w-auto">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in range(5) %}
+                    <tr>
+                        <td><span class="text-muted">x</td></span>
+                        <td>Pão de Queijo</td>
+                        <td>5.00</td>
+                        <td class="w-25"><input class="form-control" type="number" name="quantity" id="quantity"
+                                value="3"></td>
+                        <td>15.00</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="text-end" colspan="4">Discount</td>
+                        <td class=""><input class="form-control" type="text" name="discount" value="2.00"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end" colspan="4">Total</td>
+                        <td class="text-start">120.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h3 class="h4">Payment</h3>
+            <div class="d-flex align-items-stretch mb-3">
+                <div class="p-1">
+                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
+                        checked>
+                    <label class="btn btn-primary btn-sm" for="exampleRadios1">
+                        Money
+                    </label>
+                </div>
+                <div class="p-1">
+                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                    <label class="btn btn-primary btn-sm" for="exampleRadios2">
+                        Debit Card
+                    </label>
+                </div>
+                <div class="p-1">
+                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
+                    <label class="btn btn-primary btn-sm" for="exampleRadios3">
+                        Credit Card
+                    </label>
+                </div>
+                <div class="p-1">
+                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3"
+                        disabled>
+                    <label class="btn btn-primary btn-sm" for="exampleRadios3">
+                        User Account
+                    </label>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button class="m-2 btn btn-danger" type="reset">Cancel</button>
+                <button class="m-2 btn btn-success" type="submit">Submit</button>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

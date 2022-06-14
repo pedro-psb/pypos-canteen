@@ -1,5 +1,6 @@
 import functools
 from re import L
+from unicodedata import category
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -105,7 +106,8 @@ def remove_category():
     if not error:
         try:
             db.execute('UPDATE product_category SET active=0 WHERE id=?', (id,))
-            db.execute('UPDATE product SET category=NULL WHERE category=?', (id,))
+            db.execute(
+                'UPDATE product SET category=NULL WHERE category=?', (id,))
             db.commit()
             return redirect(url_for('page.manage_products'))
         except:
@@ -146,3 +148,27 @@ def update_product():
             error = ADD_PRODUCT_INTEGRITY_ERROR
     flash(error)
     return redirect(url_for('page.manage_products_update_product', id=product_id))
+
+
+@bp.route("/update_category", methods=['POST'])
+def update_category():
+    '''Allows updating name and description'''
+    db = get_db()
+    category = ProductCategory(
+        id=request.form.get("id"),
+        name=request.form.get("name"),
+        description=request.form.get("description")
+    )
+    error = category.validate()
+    # Database Dependent Validation
+    if error is None:
+        try:
+            query = "UPDATE product_category SET name=?, description=? WHERE id=?;"
+            db.execute(query, (category.name, category.description, category.id))
+            db.commit()
+            return redirect(url_for('page.manage_products'))
+        except:
+            print('some error ocurred')
+            error = ADD_PRODUCT_INTEGRITY_ERROR
+    flash(error)
+    return redirect(url_for('page.manage_products_update_category', id=category.id))

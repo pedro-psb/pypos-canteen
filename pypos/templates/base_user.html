@@ -218,14 +218,15 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"">Sign out</a></li>
+                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sign out</a></li>
                 </ul>
             </div>
         </div>
-        <div class=" flex-column m-3 p-4 w-100">
+        <div class="flex-column m-3 p-4 w-100">
                             {% block content %}{% endblock %}
             </div>
     </main>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
+
 </html>
