@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row pt-5">
+            <div class="col">
+                <div class="row" id="products">
+                    <!-- card -->
+                    <div class="card m-3" style="width: 10rem;">
+                        <div class="card-body">
+                            <h1 class="row_name">item A</h1>
+                            <p class="row_price">12.0</p>
+                            <p class="row_id small">1</p>
+                        </div>
+                    </div>
+                    <!-- card -->
+                    <div class="card m-3" style="width: 10rem;">
+                        <div class="card-body">
+                            <h1 class="row_name">item B</h1>
+                            <p class="row_price">2.0</p>
+                            <p class="row_id small">2</p>
+                        </div>
+                    </div>
+                    <!-- card -->
+                    <div class="card m-3" style="width: 10rem;">
+                        <div class="card-body">
+                            <h1 class="row_name">item C</h1>
+                            <p class="row_price">3.2</p>
+                            <p class="row_id small">3</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>quantity</th>
+                            <th>price</th>
+                            <th>total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order_items"></tbody>
+                    <tfoot id="order_foot"></tfoot>
+                </table>
+                <div>
+                    <label class="form-label">Discount</label>
+                    <input id="discount" class="control-form" type="number" value="0" oninput="update_form();">
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="reset_order();">Cancel</button>
+                    <form method="" action="">
+                        <button class="btn btn-success" type="submit">Finish</button>
+                        <input hidden id="form_products" name="products">
+                        <input hidden id="form_discount" name="discount">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>
