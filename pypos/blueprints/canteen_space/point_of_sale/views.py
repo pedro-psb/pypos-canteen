@@ -7,7 +7,9 @@ from .models import TransactionProduct
 @bp.route('/add_transaction_product', methods=['POST'])
 def add_transaction_product():
     transaction_product = TransactionProduct(
-        request.get_json()
+        request.form.get('products'),
+        request.form.get('discount'),
+        request.form.get('payment_method')
     )
     # Create transaction
     db = get_db()
@@ -15,9 +17,11 @@ def add_transaction_product():
     if not errors:
         db.execute(
             'INSERT INTO transaction_product'
-            '(date, total_value) VALUES (?,?);',
+            '(date, total_value, discount, payment_method) VALUES (?,?,?,?);',
             (transaction_product.date,
-             transaction_product.total_value
+             transaction_product.total_value,
+             transaction_product.discount,
+             transaction_product.payment_method
              ))
         # Get the id of the inserted transaction
         transaction_id = db.execute(
@@ -26,7 +30,7 @@ def add_transaction_product():
 
         # Create transaction items for each product
         for product in transaction_product.products:
-            product_id = product['product_id']
+            product_id = product['id']
             quantity = int(product['quantity'])
             db.execute(
                 'INSERT INTO transaction_product_item'
@@ -48,6 +52,6 @@ def remove_transaction_product():
     db.execute(
         'UPDATE transaction_product SET active=0 WHERE id=?',
         (transaction_id))
-    
+
     flash(errors)
     return redirect(url_for('page.index'))

@@ -38,5 +38,11 @@ VALUES
   ("cashier", "acess_pos"),
   ("client", "acess_client_dashboard"),
   ("client", "acess_client_account_management"),
-  ("client_dependent", "acess_client_dashboard")
-  ;
+  ("client_dependent", "acess_client_dashboard");
+
+INSERT INTO payment_method (name)
+VALUES
+  ("money"),
+  ("credit_card"),
+  ("debit_card"),
+  ("user_account");

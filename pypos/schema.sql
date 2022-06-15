@@ -62,10 +62,12 @@ CREATE TABLE product_category_item (
 );
 
 CREATE TABLE transaction_product (
-  id INTEGER PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   date TEXT NOT NULL,
-  active INTEGER DEFAULT 1 NOT NULL,
-  total_value NUMBER NOT NULL
+  payment_method INTEGER NOT NULL,
+  discount NUMBER NOT NULL DEFAULT 0,
+  total_value NUMBER NOT NULL,
+  active INTEGER DEFAULT 1 NOT NULL
 );
 
 CREATE TABLE transaction_product_item (
@@ -74,4 +76,9 @@ CREATE TABLE transaction_product_item (
   quantity INTEGER NOT NULL,
   FOREIGN KEY (product_id) REFERENCES product(id),
   FOREIGN KEY (transaction_product_id) REFERENCES transaction_product(id)
+);
+
+CREATE TABLE payment_method (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
 );
