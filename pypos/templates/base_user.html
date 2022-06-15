@@ -5,8 +5,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/user-style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.7.0"
+        integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo"
+        crossorigin="anonymous"></script>
     {% block custom_header %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -223,8 +227,8 @@
             </div>
         </div>
         <div class="flex-column m-3 p-4 w-100">
-                            {% block content %}{% endblock %}
-            </div>
+            {% block content %}{% endblock %}
+        </div>
     </main>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>

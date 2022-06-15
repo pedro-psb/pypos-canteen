@@ -134,7 +134,14 @@ def manage_products_update_category(id):
 @bp.route('/canteen/point-of-sale')
 @login_required(permissions=['acess_pos'])
 def pos_main():
-    return render_template("user/pos_main.html")
+    db = get_db()
+    products = db.execute('''
+        SELECT p.name, p.id, p.price, pc.name as category FROM product p
+        LEFT JOIN product_category pc ON p.category = pc.id
+        WHERE p.active=1;
+    ''').fetchall()
+    data = {'products': [dict(prod) for prod in products]}
+    return render_template("user/pos_main.html", data=data)
 
 
 @bp.route('/canteen/reports')
@@ -161,3 +168,27 @@ def client_index():
 @login_required(permissions=['acess_client_dashboard'])
 def client_manage():
     return render_template("user/client_manage.html")
+
+# AJAX
+
+
+@bp.route('/pos/get_products')
+@login_required(permissions=['acess_pos'])
+def get_products():
+    data = [
+        {
+            'category': 'lunch',
+            'products': [
+                {'name': 'Rice', 'price': 12.50, 'id': 1},
+                {'name': 'Beans', 'price': 20, 'id': 2},
+            ]
+        },
+        {
+            'category': 'breakfast',
+            'products': [
+                {'name': 'Bread and Milk', 'price': 22.50, 'id': 3},
+                {'name': 'Pão de Queijo', 'price': 1.50, 'id': 4},
+            ]
+        },
+    ]
+    return render_template("user/pos_main.html", data=data)

@@ -32,18 +32,20 @@
                         </label>
                     </div>
                     <div class="p-1">
-                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
-                        <label class="btn btn-secondary btn-sm" for="exampleRadios3">
+                        <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios4" value="option3">
+                        <label class="btn btn-secondary btn-sm" for="exampleRadios4">
                             Drinks
                         </label>
                     </div>
                 </div>
             </div>
+
             <!-- products -->
-            <div class="row g-3 justify-content-start">
-                <h2>Lunch</h2>
-                {% for item in range(4) %}
-                <div class="col-auto">
+            <div id="products" class="row g-3 justify-content-start">
+                <h2>All Products</h2>
+                {% for product in data.products %}
+                <div class="col-auto product" data-name="{{ product.name }}" data-price="{{ product.price }}"
+                    data-id="{{ product.id }}">
                     <div class="card shadow-sm" style="width: 12rem;">
                         <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
                             xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
@@ -52,36 +54,37 @@
                             <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
                                 dy=".3em">Thumbnail</text>
                         </svg>
-
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h3 class="h6 card-title text-muted">Pão de Queijo</h3>
-                            <span class="fs-6 badge bg-secondary">R$5,00</span>
+                        
+                        <p class="text-left small p-2 pb-0"><span class="badge bg-secondary ">{{ product.category }}</span></span></p>
+                        <div class="card-body d-flex justify-content-between align-items-center pt-0">
+                            <h3 class="h6 card-title text-muted card_name">{{ product.name }}</h3>
+                            <span class="fs-6 badge bg-secondary card_price">{{ product.price }}</span>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
-                <h2>Breakfast</h2>
-                {% for item in range(2) %}
-                <div class="col-auto">
-                    <div class="card shadow-sm" style="width: 12rem;">
-                        <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
-                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                            preserveAspectRatio="xMidYMid slice" focusable="false">
-                            <title>Placeholder</title>
-                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                                dy=".3em">Thumbnail</text>
-                        </svg>
 
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h3 class="h6 card-title text-muted">Pão de Queijo</h3>
-                            <span class="fs-6 badge bg-secondary">R$5,00</span>
+                <!-- <h2>Lunch</h2>
+                    {% for item in data %}
+                    <div class="col-auto product" data-name="Pão de Queijo" data-price="5.0" data-id="{{ loop.index }}">
+                        <div class="card shadow-sm" style="width: 12rem;">
+                            <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
+                                xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                                preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <title>Placeholder</title>
+                                <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%"
+                                    fill="#eceeef" dy=".3em">Thumbnail</text>
+                            </svg>
+
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <h3 class="h6 card-title text-muted card_name">Pão de Queijo</h3>
+                                <span class="fs-6 badge bg-secondary card_price">R$5,00</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
+                    {% endfor %} -->
             </div>
         </div>
-
         <!-- order -->
         <div class="col-12 col-lg-5">
             <h2>Order</h2>
@@ -90,71 +93,73 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th class="w-50">Item</th>
+                        <th class="w-25">Item</th>
                         <th class="w-auto">Price</th>
                         <th class="w-auto">Qtd</th>
                         <th class="w-auto">Total</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for n in range(5) %}
-                    <tr>
-                        <td><span class="text-muted">x</td></span>
-                        <td>Pão de Queijo</td>
-                        <td>5.00</td>
-                        <td class="w-25"><input class="form-control" type="number" name="quantity" id="quantity"
-                                value="3"></td>
-                        <td>15.00</td>
-                    </tr>
-                    {% endfor %}
+                <tbody id="order">
                 </tbody>
-                <tfoot>
+                <tfoot id="order_foot">
                     <tr>
                         <td class="text-end" colspan="4">Discount</td>
-                        <td class=""><input class="form-control" type="text" name="discount" value="2.00"></td>
+                        <td class=""><input id="discount" class="form-control" type="text" name="discount" value="0.00">
+                        </td>
                     </tr>
                     <tr>
                         <td class="text-end" colspan="4">Total</td>
-                        <td class="text-start">120.00</td>
+                        <td id="final_total" class="text-start">$ 0.00</td>
                     </tr>
                 </tfoot>
             </table>
 
             <h3 class="h4">Payment</h3>
-            <div class="d-flex align-items-stretch mb-3">
+            <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
                 <div class="p-1">
-                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
+                    <input class="btn-check" type="radio" name="payment_method" id="payment_method1" value="money"
                         checked>
-                    <label class="btn btn-primary btn-sm" for="exampleRadios1">
+                    <label class="btn btn-primary btn-sm" for="payment_method1">
                         Money
                     </label>
                 </div>
                 <div class="p-1">
-                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-                    <label class="btn btn-primary btn-sm" for="exampleRadios2">
+                    <input class="btn-check" type="radio" name="payment_method" id="payment_method2" value="debit_card">
+                    <label class="btn btn-primary btn-sm" for="payment_method2">
                         Debit Card
                     </label>
                 </div>
                 <div class="p-1">
-                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3">
-                    <label class="btn btn-primary btn-sm" for="exampleRadios3">
+                    <input class="btn-check" type="radio" name="payment_method" id="payment_method3"
+                        value="credit_card">
+                    <label class="btn btn-primary btn-sm" for="payment_method3">
                         Credit Card
                     </label>
                 </div>
                 <div class="p-1">
-                    <input class="btn-check" type="radio" name="exampleRadios" id="exampleRadios3" value="option3"
-                        disabled>
-                    <label class="btn btn-primary btn-sm" for="exampleRadios3">
+                    <input class="btn-check" type="radio" name="payment_method" id="payment_method4"
+                        value="user_account">
+                    <label class="btn btn-primary btn-sm" for="payment_method4">
                         User Account
                     </label>
                 </div>
             </div>
 
             <div class="d-flex justify-content-end">
-                <button class="m-2 btn btn-danger" type="reset">Cancel</button>
-                <button class="m-2 btn btn-success" type="submit">Submit</button>
+                <div class="col">
+                    <button id="clear_order_button" class="m-2 btn btn-danger" type="reset">Cancel</button>
+                </div>
+                <div class="col">
+                    <form method="" target="">
+                        <input id="form_products" hidden name="products">
+                        <input id="form_discount" hidden name="discount">
+                        <input id="form_payment_method" hidden name="payment_method">
+                        <button class="m-2 btn btn-success" type="submit">Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script src="{{ url_for('static', filename='custom/main.js') }}"></script>
 {% endblock %}
