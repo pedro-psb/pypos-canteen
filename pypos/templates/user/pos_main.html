@@ -150,7 +150,7 @@
                     <button id="clear_order_button" class="m-2 btn btn-danger" type="reset">Cancel</button>
                 </div>
                 <div class="col">
-                    <form method="" target="">
+                    <form method="post" action="{{ url_for('canteen.point_of_sale.add_transaction_product') }}">
                         <input id="form_products" hidden name="products">
                         <input id="form_discount" hidden name="discount">
                         <input id="form_payment_method" hidden name="payment_method">

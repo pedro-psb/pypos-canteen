@@ -2,7 +2,7 @@ import json
 from urllib import response
 import pytest
 from flask import g, got_request_exception, session, url_for, get_flashed_messages
-from pypos.db import get_db
+from pypos.db import get_db, close_db
 from pypos.blueprints.canteen_space.point_of_sale.errors import *
 from markupsafe import escape
 
@@ -27,16 +27,17 @@ def test_valid_transaction(app, client):
         # response = client.post(
         #     url_for('canteen.point_of_sale.add_transaction_product'),
         #     json=form_data)
-
         response = client.post(
-                url_for('canteen.point_of_sale.add_transaction_product'),
-                data=form_data)
+            url_for('canteen.point_of_sale.add_transaction_product'),
+            data=form_data)
 
-        transactions_after=db.execute(
+        close_db()
+        db = get_db()
+        transactions_after = db.execute(
             'SELECT count(*) FROM transaction_product;').fetchone()[0]
-        transactions_items_after=db.execute(
+        transactions_items_after = db.execute(
             'SELECT count(*) FROM transaction_product_item;').fetchone()[0]
-        
+
         assert response.status_code == 302
         assert transactions_after == transactions_before + 1
         assert transactions_items_after == transactions_items_before + 2
@@ -44,7 +45,7 @@ def test_valid_transaction(app, client):
 
 def test_remove_transaction_product(app, client):
     with app.app_context(), app.test_request_context():
-        db=get_db()
+        db = get_db()
         add_form_data = {
             'products': json.dumps([
                 {'id': '1', 'quantity': '1'},
@@ -53,26 +54,30 @@ def test_remove_transaction_product(app, client):
             'discount': '0',
             'payment_method': '1'
         }
-        remove_form_data={'transaction_id': '1'}
+        remove_form_data = {'transaction_id': '1'}
 
         # add product
         client.post(
             url_for('canteen.point_of_sale.add_transaction_product'),
             data=add_form_data)
 
-        transactions_before=db.execute(
+        transactions_before = db.execute(
             'SELECT count(*) FROM transaction_product '
             'WHERE active=1;').fetchone()[0]
 
         # remove product
-        response=client.post(
+        response = client.post(
             url_for('canteen.point_of_sale.remove_transaction_product'),
             data=remove_form_data)
 
-        transactions_after=db.execute(
+        # restart db to check persistence
+        close_db()
+        db = get_db()
+        
+        transactions_after = db.execute(
             'SELECT count(*) FROM transaction_product '
             'WHERE active=1;').fetchone()[0]
-        
+
         assert response.status_code == 302
         assert transactions_after == transactions_before - 1
 

@@ -15,14 +15,15 @@ def add_transaction_product():
     db = get_db()
     errors = transaction_product.validate(db)
     if not errors:
-        db.execute(
-            'INSERT INTO transaction_product'
-            '(date, total_value, discount, payment_method) VALUES (?,?,?,?);',
-            (transaction_product.date,
-             transaction_product.total_value,
-             transaction_product.discount,
-             transaction_product.payment_method
-             ))
+        insert_query = "INSERT INTO transaction_product (date, total_value, discount, payment_method) VALUES (?,?,?,?);"
+        db.execute(insert_query,
+                   (transaction_product.date,
+                    transaction_product.total_value,
+                    transaction_product.discount,
+                    transaction_product.payment_method
+                    ))
+        db.commit()
+
         # Get the id of the inserted transaction
         transaction_id = db.execute(
             "SELECT last_insert_rowid() as id;").fetchone()
@@ -36,11 +37,12 @@ def add_transaction_product():
                 'INSERT INTO transaction_product_item'
                 '(product_id, quantity, transaction_product_id) VALUES (?,?,?);',
                 (product_id, quantity, transaction_id))
+            db.commit()
 
         flash("Sucefully added transaction")
     else:
         flash(errors)
-    return redirect(url_for('page.index'))
+    return redirect(url_for('page.pos_main'))
 
 
 @bp.route('/remove_transaction_product', methods=['POST'])
@@ -52,6 +54,6 @@ def remove_transaction_product():
     db.execute(
         'UPDATE transaction_product SET active=0 WHERE id=?',
         (transaction_id))
-
+    db.commit()
     flash(errors)
     return redirect(url_for('page.index'))
