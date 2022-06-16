@@ -46,7 +46,7 @@ class TransactionProduct:
             # sum if everything is ok
             total_sum += product_price[0] * product_quantity
         if not errors:
-            self.total_value = total_sum
+            self.total_value = total_sum - self.discount
             return None
         return errors
     

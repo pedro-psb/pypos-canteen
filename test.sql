@@ -1,9 +1,22 @@
 /*
 Run this to test:
-cat test.sql | sqlite3 instance/pypos.sqlite 
+cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT * FROM transaction_product;
+SELECT pm.name FROM transaction_product tp
+INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
+INNER JOIN product p ON p.id = tpi.product_id
+INNER JOIN payment_method pm ON tp.payment_method = pm.id
+GROUP BY tp.id;
+
+
+/* Nested structure of Transactions
+-- SELECT tp.date, tp.payment_method, tp.discount, tp.total_value,
+-- group_concat('{"name":' || p.name || ',"quantity":' || tpi.quantity || '}') as products
+-- FROM transaction_product tp
+-- INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
+-- INNER JOIN product p ON p.id = tpi.product_id
+-- GROUP BY tp.id;
 
 /* SELECT pc.id, pc.name as category_name, COUNT(*) as products_inside
 -- FROM product p INNER JOIN product_category pc ON p.category = pc.id

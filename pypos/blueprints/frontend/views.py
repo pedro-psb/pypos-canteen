@@ -1,3 +1,5 @@
+import json
+from re import L
 from unicodedata import category
 from flask import request, redirect, render_template, session
 
@@ -147,7 +149,70 @@ def pos_main():
 @bp.route('/canteen/reports')
 @login_required(permissions=['acess_reports'])
 def pos_reports():
-    return render_template("user/pos_reports.html")
+    data = {
+        'transactions': [
+            {
+                'date': '12/12/12',
+                'products': [
+                    {'name': 'Foo', 'quantity': '2'},
+                    {'name': 'Bar', 'quantity': '1'},
+                    {'name': 'Spam', 'quantity': '4'}
+                ],
+                'payment_method': 'Money',
+                'discount': 2.0,
+                'total_value': 23.50
+            },
+            {
+                'date': '13/12/12',
+                'products': [
+                    {'name': 'Foo', 'quantity': '2'},
+                    {'name': 'Spam', 'quantity': '4'}
+                ],
+                'payment_method': 'Credit Card',
+                'discount': 0,
+                'total_value': 50
+            },
+            {
+                'date': '14/12/12',
+                'products': [
+                    {'name': 'Bar', 'quantity': '1'},
+                    {'name': 'Spam', 'quantity': '4'}
+                ],
+                'payment_method': 'Money',
+                'discount': 5.0,
+                'total_value': 4.78
+            }
+        ]
+    }
+    query = """
+        SELECT tp.date, pm.name AS payment_method, tp.discount, tp.total_value,
+        group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity || '"}') AS products
+        FROM transaction_product tp
+        INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
+        INNER JOIN product p ON p.id = tpi.product_id
+        INNER JOIN payment_method pm ON tp.payment_method = pm.id
+        GROUP BY tp.id;
+    """
+    db = get_db()
+    all_transactions = db.execute(query).fetchall()
+
+    for key, transaction in enumerate(all_transactions):
+        transaction_parsed = dict(transaction)
+        products_string = transaction_parsed.get('products')
+        product_parsed = json.loads(f'[{products_string}]')
+
+        # products_quantities = products_string.split(';')
+        # for product_quantity in products_quantities:
+        #     product_quantity_split = product_quantity.split(',')
+        #     product = product_quantity_split(1)
+
+        transaction_parsed['products'] = product_parsed
+        all_transactions[key] = transaction_parsed
+    
+    print(all_transactions)
+    data = {'transactions': all_transactions}
+
+    return render_template("user/pos_reports.html", data=data)
 
 
 @bp.route('/canteen/manage-clients')

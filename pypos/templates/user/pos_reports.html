@@ -2,4 +2,66 @@
 {% block title %}Point of Sale - Reports{% endblock %}
 {% block content %}
 <h1>Point of Sale - Reports</h1>
+<hr>
+<div class="container-liquid">
+    <div class="row">
+        <div class="col-12 col-md-7">
+            <h2>All Transactions</h2>
+            <hr>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Products</th>
+                        <th>Payment Method</th>
+                        <th>Discount</th>
+                        <th>Total (w/ discount)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in data.transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>
+                            {% for product in transaction.products %}
+                            <span class="small badge rounded-pill bg-secondary">{{ product.name}}
+                                ({{ product.quantity }})</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ transaction.payment_method }}</td>
+                        <td>${{ transaction.discount }}</td>
+                        <td>${{ transaction.total_value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12 col-md-5">
+            <h2>Summary</h2>
+            <hr>
+            <h3>Sales</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span class="badge bg-success">most sales</span>
+                    <strong>Foo Good</strong> with 50% of sales
+                </li>
+                <li class="list-group-item">
+                    <span class="badge bg-danger">less sales</span>
+                    <strong>Foo Bad</strong> with 2% of sales
+                </li>
+            </ul>
+            <h3>Invoice</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <span class="badge bg-success">higher invoice</span>
+                    <strong>Bar Good</strong> with 87% of the invoice
+                </li>
+                <li class="list-group-item">
+                    <span class="badge bg-danger">lower invoice</span>
+                    <strong>Bar Bad</strong> with 4% of the invoice
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
