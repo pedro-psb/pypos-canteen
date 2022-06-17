@@ -1,0 +1,36 @@
+{% extends "base_public.html" %}
+{% block custom_header %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/public-login.css') }}">
+{% endblock %}
+{% block title %}Create Canteen{% endblock %}
+{% block content %}
+<div class="container text-center">
+    <div class="form-body text-center">
+        <div class="form-signin w-100 m-auto">
+            <form action="{{ url_for('auth.register') }}" method="post">
+                <h1 class="mb-3 p-3 fw-normal">Create Canteen</h1>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="My Canteen">
+                    <label for="floatingInput">Canteen Name</label>
+                </div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" name="email"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">Institutional Email</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="phone" name="phone"
+                        placeholder="(21) 99999-9999">
+                    <label for="floatingPassword">Institutional Phone</label>
+                </div>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="adress" name="adress"
+                        placeholder="2nd Street, 387 - 30-320-100">
+                    <label for="floatingPassword">Adress</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

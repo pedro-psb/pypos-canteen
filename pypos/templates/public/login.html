@@ -1,14 +1,8 @@
 {% extends "base_public.html" %}
-
-<!-- custom style -->
 {% block custom_header %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/public-login.css') }}">
 {% endblock %}
-
-<!-- title -->
-{% block title %}Point of Sale Dashboard{% endblock %}
-
-<!-- content -->
+{% block title %}Login{% endblock %}
 {% block content %}
 <div class="container text-center">
     <div class="form-body text-center">
@@ -32,6 +26,7 @@
                 </div>
                 <button class="w-100 btn btn-lg btn-primary" type="submit">Log in</button>
             </form>
+            <p class=""><a href="{{ url_for('page.register') }}">Or register</a></p>
         </div>
     </div>
 </div>

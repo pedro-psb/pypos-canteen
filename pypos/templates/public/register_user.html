@@ -1,0 +1,36 @@
+{% extends "base_public.html" %}
+{% block custom_header %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/public-login.css') }}">
+{% endblock %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container text-center">
+    <div class="form-body text-center">
+        <div class="form-signin w-100 m-auto">
+            <form action="{{ url_for('auth.register') }}" method="post">
+                <h1 class="mb-3 p-3 fw-normal">Register User</h1>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="user123">
+                    <label for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" name="email"
+                        placeholder="name@example.com">
+                    <label for="floatingInput">Email</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password_confirm" name="password_confirm"
+                        placeholder="Password">
+                    <label for="floatingPassword">Confirm password</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

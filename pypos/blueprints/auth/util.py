@@ -22,10 +22,12 @@ def login_required(permissions=None):
         def wrapped_view(*args,**kwargs):
             if g.user is None:
                 return redirect(url_for('page.login'))
-            user_permissions = session['permissions']
-            for required_perm in permissions:
-                if required_perm not in user_permissions:
-                    return redirect(url_for('page.unauthorized'))
+            
+            if permissions:
+                user_permissions = session['permissions']
+                for required_perm in permissions:
+                    if required_perm not in user_permissions:
+                        return redirect(url_for('page.unauthorized'))
             return view(*args, **kwargs)
         return wrapped_view
     return decorator

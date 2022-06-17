@@ -14,7 +14,7 @@ CREATE TABLE user (
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
   phone_number TEXT,
-  role_name TEXT NOT NULL,
+  role_name TEXT,
   active INTEGER DEFAULT 1 NOT NULL
 );
 

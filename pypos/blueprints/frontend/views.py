@@ -17,7 +17,13 @@ def index():
 
 @bp.route('/register')
 def register():
-    return render_template("public/register.html")
+    return render_template("public/register_user.html")
+
+
+@bp.route('/register_canteen')
+@login_required()
+def register_canteen():
+    return render_template("public/register_canteen.html")
 
 
 @bp.route('/login')
@@ -208,7 +214,7 @@ def pos_reports():
 
         transaction_parsed['products'] = product_parsed
         all_transactions[key] = transaction_parsed
-    
+
     print(all_transactions)
     data = {'transactions': all_transactions}
 

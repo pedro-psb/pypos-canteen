@@ -1,33 +1,55 @@
 import pytest
 from flask import g, session
-from pypos.db import get_db
+from pypos.db import get_db, close_db
 
 
 def test_register(client, app):
-    response = client.post(
-        '/auth/register', data={
-            'username': 'a', 'password': 'a', 'role_name': 'owner'}
-    )
-
     with app.app_context():
-        user_registered = get_db().execute(
-            "SELECT * FROM user WHERE username = 'a'",).fetchone()
+        form_data = {
+            'username': 'a',
+            'email': 'foo@gmail.com',
+            'password': 'a',
+            'password_confirm': 'a'
+        }
+        response = client.post(
+            '/auth/register', data=form_data
+        )
+
+        db = get_db()
+        query = "SELECT * FROM user WHERE username=?"
+        user_registered = db.execute(query, ('a')).fetchone()
+
         assert user_registered is not None
-    
-    assert response.headers["Location"] == "/auth/login"
+        assert response.headers["Location"] == "/auth/login"
 
 
-# @pytest.mark.parametrize(('username', 'password', 'message'), (
-#     ('', '', b'Username is required.'),
-#     ('a', '', b'Password is required.'),
-#     ('test', 'test', b'already registered'),
-# ))
-# def test_register_validate_input(client, username, password, message):
-#     response = client.post(
-#         '/auth/register',
-#         data={'username': username, 'password': password}
-#     )
-#     assert message in response.data
+@pytest.mark.parametrize(('username', 'email', 'password', 'password_confirm', 'message'), (
+    ('', 'foo@gmail.com', 'pass', 'pass', 'Username is required.'),
+    ('user', '', 'pass', 'pass', 'Email is required.'),
+    ('user', 'foo@gmail.com', '', 'pass', 'Password is required.'),
+    ('user', 'foo-gmail.com', 'pass', 'pass', 'Email is invalid'),
+    ('user', 'foo@gmail.com', 'pass', 'pass2', "Password doesn't match"),
+    ('fake_client', 'foo@gmail.com', 'pass', 'pass', 'User already exist')
+))
+def test_register_fail(app, client, username, email, password, password_confirm, message):
+    with app.app_context():
+        form_data = {
+            'username': username,
+            'email': email,
+            'password': password,
+            'password_confirm': password_confirm
+        }
+        db = get_db()
+        query = "SELECT * FROM user;"
+        user_registered_before = db.execute(query).fetchall()
+        
+        response = client.post('/auth/register', data=form_data)
+        close_db()
+        db = get_db()
+        user_registered_after = db.execute(query).fetchall()
+
+        assert user_registered_before == user_registered_after
+        # assert message in response.data
 
 
 def test_login(client, auth):
