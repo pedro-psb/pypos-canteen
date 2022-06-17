@@ -32,6 +32,11 @@
                     <a class="btn btn-primary" href="{{ url_for('page.login') }}">Login</a>
                     <a class="text-dark small" href="{{ url_for('page.register') }}">or Register</a>
                 </div>
+                {% elif 'initial_acess' in session['permissions'] %}
+                <div class="d-flex flex-column text-center">
+                    <a class="btn btn-primary" href="{{ url_for('page.create_or_join_canteen') }}">User Area</a>
+                    <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
+                </div>
                 {% elif 'acess_client_dashboard' in session['permissions'] %}
                 <div class="d-flex flex-column text-center">
                     <a class="btn btn-primary" href="{{ url_for('page.client_index') }}">User Area</a>

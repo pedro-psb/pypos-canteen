@@ -23,11 +23,13 @@ def login_required(permissions=None):
             if g.user is None:
                 return redirect(url_for('page.login'))
             
-            if permissions:
-                user_permissions = session['permissions']
-                for required_perm in permissions:
-                    if required_perm not in user_permissions:
-                        return redirect(url_for('page.unauthorized'))
+            if permissions and not isinstance(permissions, list):
+                raise Exception("'permissions' must be a list in @login_required(permissions)")
+
+            user_permissions = session['permissions']
+            for required_perm in permissions:
+                if required_perm not in user_permissions:
+                    return redirect(url_for('page.unauthorized'))
             return view(*args, **kwargs)
         return wrapped_view
     return decorator

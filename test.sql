@@ -3,11 +3,14 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT pm.name FROM transaction_product tp
-INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
-INNER JOIN product p ON p.id = tpi.product_id
-INNER JOIN payment_method pm ON tp.payment_method = pm.id
-GROUP BY tp.id;
+SELECT username, email FROM user;
+
+/*
+-- SELECT pm.name FROM transaction_product tp
+-- INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
+-- INNER JOIN product p ON p.id = tpi.product_id
+-- INNER JOIN payment_method pm ON tp.payment_method = pm.id
+-- GROUP BY tp.id;
 
 
 /* Nested structure of Transactions

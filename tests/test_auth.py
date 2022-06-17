@@ -20,7 +20,6 @@ def test_register(client, app):
         user_registered = db.execute(query, ('a')).fetchone()
 
         assert user_registered is not None
-        assert response.headers["Location"] == "/auth/login"
 
 
 @pytest.mark.parametrize(('username', 'email', 'password', 'password_confirm', 'message'), (

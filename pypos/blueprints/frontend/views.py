@@ -21,7 +21,7 @@ def register():
 
 
 @bp.route('/register_canteen')
-@login_required()
+@login_required(permissions=['initial_acess'])
 def register_canteen():
     return render_template("public/register_canteen.html")
 
@@ -30,6 +30,10 @@ def register_canteen():
 def login():
     return render_template("public/login.html")
 
+@bp.route('/user/welcome')
+@login_required(permissions=['initial_acess'])
+def create_or_join_canteen():
+    return render_template("public/user_welcome.html")
 # Common
 
 

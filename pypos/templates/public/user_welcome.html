@@ -1,0 +1,13 @@
+{% extends "base_public.html" %}
+{% block custom_header %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/public-login.css') }}">
+{% endblock %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="container text-center">
+    <h1>Welcome!</h1>
+    <p>Welcome to our canteen system. What do you want to do next?</p>
+    <button class="btn btn-primary">Join an existing canteen</button>
+    <a class="btn btn-primary" href="{{ url_for('page.register_canteen') }}">Create a new canteen</a>
+</div>
+{% endblock %}
