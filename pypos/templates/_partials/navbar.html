@@ -23,28 +23,23 @@
             </a>
             <!-- menu -->
             <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-                <a class="p-2 text-decoration-none text-dark nav-link active" href="#">Home</a>
+                <a class="p-2 text-decoration-none text-dark nav-link active" href="{{ url_for('page.index') }}">Home</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="#">Getting Started</a>
+                {% if not g.user %}
                 <a class="p-2 text-decoration-none text-dark nav-link" href="{{ url_for ('page.register_canteen') }}">Create Canteen</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="{{ url_for ('page.register_client') }}">Join Canteen</a>
-                {% if not g.user %}
                 <div class="d-flex flex-column text-center">
                     <a class="btn btn-primary" href="{{ url_for('page.login') }}">Login</a>
                     <a class="text-dark small" href="{{ url_for('page.choose_role') }}">or Register</a>
                 </div>
-                {% elif 'initial_acess' in session['permissions'] %}
+                {% elif 'acess_canteen_index' in session['permissions'] %}
                 <div class="d-flex flex-column text-center">
-                    <a class="btn btn-primary" href="{{ url_for('page.create_or_join_canteen') }}">User Area</a>
-                    <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
-                </div>
-                {% elif 'acess_client_dashboard' in session['permissions'] %}
-                <div class="d-flex flex-column text-center">
-                    <a class="btn btn-primary" href="{{ url_for('page.client_index') }}">User Area</a>
+                    <a class="btn btn-primary" href="{{ url_for('page.canteen_index') }}">User Area</a>
                     <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
                 </div>
                 {% else %}
                 <div class="d-flex flex-column text-center">
-                    <a class="btn btn-primary" href="{{ url_for('page.canteen_index') }}">User Area</a>
+                    <a class="btn btn-primary" href="{{ url_for('page.client_index') }}">User Area</a>
                     <a class="text-dark small" href="{{ url_for('auth.logout') }}">or Log Out</a>
                 </div>
                 {% endif %}

@@ -7,8 +7,9 @@
 <div class="container text-center">
     <div class="form-body text-center">
         <div class="form-signin w-100 m-auto">
-            <form action="{{ url_for('auth.register') }}" method="post">
-                <h1 class="mb-3 p-3 fw-normal">Join a Canteen</h1>
+            <form action="{{ url_for('auth.register_client') }}" method="post">
+                <h1 class="mb-3 p-3 fw-normal">Create Account</h1>
+                <p>To join a canteen you must create an account too.</p>
                 <p>The canteen should expose their Passphrase/ID for you. If not, request them to do so.</p>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="canteen_id" name="canteen_id" placeholder="random-passphrase-2">

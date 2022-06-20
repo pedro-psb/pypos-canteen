@@ -11,8 +11,8 @@ from . import bp
 from .util import *
 
 
-@bp.route('/register', methods=['POST'])
-def register():
+@bp.route('/register_client', methods=['POST'])
+def register_client():
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
@@ -20,7 +20,7 @@ def register():
         password_confirm = request.form.get('password_confirm')
         canteen_id = request.form.get('canteen_id')
         current_url = request.form.get('current_url')
-        role = 'generic'
+        role = 'client'
 
         db = get_db()
         error = None
@@ -48,27 +48,29 @@ def register():
         if password != password_confirm:
             error = "Password doesn't match"
 
+        # canteen doesn't exist/ is invalid
+        check_canteen_query = "SELECT * FROM canteen WHERE id=?;"
+        canteen_exist = db.execute(
+            check_canteen_query, (canteen_id,)).fetchone()
+        if not canteen_exist:
+            error = "Canteen don't exist"
+
         # User already exist
-        check_user_query = "SELECT * FROM user WHERE username=?;"
-        user_exist = db.execute(check_user_query, (username,)).fetchone()
+        check_user_query = "SELECT * FROM user WHERE username=? AND canteen_id=?;"
+        user_exist = db.execute(
+            check_user_query, (username, canteen_id)).fetchone()
         if user_exist:
             error = "User already exist"
 
-        # canteen doesn't exist/ is invalid
-        check_canteen_query = "SELECT * FROM canteen WHERE id=?;"
-        canteen_exist = db.execute(check_canteen_query, (canteen_id,)).fetchone()
-        if not canteen_exist:
-            error = "Canteen don't exist"
-        
         if error is None:
             try:
                 db.execute(
                     "INSERT INTO user (username, email, password, role_name, canteen_id) VALUES (?,?,?,?,?)",
                     (username,
-                    email,
-                    generate_password_hash(password),
-                    role,
-                    canteen_id))
+                     email,
+                     generate_password_hash(password),
+                     role,
+                     canteen_id))
                 db.commit()
                 session.clear()
                 return redirect(url_for("page.login"))
@@ -79,6 +81,11 @@ def register():
         print('\n', error, '\n')
         return redirect(current_url)
 
+
+@bp.route('/register_client', methods=['POST'])
+def register_canteen():
+    if request.method == 'POST':
+        pass
 
 @bp.route('/login', methods=['POST'])
 def login():
@@ -92,7 +99,7 @@ def login():
 
             # get user data from db
             user = db.execute(
-                'SELECT * FROM user WHERE username = ?', (username,)
+                'SELECT * FROM user WHERE username=?;', (username,)
             ).fetchone()
             user = dict(user)
 
@@ -120,9 +127,7 @@ def login():
             session['canteen_id'] = user['canteen_id']
 
             # redirect to the right place
-            if 'initial_acess' in session['permissions']:
-                return redirect(url_for('page.create_or_join_canteen'))
-            elif 'acess_client_dashboard' in session['permissions']:
+            if 'acess_client_dashboard' in session['permissions']:
                 return redirect(url_for('page.client_index'))
             return redirect(url_for('page.canteen_index'))
         except:

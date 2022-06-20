@@ -1,10 +1,10 @@
 import pytest
-from flask import g, session
+from flask import g, session, url_for
 from pypos.db import get_db, close_db
 
 
 def test_register(client, app):
-    with app.app_context():
+    with app.app_context(), app.test_request_context():
         form_data = {
             'username': 'a',
             'email': 'foo@gmail.com',
@@ -12,9 +12,7 @@ def test_register(client, app):
             'password_confirm': 'a',
             'canteen_id': '1'
         }
-        response = client.post(
-            '/auth/register', data=form_data
-        )
+        response = client.post(url_for('auth.register_client'), data=form_data)
 
         db = get_db()
         query = "SELECT * FROM user WHERE username=?"

@@ -3,7 +3,7 @@ from re import L
 from unicodedata import category
 from flask import request, redirect, render_template, session
 
-from pypos.blueprints.auth.util import login_required, get_db
+from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
 from . import bp
 
 # Public
@@ -15,10 +15,12 @@ def index():
     return render_template("public/index.html")
 
 @bp.route('/user/choose_role')
+@public_acess_only
 def choose_role():
     return render_template("public/choose_role.html")
 
 @bp.route('/register')
+@public_acess_only
 def register_client():
     return render_template("public/register_client.html")
 
@@ -27,11 +29,13 @@ def register_employee():
     return render_template("public/register_employee.html")
 
 @bp.route('/register_canteen')
+@public_acess_only
 def register_canteen():
     return render_template("public/register_canteen.html")
 
 
 @bp.route('/login')
+@public_acess_only
 def login():
     return render_template("public/login.html")
 

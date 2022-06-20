@@ -33,3 +33,11 @@ def login_required(permissions=None):
             return view(*args, **kwargs)
         return wrapped_view
     return decorator
+
+def public_acess_only(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user:
+            return redirect(url_for('page.index'))
+        return view(**kwargs)
+    return wrapped_view
