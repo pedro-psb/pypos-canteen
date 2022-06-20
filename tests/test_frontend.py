@@ -7,7 +7,8 @@ from markupsafe import escape
 @pytest.mark.parametrize(
     ('page'), (
     ('page.index'),
-    ('page.register'),
+    ('page.register_client'),
+    ('page.choose_role'),
     ('page.login')
 ))
 def test_pages_dont_require_auth(client, app, page):

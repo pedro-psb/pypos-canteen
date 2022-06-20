@@ -1,3 +1,5 @@
+INSERT INTO canteen (name) VALUES ("Default Canteen");
+
 INSERT INTO role (name, description)
 VALUES
   ("owner", "The creator of the canteen"),

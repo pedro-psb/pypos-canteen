@@ -8,26 +8,30 @@
     <div class="form-body text-center">
         <div class="form-signin w-100 m-auto">
             <form action="{{ url_for('auth.register') }}" method="post">
-                <h1 class="mb-3 p-3 fw-normal">Register User</h1>
+                <h1 class="mb-3 p-3 fw-normal">Join a Canteen</h1>
+                <p>The canteen should expose their Passphrase/ID for you. If not, request them to do so.</p>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="canteen_id" name="canteen_id" placeholder="random-passphrase-2">
+                    <label for="canteen_id">Canteen ID</label>
+                </div>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="username" name="username" placeholder="user123">
-                    <label for="floatingInput">Username</label>
+                    <label for="username">Username</label>
                 </div>
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="email" name="email"
-                        placeholder="name@example.com">
-                    <label for="floatingInput">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                    <label for="email">Email</label>
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="Password">
-                    <label for="floatingPassword">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    <label for="password">Password</label>
                 </div>
                 <div class="form-floating">
                     <input type="password" class="form-control" id="password_confirm" name="password_confirm"
                         placeholder="Password">
                     <label for="floatingPassword">Confirm password</label>
                 </div>
+                <input hidden name="current_url" value="{{ url_for('page.register_client') }}">
                 <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
             </form>
         </div>

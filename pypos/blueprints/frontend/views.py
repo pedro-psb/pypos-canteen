@@ -14,14 +14,19 @@ from . import bp
 def index():
     return render_template("public/index.html")
 
+@bp.route('/user/choose_role')
+def choose_role():
+    return render_template("public/choose_role.html")
 
 @bp.route('/register')
-def register():
-    return render_template("public/register_user.html")
+def register_client():
+    return render_template("public/register_client.html")
 
+@bp.route('/register_employee')
+def register_employee():
+    return render_template("public/register_employee.html")
 
 @bp.route('/register_canteen')
-@login_required(permissions=['initial_acess'])
 def register_canteen():
     return render_template("public/register_canteen.html")
 
@@ -30,10 +35,6 @@ def register_canteen():
 def login():
     return render_template("public/login.html")
 
-@bp.route('/user/welcome')
-@login_required(permissions=['initial_acess'])
-def create_or_join_canteen():
-    return render_template("public/user_welcome.html")
 # Common
 
 

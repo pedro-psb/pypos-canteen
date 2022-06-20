@@ -5,9 +5,9 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <div class="container text-center">
-    <h1>Welcome!</h1>
-    <p>Welcome to our canteen system. What do you want to do next?</p>
-    <button class="btn btn-primary">Join an existing canteen</button>
+    <h1>Hello!</h1>
+    <p>Glad you would like to join us. What do you want to do next?</p>
+    <a class="btn btn-primary" href="{{ url_for('page.register_client') }}">Join an existing canteen</a>
     <a class="btn btn-primary" href="{{ url_for('page.register_canteen') }}">Create a new canteen</a>
 </div>
 {% endblock %}

@@ -18,6 +18,9 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         password_confirm = request.form.get('password_confirm')
+        canteen_id = request.form.get('canteen_id')
+        current_url = request.form.get('current_url')
+        role = 'generic'
 
         db = get_db()
         error = None
@@ -29,6 +32,10 @@ def register():
             error = 'Password is required.'
         elif not email:
             error = 'Email is required'
+        elif not canteen_id:
+            error = 'Needs to be related to an existing canteen'
+        if not current_url:
+            current_url = url_for('page.index')
 
         # validate email
         email_pattern = r"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"
@@ -45,14 +52,23 @@ def register():
         check_user_query = "SELECT * FROM user WHERE username=?;"
         user_exist = db.execute(check_user_query, (username,)).fetchone()
         if user_exist:
-            print(username, dict(user_exist))
             error = "User already exist"
 
+        # canteen doesn't exist/ is invalid
+        check_canteen_query = "SELECT * FROM canteen WHERE id=?;"
+        canteen_exist = db.execute(check_canteen_query, (canteen_id,)).fetchone()
+        if not canteen_exist:
+            error = "Canteen don't exist"
+        
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, email, password, role_name) VALUES (?,?,?,?)",
-                    (username, email, generate_password_hash(password), 'generic'))
+                    "INSERT INTO user (username, email, password, role_name, canteen_id) VALUES (?,?,?,?,?)",
+                    (username,
+                    email,
+                    generate_password_hash(password),
+                    role,
+                    canteen_id))
                 db.commit()
                 session.clear()
                 return redirect(url_for("page.login"))
@@ -61,7 +77,7 @@ def register():
 
         flash(error)
         print('\n', error, '\n')
-        return redirect(url_for('page.register'))
+        return redirect(current_url)
 
 
 @bp.route('/login', methods=['POST'])
@@ -101,6 +117,7 @@ def login():
             session.clear()
             session['user_id'] = user['id']
             session['permissions'] = user_permissions
+            session['canteen_id'] = user['canteen_id']
 
             # redirect to the right place
             if 'initial_acess' in session['permissions']:

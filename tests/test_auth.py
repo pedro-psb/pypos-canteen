@@ -9,7 +9,8 @@ def test_register(client, app):
             'username': 'a',
             'email': 'foo@gmail.com',
             'password': 'a',
-            'password_confirm': 'a'
+            'password_confirm': 'a',
+            'canteen_id': '1'
         }
         response = client.post(
             '/auth/register', data=form_data
@@ -22,30 +23,33 @@ def test_register(client, app):
         assert user_registered is not None
 
 
-@pytest.mark.parametrize(('username', 'email', 'password', 'password_confirm', 'message'), (
-    ('', 'foo@gmail.com', 'pass', 'pass', 'Username is required.'),
-    ('user', '', 'pass', 'pass', 'Email is required.'),
-    ('user', 'foo@gmail.com', '', 'pass', 'Password is required.'),
-    ('user', 'foo-gmail.com', 'pass', 'pass', 'Email is invalid'),
-    ('user', 'foo@gmail.com', 'pass', 'pass2', "Password doesn't match"),
-    ('fake_client', 'foo@gmail.com', 'pass', 'pass', 'User already exist')
+@pytest.mark.parametrize(('username', 'email', 'password', 'password_confirm', 'canteen_id', 'message'), (
+    ('', 'foo@gmail.com', 'pass', 'pass', '1', 'Username is required.'),
+    ('user', '', 'pass', 'pass', '1', 'Email is required.'),
+    ('user', 'foo@gmail.com', '', 'pass', '1', 'Password is required.'),
+    ('user', 'foo@gmail.com', '', 'pass', '', 'Canteen ID is required.'),
+    ('user', 'foo-gmail.com', 'pass', 'pass', '1', 'Email is invalid'),
+    ('user', 'foo@gmail.com', 'pass', 'pass2', '1', "Password doesn't match"),
+    ('fake_client', 'foo@gmail.com', 'pass', 'pass', '1', 'User already exist'),
+    ('user', 'foo@gmail.com', 'pass', 'pass', '100', 'Canteen ID is Invalid')
 ))
-def test_register_fail(app, client, username, email, password, password_confirm, message):
+def test_register_fail(app, client, username, email, password, password_confirm, canteen_id, message):
     with app.app_context():
         form_data = {
             'username': username,
             'email': email,
             'password': password,
-            'password_confirm': password_confirm
+            'password_confirm': password_confirm,
+            'canteen_id': canteen_id
         }
         db = get_db()
-        query = "SELECT * FROM user;"
-        user_registered_before = db.execute(query).fetchall()
+        query = "SELECT count(*) FROM user;"
+        user_registered_before = db.execute(query).fetchone()[0]
         
         response = client.post('/auth/register', data=form_data)
         close_db()
         db = get_db()
-        user_registered_after = db.execute(query).fetchall()
+        user_registered_after = db.execute(query).fetchone()[0]
 
         assert user_registered_before == user_registered_after
         # assert message in response.data

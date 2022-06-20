@@ -26,11 +26,11 @@
                 <a class="p-2 text-decoration-none text-dark nav-link active" href="#">Home</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="#">Getting Started</a>
                 <a class="p-2 text-decoration-none text-dark nav-link" href="{{ url_for ('page.register_canteen') }}">Create Canteen</a>
-                <a class="p-2 text-decoration-none text-dark nav-link" href="#">Join Canteen</a>
+                <a class="p-2 text-decoration-none text-dark nav-link" href="{{ url_for ('page.register_client') }}">Join Canteen</a>
                 {% if not g.user %}
                 <div class="d-flex flex-column text-center">
                     <a class="btn btn-primary" href="{{ url_for('page.login') }}">Login</a>
-                    <a class="text-dark small" href="{{ url_for('page.register') }}">or Register</a>
+                    <a class="text-dark small" href="{{ url_for('page.choose_role') }}">or Register</a>
                 </div>
                 {% elif 'initial_acess' in session['permissions'] %}
                 <div class="d-flex flex-column text-center">
