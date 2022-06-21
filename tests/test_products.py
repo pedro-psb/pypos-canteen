@@ -158,8 +158,3 @@ def test_update_product(client, app, name, price, category):
         assert product_before.price != product_after.price
         assert product_before.category != product_after.category
 
-def test_products_are_isolated_by_canteen():
-    pass
-
-def test_products_are_isolated_by_canteen():
-    pass

@@ -24,15 +24,14 @@ def add_product():
         request.form.get("category")
     )
     error = product.validate()
-    breakpoint()
-    print(session)
+    canteen_id = session.get('canteen_id')
     # Database Dependent Validation
     if error is None:
         try:
             db.execute(
-                "INSERT INTO product(name, price, category) "
-                "VALUES (?,?,?);",
-                (product.name, product.price, product.category))
+                "INSERT INTO product(name, price, category, canteen_id) "
+                "VALUES (?,?,?,?);",
+                (product.name, product.price, product.category, canteen_id))
             db.commit()
             return redirect(url_for('page.manage_products'))
         except:
@@ -75,11 +74,12 @@ def add_category():
         request.form.get('description')
     )
     error = category.validate()
+    canteen_id = session.get('canteen_id')
     if not error:
         try:
             db = get_db()
-            db.execute('INSERT INTO product_category(name, description) VALUES (?,?);',
-                       (category.name, category.description))
+            db.execute('INSERT INTO product_category(name, description, canteen_id) VALUES (?,?,?);',
+                       (category.name, category.description, canteen_id))
             db.commit()
             flash("Sucefully added product category")
             return redirect(url_for('page.manage_products'))

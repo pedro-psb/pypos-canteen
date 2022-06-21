@@ -73,7 +73,7 @@ def test_remove_transaction_product(app, client):
         # restart db to check persistence
         close_db()
         db = get_db()
-        
+
         transactions_after = db.execute(
             'SELECT count(*) FROM transaction_product '
             'WHERE active=1;').fetchone()[0]
