@@ -120,7 +120,7 @@ def register_canteen():
             error = "Password doesn't match"
 
         # canteen doesn't exist/ is invalid
-        check_canteen_query = "SELECT * FROM canteen WHERE name=?;"
+        check_canteen_query = "SELECT * FROM canteen WHERE name LIKE ?;"
         canteen_exist = db.execute(
             check_canteen_query, (canteen_name,)).fetchone()
         if canteen_exist:
@@ -132,7 +132,7 @@ def register_canteen():
             check_user_query, (username,)).fetchone()
         if user_exist:
             error = "User already exist"
-
+    
     if error is None:
         try:
             # create canteen

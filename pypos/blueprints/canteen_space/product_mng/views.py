@@ -24,6 +24,8 @@ def add_product():
         request.form.get("category")
     )
     error = product.validate()
+    breakpoint()
+    print(session)
     # Database Dependent Validation
     if error is None:
         try:

@@ -14,7 +14,10 @@ VALUES
   'cashier', 1),
   ('fake_client',
   'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f',
-  'client', 1);
+  'client', 1),
+  ('client_canten_2',
+  'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f',
+  'client', 2);
 
 INSERT INTO product_category (name)
 VALUES

@@ -3,7 +3,9 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT username, email FROM user;
+SELECT username, canteen_id FROM user;
+SELECT "";
+SELECT id, name FROM canteen;
 
 /*
 -- SELECT pm.name FROM transaction_product tp
