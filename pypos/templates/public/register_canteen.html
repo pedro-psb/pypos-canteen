@@ -9,6 +9,8 @@
         <div class="form-signin w-100 m-auto">
             <form action="{{ url_for('auth.register_canteen') }}" method="post">
                 <h1 class="mb-3 p-3 fw-normal">Create Canteen</h1>
+                <p>To create a canteen you must create an account too.</p>
+                <!-- canteen data -->
                 <div class="form-floating">
                     <input type="text" class="form-control" id="name" name="name" placeholder="My Canteen">
                     <label for="floatingInput">Canteen Name</label>
@@ -28,6 +30,27 @@
                         placeholder="2nd Street, 387 - 30-320-100">
                     <label for="floatingPassword">Adress</label>
                 </div>
+                <hr>
+                <!-- user data -->
+                <h3>Owner Account</h3>
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="user123">
+                    <label for="username">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                    <label for="email">Email</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    <label for="password">Password</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password_confirm" name="password_confirm"
+                        placeholder="Password">
+                    <label for="floatingPassword">Confirm password</label>
+                </div>
+                <input hidden name="current_url" value="{{ url_for('page.register_canteen') }}">
                 <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
             </form>
         </div>

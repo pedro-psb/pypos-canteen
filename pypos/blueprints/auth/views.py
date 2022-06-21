@@ -82,10 +82,83 @@ def register_client():
         return redirect(current_url)
 
 
-@bp.route('/register_client', methods=['POST'])
+@bp.route('/register_canteen', methods=['POST'])
 def register_canteen():
     if request.method == 'POST':
-        pass
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        password_confirm = request.form.get('password_confirm')
+        canteen_name = request.form.get('canteen_name')
+        current_url = request.form.get('current_url')
+        role = 'owner'
+
+        db = get_db()
+        error = None
+
+        # required fields
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+        elif not email:
+            error = 'Email is required'
+        elif not canteen_name:
+            error = 'Canteen needs a name'
+        if not current_url:
+            current_url = url_for('page.index')
+
+        # validate email
+        email_pattern = r"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"
+        pattern = re.compile(email_pattern)
+        email_is_valid = re.match(pattern, email.strip())
+        if not email_is_valid:
+            error = "Email is not valid"
+
+        # Password doesnt match
+        if password != password_confirm:
+            error = "Password doesn't match"
+
+        # canteen doesn't exist/ is invalid
+        check_canteen_query = "SELECT * FROM canteen WHERE name=?;"
+        canteen_exist = db.execute(
+            check_canteen_query, (canteen_name,)).fetchone()
+        if canteen_exist:
+            error = "Canteen Name already taken"
+
+        # User already exist
+        check_user_query = "SELECT * FROM user WHERE username=?;"
+        user_exist = db.execute(
+            check_user_query, (username,)).fetchone()
+        if user_exist:
+            error = "User already exist"
+
+    if error is None:
+        try:
+            # create canteen
+            db.execute(
+                "INSERT INTO canteen (name) VALUES (?)", (canteen_name,))
+
+            # create user
+            last_id_query = "SELECT last_insert_rowid();"
+            canteen_id = int(db.execute(last_id_query).fetchone()[0])
+            db.execute(
+                "INSERT INTO user (username, email, password, role_name, canteen_id) VALUES (?,?,?,?,?)",
+                (username,
+                 email,
+                 generate_password_hash(password),
+                 role,
+                 canteen_id))
+            db.commit()
+            session.clear()
+            return redirect(url_for("page.login"))
+        except:
+            error = f"Some error with the database ocurred"
+
+    flash(error)
+    print('\n', error, '\n')
+    return redirect(current_url)
+
 
 @bp.route('/login', methods=['POST'])
 def login():

@@ -3,7 +3,7 @@ from flask import g, session, url_for
 from pypos.db import get_db, close_db
 
 
-def test_register(client, app):
+def test_register_client(client, app):
     with app.app_context(), app.test_request_context():
         form_data = {
             'username': 'a',
@@ -31,7 +31,7 @@ def test_register(client, app):
     ('fake_client', 'foo@gmail.com', 'pass', 'pass', '1', 'User already exist'),
     ('user', 'foo@gmail.com', 'pass', 'pass', '100', 'Canteen ID is Invalid')
 ))
-def test_register_fail(app, client, username, email, password, password_confirm, canteen_id, message):
+def test_register_client_fail(app, client, username, email, password, password_confirm, canteen_id, message):
     with app.app_context():
         form_data = {
             'username': username,
@@ -43,7 +43,7 @@ def test_register_fail(app, client, username, email, password, password_confirm,
         db = get_db()
         query = "SELECT count(*) FROM user;"
         user_registered_before = db.execute(query).fetchone()[0]
-        
+
         response = client.post('/auth/register', data=form_data)
         close_db()
         db = get_db()
@@ -51,6 +51,54 @@ def test_register_fail(app, client, username, email, password, password_confirm,
 
         assert user_registered_before == user_registered_after
         # assert message in response.data
+
+
+def test_register_canteen(app, client):
+    with app.app_context(), app.test_request_context():
+        form_data = {
+            'canteen_name': 'canteen123',
+            'username': 'a123',
+            'email': 'foo@gmail.com',
+            'password': 'a',
+            'password_confirm': 'a'
+        }
+        response = client.post(
+            url_for('auth.register_canteen'), data=form_data)
+
+        db = get_db()
+        user_registered = db.execute(
+            "SELECT * FROM user WHERE username=?", ('a123',)).fetchone()
+        canteen_registered = db.execute(
+            "SELECT * FROM canteen WHERE name=?;", ('canteen123',)).fetchone()
+
+        assert canteen_registered is not None
+        assert user_registered is not None
+
+
+@pytest.mark.parametrize(('canteen_name', 'username', 'message'),(
+    ('canteen', '', 'User Info is invalid'),
+    ('', 'foo', 'Canteen must have a name')
+))
+def test_register_canteen_fail(app, client, canteen_name, username, message):
+    with app.app_context(), app.test_request_context():
+        form_data = {
+            'canteen_name': canteen_name,
+            'username': username,
+            'email': 'foo@gmail.com',
+            'password': 'a',
+            'password_confirm': 'a'
+        }
+        response = client.post(
+            url_for('auth.register_canteen'), data=form_data)
+
+        db = get_db()
+        user_registered = db.execute(
+            "SELECT * FROM user WHERE username=?", (username,)).fetchone()
+        canteen_registered = db.execute(
+            "SELECT * FROM canteen WHERE name=?;", (canteen_name,)).fetchone()
+
+        assert canteen_registered is None
+        assert user_registered is None
 
 
 def test_login(client, auth):
