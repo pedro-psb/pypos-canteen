@@ -6,7 +6,7 @@ from pypos.blueprints.canteen_space.product_mng.errors import *
 from markupsafe import escape
 
 
-def test_add_product(client, app):
+def test_add_product(client, app, auth):
     # TODO: test validations
     form_data = {
         'name': 'name',
@@ -15,6 +15,7 @@ def test_add_product(client, app):
     }
 
     with app.app_context(), app.test_request_context():
+        auth.login()
         db = get_db()
         product_count_before = db.execute(
             "SELECT COUNT(*) FROM product").fetchone()[0]
@@ -90,8 +91,9 @@ def test_remove_product_validation(client, app):
         assert message in response.data
 
 
-def test_add_product_category(app, client):
+def test_add_product_category(app, client, auth):
     with app.app_context(), app.test_request_context():
+        auth.login()
         db = get_db()
         rows_before = db.execute(
             'SELECT COUNT(*) FROM product_category;').fetchone()[0]

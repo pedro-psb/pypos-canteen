@@ -3,9 +3,19 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT username, canteen_id FROM user;
-SELECT "";
-SELECT id, name FROM canteen;
+SELECT tp.date, pm.name AS payment_method, tp.discount, tp.total_value,
+group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity || '"}') AS products
+FROM transaction_product tp
+INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
+INNER JOIN product p ON p.id = tpi.product_id
+INNER JOIN payment_method pm ON tp.payment_method = pm.id
+GROUP BY tp.id HAVING p.canteen_id=2;
+
+
+/* PRODUCT CATEGORY IS WORKING
+SELECT p.id, p.name, p.price, p.active, pc.name as category_name
+FROM product p LEFT JOIN product_category pc ON p.category = pc.id
+WHERE p.canteen_id=2;
 
 /*
 -- SELECT pm.name FROM transaction_product tp
