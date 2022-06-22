@@ -74,7 +74,7 @@ def register_client():
                 db.commit()
                 session.clear()
                 return redirect(url_for("page.login"))
-            except:
+            except Exception():
                 error = f"Some error with the database ocurred"
 
         flash(error)
@@ -152,7 +152,7 @@ def register_canteen():
             db.commit()
             session.clear()
             return redirect(url_for("page.login"))
-        except:
+        except Exception():
             error = f"Some error with the database ocurred"
 
     flash(error)
@@ -203,7 +203,7 @@ def login():
             if 'acess_client_dashboard' in session['permissions']:
                 return redirect(url_for('page.client_index'))
             return redirect(url_for('page.canteen_index'))
-        except:
+        except Exception():
             print(error)
             flash(error)
             return redirect(url_for('page.login'))

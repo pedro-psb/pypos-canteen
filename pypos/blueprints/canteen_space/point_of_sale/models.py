@@ -20,7 +20,7 @@ class TransactionProduct:
                 product_id = product['id']
             # check product id is in database
             errors = self.sum_total(db)
-        except:
+        except Exception():
             errors = POS_INVALID_TRANSACTION_REQUEST_ERROR
         return errors
 
@@ -31,7 +31,7 @@ class TransactionProduct:
             # check if quantity is integer
             try:
                 product_quantity = int(product['quantity'])
-            except:
+            except Exception():
                 errors = POS_INVALID_PRODUCT_QUANTITY_VALUE_ERROR
                 break
 

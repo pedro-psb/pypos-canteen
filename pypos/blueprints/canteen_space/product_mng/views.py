@@ -1,7 +1,3 @@
-import functools
-from re import L
-from unicodedata import category
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
@@ -34,7 +30,7 @@ def add_product():
                 (product.name, product.price, product.category, canteen_id))
             db.commit()
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error ocurred')
             error = ADD_PRODUCT_INTEGRITY_ERROR
     flash(error)
@@ -60,7 +56,7 @@ def remove_product():
             db.execute('UPDATE product SET active=0 WHERE id=?', (id,))
             db.commit()
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error has ocurred')
             error = ADD_PRODUCT_GENERIC_ERROR
     flash(error)
@@ -83,7 +79,7 @@ def add_category():
             db.commit()
             flash("Sucefully added product category")
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error ocurred')
             error = ADD_PRODUCT_GENERIC_ERROR
 
@@ -112,7 +108,7 @@ def remove_category():
                 'UPDATE product SET category=NULL WHERE category=?', (id,))
             db.commit()
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error has ocurred')
             error = ADD_PRODUCT_GENERIC_ERROR
     flash(error)
@@ -144,7 +140,7 @@ def update_product():
                            (product.name, product.price, product.id))
             db.commit()
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error ocurred')
             print(product.id, product.name)
             error = ADD_PRODUCT_INTEGRITY_ERROR
@@ -166,10 +162,11 @@ def update_category():
     if error is None:
         try:
             query = "UPDATE product_category SET name=?, description=? WHERE id=?;"
-            db.execute(query, (category.name, category.description, category.id))
+            db.execute(
+                query, (category.name, category.description, category.id))
             db.commit()
             return redirect(url_for('page.manage_products'))
-        except:
+        except Exception():
             print('some error ocurred')
             error = ADD_PRODUCT_INTEGRITY_ERROR
     flash(error)
