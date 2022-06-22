@@ -1,11 +1,14 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, redirect, request, session, url_for
 )
 
 from pypos.db import get_db
-from .errors import *
+from .errors import (
+    ADD_PRODUCT_GENERIC_ERROR,
+    ADD_PRODUCT_INTEGRITY_ERROR,
+    REMOVE_PRODUCT_INVALID_PRODUCT_ID
+)
 from .models import Product, ProductCategory
-from . import bp
 
 bp = Blueprint('product', __name__, url_prefix='/product')
 
@@ -74,8 +77,8 @@ def add_category():
     if not error:
         try:
             db = get_db()
-            db.execute('INSERT INTO product_category(name, description, canteen_id) VALUES (?,?,?);',
-                       (category.name, category.description, canteen_id))
+            query = 'INSERT INTO product_category(name, description, canteen_id) VALUES (?,?,?);'
+            db.execute(query, (category.name, category.description, canteen_id))
             db.commit()
             flash("Sucefully added product category")
             return redirect(url_for('page.manage_products'))
@@ -131,7 +134,8 @@ def update_product():
     if error is None:
         try:
             if product.category != "None":
-                query = "UPDATE product SET name=?, price=?, category=? WHERE id=?;"
+                query =\
+                    "UPDATE product SET name=?, price=?, category=? WHERE id=?;"
                 db.execute(query,
                            (product.name, product.price, product.category, product.id))
             else:
@@ -161,7 +165,7 @@ def update_category():
     # Database Dependent Validation
     if error is None:
         try:
-            query = "UPDATE product_category SET name=?, description=? WHERE id=?;"
+            query = '''UPDATE product_category SET name=?, description=? WHERE id=?;'''
             db.execute(
                 query, (category.name, category.description, category.id))
             db.commit()

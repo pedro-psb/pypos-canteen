@@ -1,6 +1,4 @@
 import json
-from re import L
-from unicodedata import category
 from flask import request, redirect, render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
