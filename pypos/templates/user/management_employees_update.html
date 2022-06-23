@@ -40,7 +40,7 @@
                     <input disabled type="text" class="form-control" id="phone_number" name="phone_number"
                         placeholder="{{ data.employee.phone_number }}">
                 </div>
-                <form method="post" action="{{ '' }}">
+                <form method="post" action="{{ url_for('canteen.manage_employee.update') }}">
                     <div class="col-12 mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select id="role" class="form-select" aria-label="Default select example" name="role">

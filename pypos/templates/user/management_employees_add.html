@@ -6,7 +6,7 @@
 
 <div class="container">
     <h2 class="text-center mb-3">Add Employee</h2>
-    <form method="post" action="{{ '' }}" class="row g-5">
+    <form method="post" action="{{ url_for('canteen.manage_employee.add') }}" class="row g-5">
         <!-- img -->
         <div class="col-3">
             <div id="profile_image" class="mb-3">
@@ -37,8 +37,8 @@
                 </div>
                 <div class="col-12 mb-3">
                     <label for="role" class="form-label">Role</label>
-                    <select id="role" class="form-select" aria-label="Default select example" name="role">
-                        <option selected>None</option>
+                    <select id="role" class="form-select" aria-label="Default select example" name="role_name">
+                        <option selected value="">None</option>
                         {% for role in data.roles %}
                         <option value="{{ role.id }}">{{ role.name }}</option>
                         {% endfor %}

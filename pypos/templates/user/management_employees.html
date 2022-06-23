@@ -34,7 +34,7 @@
                     <div class="btn-group">
                         <a class="btn btn-sm btn-outline-success"
                             href="{{ url_for('page.manage_employees_update', id=employee.id) }}">Update</a>
-                        <form method="post" action="{{ '' }}">
+                        <form method="post" action="{{ url_for('canteen.manage_employee.delete') }}">
                             <input type="hidden" name="id" value="{{ employee.id }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                         </form>
