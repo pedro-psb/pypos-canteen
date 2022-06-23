@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 from pydantic import BaseModel, ConstrainedStr, validator
 from werkzeug.security import generate_password_hash
 
@@ -8,6 +9,7 @@ class NotEmptyString(ConstrainedStr):
 
 
 class Employee(BaseModel):
+    id: Optional[int]
     name: NotEmptyString
     email: NotEmptyString
     password: NotEmptyString

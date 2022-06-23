@@ -20,27 +20,28 @@
         <!-- fields -->
         <div class="col-9 w-50">
             <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input disabled type="text" class="form-control" id="name" name="name"
-                        placeholder="{{ data.employee.username }}">
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input disabled type="email" class="form-control" id="email" name="email"
-                        placeholder="{{ data.employee.email }}">
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input disabled type="password" class="form-control" id="password" name="password"
-                        placeholder="********">
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="phone_number" class="form-label">Phone Number</label>
-                    <input disabled type="text" class="form-control" id="phone_number" name="phone_number"
-                        placeholder="{{ data.employee.phone_number }}">
-                </div>
                 <form method="post" action="{{ url_for('canteen.manage_employee.update') }}">
+                    <div class="col-12 mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input disabled type="text" class="form-control" id="name" name="name"
+                            placeholder="{{ data.employee.username }}">
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input disabled type="email" class="form-control" id="email" name="email"
+                            placeholder="{{ data.employee.email }}">
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input disabled type="password" class="form-control" id="password" name="password"
+                            placeholder="********">
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input disabled type="text" class="form-control" id="phone_number" name="phone_number"
+                            placeholder="{{ data.employee.phone_number }}">
+                    </div>
+
                     <div class="col-12 mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select id="role" class="form-select" aria-label="Default select example" name="role">
