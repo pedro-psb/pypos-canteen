@@ -131,8 +131,20 @@ def test_update_employee_exceptions(app, auth, client, error, new_role):
         assert role_before == role_after, "Role of user shouldn't been modified"
 
 
-def test_delete_employee(app, client):
-    pass
+def test_delete_employee(app, auth, client):
+    form_data = {'id': '1'}
+    with app.app_context(), app.test_request_context():
+        endpoint = url_for('canteen.manage_employee.delete')
+        auth.login()
+        db = get_db()
+        query = 'SELECT active FROM user WHERE id=?;'
+
+        active_state_before = db.execute(query, (form_data['id'],)).fetchone()[0]
+        client.post(endpoint, data=form_data)
+        active_state_after = db.execute(query, (form_data['id'],)).fetchone()[0]
+
+        assert active_state_before == 1, "Initially, user should be active"
+        assert active_state_after == 0, "Later, user should be inactive"
 
 
 @pytest.mark.parametrize(('error', 'form_data'), (
@@ -141,10 +153,18 @@ def test_delete_employee(app, client):
     }),
     ('Invalid user_id', {
         'id': '99'
-    }),
-    ('Invalid type user_id', {
-        'id': 'sdf'
-    }),
+    })
 ))
-def test_delete_employee_exceptions(app, client, error, form_data):
-    pass
+def test_delete_employee_exceptions(app, client, auth, error, form_data):
+    with app.app_context(), app.test_request_context():
+        endpoint = url_for('canteen.manage_employee.delete')
+        auth.login()
+        db = get_db()
+        query = 'SELECT COUNT(*) FROM user WHERE active=1;'
+
+        active_count_before = db.execute(query).fetchone()[0]
+        client.post(endpoint, data=form_data)
+        active_count_after = db.execute(query).fetchone()[0]
+
+        assert active_count_before == active_count_after,\
+            "Active count should be the same. User shouln't be added"

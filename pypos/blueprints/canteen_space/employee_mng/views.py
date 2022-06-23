@@ -41,6 +41,13 @@ def update():
 
 @bp.route('/delete_employee', methods=['POST'])
 def delete():
+    db = get_db()
+    form_id = request.form.get('id')
+    try:
+        query = "UPDATE user SET active=0 WHERE id=?;"
+        db.execute(query, (form_id,))
+    except Exception("Some error ocurred with the database"):
+        print('error deleting user')
     return redirect(url_for('page.manage_employees'))
 
 
