@@ -2,4 +2,47 @@
 {% block title %}Manage Employees{% endblock %}
 {% block content %}
 <h1>Manage Employees</h1>
+<hr class="p-3">
+<div class="container">
+    <div class="mb-3">
+        <h2>Employees
+            <a class="btn btn-primary" href="{{ url_for('page.manage_employees_add') }}">+</a>
+        </h2>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Role</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in data.employees %}
+            <tr>
+                <td class="text-end">
+                    <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="50" height="50">
+                </td>
+                <td>{{ employee.username }}</td>
+                <td>{{ employee.email }}</td>
+                <td>{{ employee.phone_number }}</td>
+                <td>{{ employee.role_name }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-outline-success"
+                            href="{{ url_for('page.manage_employees_update', id=employee.id) }}">Update</a>
+                        <form method="post" action="{{ '' }}">
+                            <input type="hidden" name="id" value="{{ employee.id }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

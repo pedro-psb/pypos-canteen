@@ -7,8 +7,7 @@ VALUES
   ("cashier", "The operator of the point of sale"),
   ("client", "The responsible for the credit account"),
   ("client_dependent", "The kid client of the canteen"),
-  ("temporary_client", "A kid without finacial responsible"),
-  ("generic", "A first logged user")
+  ("temporary_client", "A kid without finacial responsible")
   ;
 
 INSERT INTO permission (slug)
@@ -42,8 +41,7 @@ VALUES
   ("cashier", "acess_pos"),
   ("client", "acess_client_dashboard"),
   ("client", "acess_client_account_management"),
-  ("client_dependent", "acess_client_dashboard"),
-  ("generic", "initial_acess")
+  ("client_dependent", "acess_client_dashboard")
   ;
 
 INSERT INTO payment_method (name)

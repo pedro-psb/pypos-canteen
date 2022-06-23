@@ -1,5 +1,5 @@
 import json
-from flask import request, redirect, render_template, session
+from flask import render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
 from . import bp
@@ -68,13 +68,67 @@ def canteen_index():
 @bp.route('/canteen/manage-employees')
 @login_required(permissions=['acess_product_management'])
 def manage_employees():
-    return render_template("user/management_employees.html")
+    data = {'employees': get_all_employees()}
+    return render_template("user/management_employees.html", data=data)
+
+
+@bp.route('/canteen/add-employee')
+def manage_employees_add():
+    data = {
+        'roles': get_all_roles()
+    }
+    return render_template("user/management_employees_add.html", data=data)
+
+
+@bp.route('/canteen/update-employee/<int:id>')
+def manage_employees_update(id):
+    data = {
+        'employee': get_user_by_id(id),
+        'roles': get_all_roles()
+    }
+    return render_template("user/management_employees_update.html", data=data)
 
 
 @bp.route('/canteen/settings')
 @login_required(permissions=['acess_product_management'])
 def canteen_settings():
     return render_template("user/settings_canteen.html")
+
+
+def select_non_employee_roles():
+    # select employee roles based on fixed non-emplyed roles
+    not_employee_roles = ["owner", "client",
+                          "client_dependent", "temporary_client"]
+    not_employee_roles = map(lambda x: f"'{x}'", not_employee_roles)
+    not_employee_roles = f"({','.join(not_employee_roles)})"
+    return not_employee_roles
+
+
+def get_all_employees():
+    db = get_db()
+    not_employee_roles = select_non_employee_roles()
+    query = f"SELECT * FROM user WHERE role_name NOT IN {not_employee_roles};"
+    all_employees = db.execute(query).fetchall()
+    all_employees = [dict(employee) for employee in all_employees]
+    return all_employees
+
+
+def get_all_roles():
+    db = get_db()
+    not_employee_roles = select_non_employee_roles()
+    query = f"SELECT * FROM role WHERE name NOT IN {not_employee_roles};"
+    all_roles = db.execute(query).fetchall()
+    all_roles = [dict(role) for role in all_roles]
+    return all_roles
+
+
+def get_user_by_id(id):
+    db = get_db()
+    query = "SELECT * FROM user WHERE id=?;"
+    user = db.execute(query, (id,)).fetchone()
+    user = dict(user)
+    return user
+
 
 # Manager
 

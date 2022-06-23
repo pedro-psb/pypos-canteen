@@ -1,0 +1,56 @@
+{% extends "base_user.html" %}
+{% block title %}Manage Employees - Add Employee{% endblock %}
+{% block content %}
+<h1>Manage Employees</h1>
+<hr class="p-3">
+
+<div class="container">
+    <h2 class="text-center mb-3">Add Employee</h2>
+    <form method="post" action="{{ '' }}" class="row g-5">
+        <!-- img -->
+        <div class="col-3">
+            <div id="profile_image" class="mb-3">
+                <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="300" height="300">
+            </div>
+            <div class="">
+                <input type="file" class="form-control" id="description" name="file" placeholder="bar">
+            </div>
+        </div>
+        <!-- fields -->
+        <div class="col-9 w-50">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="My Name">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="foo@bar.com">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="bar">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select id="role" class="form-select" aria-label="Default select example" name="role">
+                        <option selected>None</option>
+                        {% for role in data.roles %}
+                        <option value="{{ role.id }}">{{ role.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-center">
+                    <a class="btn btn-primary w-auto align-bottom"
+                        href="{{ url_for('page.manage_employees') }}">Cancel</a>
+                    <button class="btn btn-primary w-auto align-bottom" type="submit">Add Employee</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
