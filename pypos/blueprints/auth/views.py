@@ -132,7 +132,7 @@ def register_canteen():
             check_user_query, (username,)).fetchone()
         if user_exist:
             error = "User already exist"
-    
+
     if error is None:
         try:
             # create canteen
@@ -143,7 +143,8 @@ def register_canteen():
             last_id_query = "SELECT last_insert_rowid();"
             canteen_id = int(db.execute(last_id_query).fetchone()[0])
             db.execute(
-                "INSERT INTO user (username, email, password, role_name, canteen_id) VALUES (?,?,?,?,?)",
+                """INSERT INTO user (username, email, password,\
+                role_name, canteen_id) VALUES (?,?,?,?,?)""",
                 (username,
                  email,
                  generate_password_hash(password),

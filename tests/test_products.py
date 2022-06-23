@@ -71,7 +71,6 @@ def test_remove_product(client, app):
                                data={'id': 1})
         rows_after = db.execute(
             'SELECT COUNT(*) FROM product WHERE active=1 AND id=1;').fetchone()[0]
-
         assert response.status_code == 302
         assert rows_after == rows_before - 1
 

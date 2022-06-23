@@ -1,5 +1,6 @@
 import re
 from pydantic import BaseModel, ConstrainedStr, validator
+from werkzeug.security import generate_password_hash
 
 
 class NotEmptyString(ConstrainedStr):
@@ -14,7 +15,7 @@ class Employee(BaseModel):
     role_name: NotEmptyString
     canteen_id: int
 
-    @validator('email')
+    @validator('name')
     def name_trailling_space(cls, name):
         name = name.strip()
         return name.strip()
@@ -27,3 +28,8 @@ class Employee(BaseModel):
         if not email_is_valid:
             raise ValueError("Email is not valid")
         return email.strip()
+
+    @validator('password')
+    def secure_password(cls, password):
+        password = generate_password_hash(password)
+        return password
