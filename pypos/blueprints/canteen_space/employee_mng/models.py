@@ -1,7 +1,10 @@
 import re
 from typing import Optional
-from pydantic import BaseModel, ConstrainedStr, validator
+from xml.dom import ValidationErr
+from pydantic import BaseModel, ConstrainedStr, ValidationError, validator
 from werkzeug.security import generate_password_hash
+
+from pypos.db import get_db
 
 
 class NotEmptyString(ConstrainedStr):
@@ -14,7 +17,8 @@ class Employee(BaseModel):
     email: NotEmptyString
     password: NotEmptyString
     phone_number: str = ""
-    role_name: NotEmptyString
+    role_name: Optional[str]
+    role_id: NotEmptyString
     canteen_id: int
 
     @validator('name')
@@ -35,3 +39,14 @@ class Employee(BaseModel):
     def secure_password(cls, password):
         password = generate_password_hash(password)
         return password
+
+    @validator('role_id')
+    def validate_id_exist(cls, id, values):
+        db = get_db()
+        role_name = db.execute(
+            "SELECT name FROM role WHERE id=?;", (id,)).fetchone()[0]
+        if not role_name:
+            raise ValidationError("The role doesn't exist")
+        if not values['role_name']:
+            values['role_name'] = role_name
+        return id

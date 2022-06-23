@@ -26,7 +26,10 @@ def update():
     form_data = dict(request.form)
     form_data['canteen_id'] = session['canteen_id']
     try:
+        # create and validate employee data
         employee = Employee(**form_data)
+        
+        # add to database
         db = get_db()
         query = "UPDATE user SET role_name=? WHERE id=?;"
         db.execute(query, (employee.role_name, employee.id,))
@@ -50,7 +53,7 @@ def insert_employee(employee):
         employee.email,
         employee.password,
         employee.phone_number,
-        employee.role_name,
+        employee.role_id,
         employee.canteen_id
     ))
 
