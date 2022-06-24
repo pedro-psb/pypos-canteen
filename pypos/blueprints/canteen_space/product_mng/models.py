@@ -36,7 +36,7 @@ class Product:
             return ADD_PRODUCT_NOT_EMPTY_PRICE_ERROR
         try:
             self.price = float(self.price)
-        except Exception():
+        except:
             return ADD_PRODUCT_INVALID_PRICE_ERROR
         else:
             if self.price < 0:

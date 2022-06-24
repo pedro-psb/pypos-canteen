@@ -21,6 +21,7 @@
         <div class="col-9 w-50">
             <div class="row">
                 <form method="post" action="{{ url_for('canteen.manage_employee.update') }}">
+                    <input hidden name="id" value="{{ data.employee.id }}">
                     <div class="col-12 mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input disabled type="text" class="form-control" id="name" name="name"
@@ -44,9 +45,9 @@
 
                     <div class="col-12 mb-3">
                         <label for="role" class="form-label">Role</label>
-                        <select id="role" class="form-select" aria-label="Default select example" name="role">
+                        <select id="role" class="form-select" aria-label="Default select example" name="role_id">
                             {% for role in data.roles %}
-                            {% if role.id == data.employee.role_id %}
+                            {% if role.name == data.employee.role_name %}
                             <option selected value="{{ role.id }}">{{ role.name }}</option>
                             {% else %}
                             <option value="{{ role.id }}">{{ role.name }}</option>

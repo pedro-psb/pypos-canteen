@@ -107,7 +107,7 @@ def select_non_employee_roles():
 def get_all_employees():
     db = get_db()
     not_employee_roles = select_non_employee_roles()
-    query = f"SELECT * FROM user WHERE role_name NOT IN {not_employee_roles};"
+    query = f"SELECT * FROM user WHERE role_name NOT IN {not_employee_roles} AND active=1;"
     all_employees = db.execute(query).fetchall()
     all_employees = [dict(employee) for employee in all_employees]
     return all_employees

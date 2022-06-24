@@ -74,7 +74,7 @@ def register_client():
                 db.commit()
                 session.clear()
                 return redirect(url_for("page.login"))
-            except Exception():
+            except:
                 error = f"Some error with the database ocurred"
 
         flash(error)
@@ -153,7 +153,7 @@ def register_canteen():
             db.commit()
             session.clear()
             return redirect(url_for("page.login"))
-        except Exception():
+        except:
             error = f"Some error with the database ocurred"
 
     flash(error)
@@ -172,11 +172,12 @@ def login():
             error = None
 
             # get user data from db
-            user = db.execute(
-                'SELECT * FROM user WHERE username=?;', (username,)
-            ).fetchone()
+            query = '''SELECT u.username, u.id, u.email, u.phone_number, u.password,\
+                u.phone_number, u.role_name, u.active, u.canteen_id, c.name as canteen_name\
+                FROM user u INNER JOIN canteen c ON u.canteen_id = c.id\
+                WHERE u.username=? AND u.active=1;'''
+            user = db.execute(query, (username,)).fetchone()
             user = dict(user)
-
             # Check password
             if user is None:
                 error = 'Incorrect username.'
@@ -199,12 +200,13 @@ def login():
             session['user_id'] = user['id']
             session['permissions'] = user_permissions
             session['canteen_id'] = user['canteen_id']
+            session['canteen_name'] = user['canteen_name']
 
             # redirect to the right place
             if 'acess_client_dashboard' in session['permissions']:
                 return redirect(url_for('page.client_index'))
             return redirect(url_for('page.canteen_index'))
-        except Exception():
+        except:
             print(error)
             flash(error)
             return redirect(url_for('page.login'))

@@ -1,14 +1,14 @@
-import re
-from typing import Optional
-from pydantic import BaseModel, ConstrainedStr, ValidationError, validator
+from pydantic import ValidationError
 from flask import request, session, url_for, redirect
 from pypos.db import get_db
 from . import bp
-from .models import Employee
+from .models import Employee, EmployeeUpdate
 
 
 @bp.route('/insert_employee', methods=['POST'])
 def add():
+    # TODO validation: check if email is not already taken
+    
     form_data = dict(request.form)
     form_data['canteen_id'] = session.get('canteen_id')
     try:
@@ -24,15 +24,19 @@ def add():
 @bp.route('/update_employee', methods=['POST'])
 def update():
     form_data = dict(request.form)
-    form_data['canteen_id'] = session['canteen_id']
     try:
         # create and validate employee data
-        employee = Employee(**form_data)
-        
+        employee = EmployeeUpdate(
+            canteen_id=session['canteen_id'],
+            id=form_data.get('id'),
+            role_id=form_data.get('role_id')
+        )
+
         # add to database
         db = get_db()
         query = "UPDATE user SET role_name=? WHERE id=?;"
         db.execute(query, (employee.role_name, employee.id,))
+        db.commit()
     except ValidationError as e:
         print(e)
         return redirect(url_for('page.manage_employees_update', id=form_data['id']))
@@ -46,6 +50,7 @@ def delete():
     try:
         query = "UPDATE user SET active=0 WHERE id=?;"
         db.execute(query, (form_id,))
+        db.commit()
     except Exception("Some error ocurred with the database"):
         print('error deleting user')
     return redirect(url_for('page.manage_employees'))
@@ -60,9 +65,10 @@ def insert_employee(employee):
         employee.email,
         employee.password,
         employee.phone_number,
-        employee.role_id,
+        employee.role_name,
         employee.canteen_id
     ))
+    db.commit()
 
 
 def update_role_by_id(id):

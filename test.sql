@@ -3,14 +3,11 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT tp.date, pm.name AS payment_method, tp.discount, tp.total_value,
-group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity || '"}') AS products
-FROM transaction_product tp
-INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
-INNER JOIN product p ON p.id = tpi.product_id
-INNER JOIN payment_method pm ON tp.payment_method = pm.id
-GROUP BY tp.id HAVING p.canteen_id=2;
 
+SELECT u.username, u.id, u.email, u.phone_number, u.password,
+u.phone_number, u.role_name, u.active, u.canteen_id, c.name as canteen_name
+FROM user u INNER JOIN canteen c ON u.canteen_id = c.id
+WHERE u.username='Joao';
 
 /* PRODUCT CATEGORY IS WORKING
 SELECT p.id, p.name, p.price, p.active, pc.name as category_name

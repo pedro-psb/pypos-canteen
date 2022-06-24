@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-12 mb-3">
                     <label for="role" class="form-label">Role</label>
-                    <select id="role" class="form-select" aria-label="Default select example" name="role_name">
+                    <select id="role" class="form-select" aria-label="Default select example" name="role_id">
                         <option selected value="">None</option>
                         {% for role in data.roles %}
                         <option value="{{ role.id }}">{{ role.name }}</option>
