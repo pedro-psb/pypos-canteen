@@ -1,22 +1,19 @@
-import functools
 from logging import raiseExceptions
 import re
 
 from flask import (
-    flash, g, redirect, render_template, request, session, url_for
+    flash, redirect, request, session, url_for
 )
 from pydantic import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 from pypos.db import get_db
 from pypos.models.user_model import User
 from . import bp
-from .util import *
 
 
 @bp.route('/register_client', methods=['POST'])
 def register_client():
     if request.method == 'POST':
-        # breakpoint()
         form_data = dict(request.form)
         # client TODO put fixed roles in config file
         form_data['role_id'] = '4'
@@ -25,10 +22,9 @@ def register_client():
         if not current_url:
             current_url = url_for('page.index')
 
-        db = get_db()
-
         try:
             user = User(**form_data)
+            db = get_db()
             db.execute(
                 "INSERT INTO user (username, email, password,\
                     role_name, canteen_id) VALUES (?,?,?,?,?)",
@@ -114,7 +110,7 @@ def register_canteen():
             session.clear()
             return redirect(url_for("page.login"))
         except:
-            error = f"Some error with the database ocurred"
+            error = "Some error with the database ocurred"
 
     flash(error)
     print('\n', error, '\n')

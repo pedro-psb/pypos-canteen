@@ -12,7 +12,7 @@ def test_register_client(client, app):
             'password_confirm': 'a',
             'canteen_id': '1'
         }
-        response = client.post(url_for('auth.register_client'), data=form_data)
+        client.post(url_for('auth.register_client'), data=form_data)
 
         db = get_db()
         query = "SELECT * FROM user WHERE username=?"
@@ -21,7 +21,8 @@ def test_register_client(client, app):
         assert user_registered is not None
 
 
-@pytest.mark.parametrize(('username', 'email', 'password', 'password_confirm', 'canteen_id', 'message'), (
+@pytest.mark.parametrize(('username', 'email', 'password',
+                          'password_confirm', 'canteen_id', 'message'), (
     ('', 'foo@gmail.com', 'pass', 'pass', '1', 'Username is required.'),
     ('user', '', 'pass', 'pass', '1', 'Email is required.'),
     ('user', 'foo@gmail.com', '', 'pass', '1', 'Password is required.'),
@@ -31,7 +32,8 @@ def test_register_client(client, app):
     ('fake_client', 'foo@gmail.com', 'pass', 'pass', '1', 'User already exist'),
     ('user', 'foo@gmail.com', 'pass', 'pass', '100', 'Canteen ID is Invalid')
 ))
-def test_register_client_fail(app, client, username, email, password, password_confirm, canteen_id, message):
+def test_register_client_fail(app, client, username, email, password,
+                              password_confirm, canteen_id, message):
     with app.app_context():
         form_data = {
             'username': username,
@@ -44,7 +46,7 @@ def test_register_client_fail(app, client, username, email, password, password_c
         query = "SELECT count(*) FROM user;"
         user_registered_before = db.execute(query).fetchone()[0]
 
-        response = client.post('/auth/register', data=form_data)
+        client.post('/auth/register', data=form_data)
         close_db()
         db = get_db()
         user_registered_after = db.execute(query).fetchone()[0]
@@ -62,7 +64,7 @@ def test_register_canteen(app, client):
             'password': 'a',
             'password_confirm': 'a'
         }
-        response = client.post(
+        client.post(
             url_for('auth.register_canteen'), data=form_data)
 
         db = get_db()
@@ -75,7 +77,7 @@ def test_register_canteen(app, client):
         assert user_registered is not None
 
 
-@pytest.mark.parametrize(('canteen_name', 'username', 'message'),(
+@pytest.mark.parametrize(('canteen_name', 'username', 'message'), (
     ('canteen', '', 'User Info is invalid'),
     ('', 'foo', 'Canteen must have a name')
 ))
@@ -88,7 +90,7 @@ def test_register_canteen_fail(app, client, canteen_name, username, message):
             'password': 'a',
             'password_confirm': 'a'
         }
-        response = client.post(
+        client.post(
             url_for('auth.register_canteen'), data=form_data)
 
         db = get_db()
@@ -102,7 +104,7 @@ def test_register_canteen_fail(app, client, canteen_name, username, message):
 
 
 def test_login(client, auth):
-    response = auth.login()
+    auth.login()
 
     with client:
         client.get('/')
