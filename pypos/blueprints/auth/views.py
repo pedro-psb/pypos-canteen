@@ -5,8 +5,10 @@ import re
 from flask import (
     flash, g, redirect, render_template, request, session, url_for
 )
+from pydantic import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 from pypos.db import get_db
+from pypos.models.user_model import User
 from . import bp
 from .util import *
 
@@ -14,72 +16,30 @@ from .util import *
 @bp.route('/register_client', methods=['POST'])
 def register_client():
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        password_confirm = request.form.get('password_confirm')
-        canteen_id = request.form.get('canteen_id')
+        # breakpoint()
+        form_data = dict(request.form)
+        # client TODO put fixed roles in config file
+        form_data['role_id'] = '4'
+
         current_url = request.form.get('current_url')
-        role = 'client'
-
-        db = get_db()
-        error = None
-
-        # required fields
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        elif not email:
-            error = 'Email is required'
-        elif not canteen_id:
-            error = 'Needs to be related to an existing canteen'
         if not current_url:
             current_url = url_for('page.index')
 
-        # validate email
-        email_pattern = r"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"
-        pattern = re.compile(email_pattern)
-        email_is_valid = re.match(pattern, email.strip())
-        if not email_is_valid:
-            error = "Email is not valid"
+        db = get_db()
 
-        # Password doesnt match
-        if password != password_confirm:
-            error = "Password doesn't match"
-
-        # canteen doesn't exist/ is invalid
-        check_canteen_query = "SELECT * FROM canteen WHERE id=?;"
-        canteen_exist = db.execute(
-            check_canteen_query, (canteen_id,)).fetchone()
-        if not canteen_exist:
-            error = "Canteen don't exist"
-
-        # User already exist
-        check_user_query = "SELECT * FROM user WHERE username=? AND canteen_id=?;"
-        user_exist = db.execute(
-            check_user_query, (username, canteen_id)).fetchone()
-        if user_exist:
-            error = "User already exist"
-
-        if error is None:
-            try:
-                db.execute(
-                    "INSERT INTO user (username, email, password, role_name, canteen_id) VALUES (?,?,?,?,?)",
-                    (username,
-                     email,
-                     generate_password_hash(password),
-                     role,
-                     canteen_id))
-                db.commit()
-                session.clear()
-                return redirect(url_for("page.login"))
-            except:
-                error = f"Some error with the database ocurred"
-
-        flash(error)
-        print('\n', error, '\n')
-        return redirect(current_url)
+        try:
+            user = User(**form_data)
+            db.execute(
+                "INSERT INTO user (username, email, password,\
+                    role_name, canteen_id) VALUES (?,?,?,?,?)",
+                (user.username, user.email, user.password,
+                 user.role_name, user.canteen_id))
+            db.commit()
+            session.clear()
+            return redirect(url_for("page.login"))
+        except ValidationError() as e:
+            print(e)
+            return redirect(current_url)
 
 
 @bp.route('/register_canteen', methods=['POST'])

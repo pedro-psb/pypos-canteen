@@ -5,7 +5,7 @@ from pypos.db import get_db
 
 def test_add_employee(app, client, auth):
     form_data = {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian@gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984',
@@ -27,42 +27,42 @@ def test_add_employee(app, client, auth):
 
 @pytest.mark.parametrize(('error', 'form_data'), (
     ('Empty name', {
-        'name': '',
+        'username': '',
         'email': 'lilian@gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984',
         'role_id': '2'  # manager
     }),
     ('Empty email', {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': '',
         'password': '123',
         'phone_number': '(31) 9289-3984',
         'role_id': '2'  # manager
     }),
     ('Empty password', {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian@gmail.com',
         'password': '',
         'phone_number': '(31) 9289-3984',
         'role_id': '2'  # manager
     }),
     ('Empty role_id', {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian@gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984',
         'role_id': ''  # manager
     }),
     ('Invalid email format', {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian-gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984',
         'role_id': '2'  # manager
     }),
     ('Invalid role_name', {
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian-gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984',
@@ -87,7 +87,7 @@ def test_update_employee(app, client, auth):
     form_data = {
         'id': '3',
         'role_id': '3',  # cashier
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian@gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984'
@@ -113,7 +113,7 @@ def test_update_employee_exceptions(app, auth, client, error, new_role):
     form_data = {
         'id': '3',
         'role_name': new_role,
-        'name': 'Lilian',
+        'username': 'Lilian',
         'email': 'lilian@gmail.com',
         'password': '123',
         'phone_number': '(31) 9289-3984'

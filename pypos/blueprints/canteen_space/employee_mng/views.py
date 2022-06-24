@@ -2,7 +2,7 @@ from pydantic import ValidationError
 from flask import request, session, url_for, redirect
 from pypos.db import get_db
 from . import bp
-from .models import Employee, EmployeeUpdate
+from pypos.models.user_model import User, UserUpdate
 
 
 @bp.route('/insert_employee', methods=['POST'])
@@ -12,7 +12,7 @@ def add():
     form_data = dict(request.form)
     form_data['canteen_id'] = session.get('canteen_id')
     try:
-        employee = Employee(**form_data)
+        employee = User(**form_data)
         insert_employee(employee)
         print(employee)
     except ValidationError as e:
@@ -26,7 +26,7 @@ def update():
     form_data = dict(request.form)
     try:
         # create and validate employee data
-        employee = EmployeeUpdate(
+        employee = UserUpdate(
             canteen_id=session['canteen_id'],
             id=form_data.get('id'),
             role_id=form_data.get('role_id')
@@ -61,7 +61,7 @@ def insert_employee(employee):
     query = """INSERT INTO user(username, email, password,\
             phone_number, role_name, canteen_id) VALUES(?,?,?,?,?,?);"""
     db.execute(query, (
-        employee.name,
+        employee.username,
         employee.email,
         employee.password,
         employee.phone_number,
