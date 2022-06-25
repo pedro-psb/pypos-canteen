@@ -4,10 +4,7 @@ cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
 
-SELECT u.username, u.id, u.email, u.phone_number, u.password,
-u.phone_number, u.role_name, u.active, u.canteen_id, c.name as canteen_name
-FROM user u INNER JOIN canteen c ON u.canteen_id = c.id
-WHERE u.username='Joao';
+SELECT username, email FROM user;
 
 /* PRODUCT CATEGORY IS WORKING
 SELECT p.id, p.name, p.price, p.active, pc.name as category_name

@@ -53,11 +53,11 @@ class User(BaseModel):
     def canteen_id_exist(cls, canteen_id, values):
         query = "SELECT name FROM canteen WHERE id=?;"
         db = get_db()
-        canteen_name = db.execute(query, (canteen_id,)).fetchone()[0]
+        canteen_name = db.execute(query, (str(canteen_id),)).fetchone()
         if not canteen_name:
             raise ValidationError("Canteen ID is invalid.")
         if not values.get('canteen_name'):
-            values['canteen_name'] = canteen_name
+            values['canteen_name'] = canteen_name[0]
         return canteen_id
 
     @validator('username')
@@ -65,12 +65,22 @@ class User(BaseModel):
         db = get_db()
         canteen_id = values.get('canteen_id')
         if not canteen_id:
-            raise ValidationError("can't validate username if canteen_id is invalid")
+            raise ValidationError(
+                "can't validate username if canteen_id is invalid")
         query = "SELECT * FROM user WHERE username=? AND canteen_id=?;"
         user_exist = db.execute(query, (username, canteen_id)).fetchone()
         if user_exist:
             raise ValidationError('username already taken')
         return username
+
+    @validator('email')
+    def email_isnt_taken(cls, email):
+        db = get_db()
+        query = "SELECT * FROM user WHERE email=?;"
+        email_exist = db.execute(query, (email,)).fetchone()
+        if email_exist:
+            raise ValidationError('email is already taken')
+        return email
 
     class Config:
         anystr_strip_whitespace = True

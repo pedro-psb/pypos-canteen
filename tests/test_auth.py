@@ -18,7 +18,7 @@ def test_register_client(client, app):
         query = "SELECT * FROM user WHERE username=?"
         user_registered = db.execute(query, ('a')).fetchone()
 
-        assert user_registered is not None
+        assert user_registered is not None, 'New user should be registered'
 
 
 @pytest.mark.parametrize(('username', 'email', 'password',
@@ -44,14 +44,14 @@ def test_register_client_fail(app, client, username, email, password,
         }
         db = get_db()
         query = "SELECT count(*) FROM user;"
-        user_registered_before = db.execute(query).fetchone()[0]
+        users_registered_before = db.execute(query).fetchone()[0]
 
         client.post('/auth/register', data=form_data)
         close_db()
         db = get_db()
-        user_registered_after = db.execute(query).fetchone()[0]
+        users_registered_after = db.execute(query).fetchone()[0]
 
-        assert user_registered_before == user_registered_after
+        assert users_registered_before == users_registered_after
         # assert message in response.data
 
 

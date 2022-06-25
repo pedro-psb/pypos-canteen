@@ -7,7 +7,7 @@ from flask import (
 from pydantic import ValidationError
 from werkzeug.security import check_password_hash, generate_password_hash
 from pypos.db import get_db
-from pypos.models.user_model import User
+from pypos.models.user_model import User, UserClient
 from . import bp
 
 
@@ -23,8 +23,8 @@ def register_client():
             current_url = url_for('page.index')
 
         try:
-            user = User(**form_data)
-            db = get_db()
+            user = UserClient(**form_data)
+            db = get_db()           
             db.execute(
                 "INSERT INTO user (username, email, password,\
                     role_name, canteen_id) VALUES (?,?,?,?,?)",
@@ -33,7 +33,7 @@ def register_client():
             db.commit()
             session.clear()
             return redirect(url_for("page.login"))
-        except ValidationError() as e:
+        except ValidationError as e:
             print(e)
             return redirect(current_url)
 
