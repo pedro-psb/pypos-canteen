@@ -73,8 +73,8 @@ def test_register_canteen(app, client):
         canteen_registered = db.execute(
             "SELECT * FROM canteen WHERE name=?;", ('canteen123',)).fetchone()
 
-        assert canteen_registered is not None
-        assert user_registered is not None
+        assert canteen_registered is not None, "Canteen should be registered"
+        assert user_registered is not None, "User should be registered"
 
 
 @pytest.mark.parametrize(('canteen_name', 'username', 'message'), (
@@ -99,8 +99,8 @@ def test_register_canteen_fail(app, client, canteen_name, username, message):
         canteen_registered = db.execute(
             "SELECT * FROM canteen WHERE name=?;", (canteen_name,)).fetchone()
 
-        assert canteen_registered is None
-        assert user_registered is None
+        assert canteen_registered is None, "Canteen shouldt be registered"
+        assert user_registered is None, "User shouldt be registered"
 
 
 def test_login(client, auth):

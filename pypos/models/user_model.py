@@ -63,12 +63,8 @@ class User(BaseModel):
     @validator('username')
     def username_doesnt_exist(cls, username, values):
         db = get_db()
-        canteen_id = values.get('canteen_id')
-        if not canteen_id:
-            raise ValidationError(
-                "can't validate username if canteen_id is invalid")
-        query = "SELECT * FROM user WHERE username=? AND canteen_id=?;"
-        user_exist = db.execute(query, (username, canteen_id)).fetchone()
+        query = "SELECT * FROM user WHERE username=?;"
+        user_exist = db.execute(query, (username,)).fetchone()
         if user_exist:
             raise ValidationError('username already taken')
         return username
@@ -109,3 +105,29 @@ class UserClient(User):
         if not values['password_confirm'] == values['password']:
             raise ValidationError("Passwords doesn't match")
         return values
+
+
+class UserOwner(User):
+    canteen_name: NotEmptyString
+    canteen_id: Optional[int]
+
+    @validator('canteen_name')
+    def canteen_name_doesnt_exist(cls, canteen_name, values):
+        query = "SELECT * FROM canteen WHERE name LIKE ?;"
+        db = get_db()
+        canteen_exist = db.execute(query, (canteen_name,)).fetchone()
+        if canteen_exist:
+            raise ValidationError("Canteen name already taken.")
+        return canteen_name
+
+    @validator('canteen_id')
+    def canteen_id_exist(cls, canteen_id):
+        print("shouldn't provide canteen_id")
+        return canteen_id
+
+
+# TODO implement this later
+class Canteen(BaseModel):
+    name: str
+    id: Optional[int]
+    description: Optional[str]
