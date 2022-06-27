@@ -2,6 +2,7 @@ import json
 from flask import render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
+from pypos.models.client_transaction_model import ClientTransaction
 from . import bp
 
 # Public
@@ -274,7 +275,36 @@ def manage_clients():
 @ bp.route('/client')
 @ login_required(permissions=['acess_client_dashboard'])
 def client_index():
-    return render_template("user/client_index.html")
+    transactions = [
+        ClientTransaction(
+            datetime='2000-12-12 12:12:12',
+            transaction_type='deposit',
+            value='15.00').dict(),
+        ClientTransaction(
+            datetime='2000-5-2 6:43:11',
+            transaction_type='deposit',
+            value='3.43',
+            pending=True).dict(),
+        ClientTransaction(
+            datetime='2001-6-5 1:2:2',
+            transaction_type='withdraw',
+            value='12.25').dict(),
+    ]
+
+    # Sum partial balance
+    partial_memory = 0
+    for t in transactions:
+        if t['transaction_type'] == 'deposit' and not t['pending']:
+            partial_memory = partial_memory + t['value']
+        elif t['transaction_type'] == 'withdraw':
+            partial_memory = partial_memory - t['value']
+
+        t['partial'] = partial_memory
+
+    data = {
+        'transactions': transactions
+    }
+    return render_template("user/client_index.html", data=data)
 
 
 @ bp.route('/client/manage')

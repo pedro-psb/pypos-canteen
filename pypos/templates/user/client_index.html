@@ -26,27 +26,22 @@
                 </tr>
             </thead>
             <tbody>
+                {% for transaction in data.transactions %}
                 <tr>
-                    <td>21-21-2022 21:39</td>
-                    <td><span class="badge bg-success">Deposit</span>
+                    <td>{{ transaction.datetime }}</td>
+                    <td>
+                        {% if transaction.transaction_type == 'withdraw' %}
+                        <span class="badge bg-danger">{{ transaction.transaction_type }} </span>
+                        {% elif transaction.pending %}
+                        <span class="badge bg-secondary">{{ transaction.transaction_type }} (pending)</span>
+                        {% elif not transaction.pending %}
+                        <span class="badge bg-success">{{ transaction.transaction_type }} </span>
+                        {% endif %}
                     </td>
-                    <td>$30.00</td>
-                    <td>$30.00</td>
+                    <td>{{ '$%0.2f' | format(transaction.value) }}</td>
+                    <td>{{ '$%0.2f' | format(transaction.partial|float) }}</td>
                 </tr>
-                <tr>
-                    <td>21-21-2022 21:39</td>
-                    <td><span class="badge bg-success">Deposit</span>
-                    </td>
-                    <td>$10.00</td>
-                    <td>$40.00</td>
-                </tr>
-                <tr>
-                    <td>21-21-2022 21:39</td>
-                    <td><span class="badge bg-danger">Widthdraw</span>
-                    </td>
-                    <td>$25.00</td>
-                    <td>$15.00</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

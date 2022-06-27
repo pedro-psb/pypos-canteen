@@ -5,12 +5,12 @@ from pypos.models.client_transaction_model import ClientTransaction
 valid_form_data = [(
     'valid_01', {
         'datetime': "2022-12-12 12:23:23",
-        'transaction_type_name': 'deposit',
+        'transaction_type': 'deposit',
         'value': '13.05'
     }), (
     'valid_02', {
         'datetime': "2022-12-12 6:00:32",
-        'transaction_type_name': 'withdraw',
+        'transaction_type': 'withdraw',
         'value': '13.05'
     })
 ]
@@ -18,27 +18,27 @@ valid_form_data = [(
 invalid_form_data = [(
     'invalid date format', {
         'datetime': "2022/12/12 12:23:23",
-        'transaction_type_name': 'deposit',
+        'transaction_type': 'deposit',
         'value': '13.05'
     }), (
     # 'invalid time format', {
     #     'datetime': "2022-12-12 6:00",
-    #     'transaction_type_name': 'withdraw',
+    #     'transaction_type': 'withdraw',
     #     'value': '13.05'
     # }), (
     'invalid transaction type', {
         'datetime': "2022-12-12 6:00",
-        'transaction_type_name': 'withdraws',
+        'transaction_type': 'withdraws',
         'value': '13.05'
     }), (
     'invalid transaction type', {
         'datetime': "2022-12-12 6:00",
-        'transaction_type_name': '2',
+        'transaction_type': '2',
         'value': '13.05'
     }), (
     'invalid value', {
         'datetime': "2022-12-12 6:00",
-        'transaction_type_name': 'withdraw',
+        'transaction_type': 'withdraw',
         'value': '-1'
     }),
 ]
