@@ -3,4 +3,78 @@
 {% block content %}
 <h1>Client Dashboard</h1>
 <hr>
+<div class="container-fluid pt-3 row">
+    <div class="row align-items-center">
+        <div class="col input-group" style="max-width:300px;">
+            <p class="input-group-text btn-secondary">Balance</p>
+            <p class="form-control">R$20.00</p>
+        </div>
+        <div class="col">
+            <a href="{{ url_for('page.client_deposit') }}" class="btn btn-primary w-auto">Manual Deposit</a>
+        </div>
+    </div>
+    <div class="col-7">
+        <h2>Account Transactions</h2>
+        <hr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Partial</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>21-21-2022 21:39</td>
+                    <td><span class="badge bg-success">Deposit</span>
+                    </td>
+                    <td>$30.00</td>
+                    <td>$30.00</td>
+                </tr>
+                <tr>
+                    <td>21-21-2022 21:39</td>
+                    <td><span class="badge bg-success">Deposit</span>
+                    </td>
+                    <td>$10.00</td>
+                    <td>$40.00</td>
+                </tr>
+                <tr>
+                    <td>21-21-2022 21:39</td>
+                    <td><span class="badge bg-danger">Widthdraw</span>
+                    </td>
+                    <td>$25.00</td>
+                    <td>$15.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-5">
+        <h2>Summary</h2>
+        <hr>
+        <h3>Financial</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <span class="badge bg-success">avarage expense per day</span>
+                $6.50
+            </li>
+            <li class="list-group-item">
+                <span class="badge bg-danger">avarage expense per week</span>
+                $34.50
+            </li>
+        </ul>
+        <h3>Products</h3>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <span class="badge bg-success">most bought product</span>
+                <strong>Foo Good</strong> with 50% of purchases
+            </li>
+            <li class="list-group-item">
+                <span class="badge bg-danger">most expense intensive product</span>
+                <strong>Foo Bad</strong> with 70% of the expense
+            </li>
+        </ul>
+    </div>
+</div>
 {% endblock %}
