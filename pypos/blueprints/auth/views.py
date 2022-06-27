@@ -1,11 +1,10 @@
 from logging import raiseExceptions
-import re
 
 from flask import (
     flash, redirect, request, session, url_for
 )
 from pydantic import ValidationError
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 from pypos.db import get_db
 from pypos.models.user_model import UserClient, UserOwner
 from . import bp

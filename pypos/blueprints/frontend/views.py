@@ -281,3 +281,10 @@ def client_index():
 @ login_required(permissions=['acess_client_dashboard'])
 def client_manage():
     return render_template("user/client_manage.html")
+
+
+@ bp.route('/client/deposit')
+@ login_required(permissions=['acess_client_dashboard',
+                              'acess_client_account_management'])
+def client_deposit():
+    return render_template("user/client_deposit.html")

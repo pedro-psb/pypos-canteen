@@ -1,0 +1,29 @@
+{% extends "base_user.html" %}
+{% block title %}Client{% endblock %}
+{% block content %}
+<h1>Manual Deposit</h1>
+<hr>
+<div class="container">
+    <form action="" class="w-100 m-auto form-signin row g-3" style="max-width:400px;">
+        <p>Please inform the value you have deposited and the timestamp, so the canteen staff can check it on the
+            system.</p>
+        <div>
+            <label for="value" class="form-label">Deposit Value</label>
+            <input type="number" class="form-control" name="value" placeholder="20.00">
+        </div>
+        <div>
+            <label for="timestamp" class="form_label">Timestamp</label>
+            <input type="text" class="form-control" id="timestamp" name="timestamp" placeholder="01-01-2022-19:23">
+        </div>
+        <div>
+            <label for="timestamp" class="form_label">Deposit Method</label>
+            <select class="form-select" name="deposit method">
+                <option value="1">Pix</option>
+                <option value="2">DOC/TED</option>
+                <option value="3">Other</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Send payment voucher</button>
+    </form>
+</div>
+{% endblock %}
