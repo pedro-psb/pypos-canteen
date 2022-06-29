@@ -44,6 +44,9 @@ VALUES
   ("client_dependent", "acess_client_dashboard")
   ;
 
+INSERT INTO canteen_account (canteen_id)
+VALUES (1);
+
 INSERT INTO payment_method (name)
 VALUES
   ("money"),
