@@ -103,12 +103,12 @@ def test_register_canteen_fail(app, client, canteen_name, username, message):
         assert user_registered is None, "User shouldt be registered"
 
 
-def test_login(client, auth):
+def test_foo(app, client, auth):
     auth.login()
 
-    with client:
-        client.get('/')
+    with app.app_context(), app.test_request_context(), client:
         # breakpoint()
+        client.get('/')
         assert session.get('user_id') == 1
         assert g.user['username'] == 'test'
         assert g.user['role_name'] == 'owner'

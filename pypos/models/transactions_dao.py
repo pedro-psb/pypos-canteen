@@ -1,6 +1,8 @@
 from datetime import datetime
 import json
+from multiprocessing.sharedctypes import Value
 from pprint import pprint
+from sqlite3 import Connection, Cursor
 from typing import List
 from xxlimited import foo
 
@@ -101,43 +103,64 @@ class RegularPurchase(BaseModel):
             transaction['products'] = products
             transaction = RegularPurchase(**transaction)
             all_transactions.append(transaction)
-        
+
         return all_transactions
-        
 
     def save(self):
-        db = get_db()
+        user_id = session.get('user_id')
+        canteen_id = session.get('canteen_id')
+        if not user_id or not canteen_id:
+            raise ValueError('User must be logged in')
+        conn = get_db()
+        db = conn.cursor()
         canteen_account_id = db.execute(
             "SELECT id FROM canteen_account WHERE canteen_id=?",
             (self.canteen_id,)).fetchone()[0]
 
+        # add to balance canteen_account/user_account
+
+        if self.payment_method == 'user_account':
+            db.execute('UPDATE user_account SET balance = balance-? WHERE id=? AND balance>=?;',
+                       (self.total, user_id, self.total))
+            if db.rowcount < 1:
+                raise ValueError("User don't have enought balance")
+        elif self.payment_method == 'cash':
+            query = 'UPDATE canteen_account SET cash_balance=cash_balance+? WHERE id=?;'
+            db.execute(query, (self.total, canteen_account_id))
+        elif self.payment_method == 'debit_card':
+            query = 'UPDATE canteen_account SET bank_account_balance=bank_account_balance+? WHERE id=?;'
+            db.execute(query, (self.total, canteen_account_id))
+
+        if db.rowcount < 1:
+            raise ValueError(
+                "Some error occurred while adding to the canteen account")
+
         # insert generic_transaction
 
-        db.execute(*insert_into_table(
-            'generic_transaction',
+        insert_into_table(
+            db, 'generic_transaction',
             date_time=self.date_time,
             canteen_id=self.canteen_id,
             total=self.total
-        ))
+        )
 
         # insert payment_info
 
-        transaction_id = db.execute(
-            "SELECT last_insert_rowid();").fetchone()[0]
-        db.execute(*insert_into_table(
-            'payment_info',
+        transaction_id = db.lastrowid
+        insert_into_table(
+            db, 'payment_info',
             discount=self.discount,
             payment_method=self.payment_method,
             generic_transaction_id=transaction_id
-        ))
+        )
 
         # insert canteen_account_transaction
 
-        db.execute(*insert_into_table(
-            'canteen_account_transaction',
+        insert_into_table(
+            db, 'canteen_account_transaction',
             generic_transaction_id=transaction_id,
             canteen_account_id=canteen_account_id
-        ))
+        )
 
         # insert product_items
 
@@ -148,22 +171,9 @@ class RegularPurchase(BaseModel):
             (product_id, quantity, sub_total, generic_transaction_id)\
             VALUES {product_item_values};"""
         db.execute(product_item_query)
-        db.commit()
+        conn.commit()
+
         return transaction_id
-
-
-def insert_into_table(table: str, **values):
-    """Return a tuple of a insert query with it's values."""
-    keys = [n for n in values]
-    values_placeholder = ["?"] * len(keys)
-    keys = ",".join(keys)
-    values_placeholder = ",".join(values_placeholder)
-
-    query = "INSERT INTO {}({}) VALUES({});".format(
-        table, keys, values_placeholder)
-    values = [n for n in values.values()]
-    values = tuple(values)
-    return (query, values)
 
 
 class UserAccountPurchase:
@@ -193,12 +203,19 @@ class CanteenWithdraw:
         pass
 
 
-# read
+# util
 
+def insert_into_table(db: Cursor, table: str, **values):
+    """Return a tuple of a insert query with it's values."""
+    keys = [n for n in values]
+    values_placeholder = ["?"] * len(keys)
+    keys = ",".join(keys)
+    values_placeholder = ",".join(values_placeholder)
 
-def get_canteen_transaction(canteen_transaction_id):
-    pass
+    query = "INSERT INTO {}({}) VALUES({});".format(
+        table, keys, values_placeholder)
+    values = [n for n in values.values()]
+    values = tuple(values)
 
-
-def get_user_transaction(user_transaction_id):
-    pass
+    db.execute(query, (values))
+    return db.lastrowid

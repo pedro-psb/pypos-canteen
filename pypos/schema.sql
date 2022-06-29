@@ -129,9 +129,7 @@ CREATE TABLE payment_info (
 
 CREATE TABLE payment_method (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  canteen_id INTEGER NOT NULL DEFAULT 1,
-  FOREIGN KEY(canteen_id) REFERENCES canteen(id)
+  name TEXT NOT NULL
 );
 
 CREATE TABLE transaction_product_item (

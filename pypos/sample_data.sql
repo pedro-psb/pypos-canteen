@@ -8,6 +8,14 @@ VALUES
   ('dependent-user', 'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f', 'client_dependent', 1),
   ('canteen_2', 'pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f', 'owner', 2);
 
+INSERT INTO user_account (balance, user_id)
+VALUES
+(100, 1),
+(10, 2),
+(0, 3),
+(0, 4),
+(0, 5);
+
 INSERT INTO product_category (name)
 VALUES
   ("Bebidas"),

@@ -50,6 +50,7 @@ VALUES (1);
 INSERT INTO payment_method (name)
 VALUES
   ("money"),
-  ("credit_card"),
   ("debit_card"),
+  ("credit_card"),
   ("user_account");
+  
