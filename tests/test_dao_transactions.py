@@ -6,7 +6,8 @@ from pypos.db import get_db
 from pypos.models import dao
 from pypos.models.transactions_dao import (
     Product,
-    RegularPurchase
+    RegularPurchase,
+    UserAccountPurchase
 )
 
 #   ("torta", 15.5, 1),
@@ -14,9 +15,13 @@ from pypos.models.transactions_dao import (
 #   ("Prato Feito", 10, 2)
 
 
-def valid_transaction(payment_method='cash'):
-    transaction = RegularPurchase(
+def valid_transaction(Transaction=RegularPurchase,
+                      payment_method='cash',
+                      client_account_id=None
+                      ):
+    transaction = Transaction(
         canteen_id=1,
+        client_account_id=client_account_id,
         products=[
             Product(id=1, quantity=2, canteen_id=1),
             Product(id=2, quantity=3, canteen_id=1)
@@ -46,38 +51,30 @@ def test_regular_purchase_model(app):
         assert transaction.total == 61.0
 
 
-def test_regular_purchase_get_by_id(app, auth, client):
-    """Given an transaciton id, should get a whole purchase record including products given"""
-    auth.login()
-    with app.app_context(), app.test_request_context(), client:
-        client.get('/')
-
-        transaction = valid_transaction()
-        transaction_id = transaction.save()
-
-        get_transaction = RegularPurchase.get_by_id(transaction_id)
-        assert get_transaction
-        assert get_transaction == transaction
-
-
 def test_regular_purchase_get_all(app, auth, client):
     """Should get all purchase records including products"""
     auth.login()
     with app.app_context(), app.test_request_context(), client:
         client.get('/')
 
-        transaction = valid_transaction()
-        transaction2 = RegularPurchase(
+        canteen_transaction = valid_transaction()
+        canteen_transaction2 = RegularPurchase(
             canteen_id=1,
             products=[
                 Product(id=2, quantity=4, canteen_id=1)
             ],
             payment_method='cash'
         )
-        transaction.save()
-        transaction2.save()
-        get_transactions = RegularPurchase.get_all()
+        user_acc_transaction = valid_transaction(
+            Transaction=UserAccountPurchase,
+            payment_method='user_account',
+            client_account_id=1
+        )
+        canteen_transaction.save()
+        canteen_transaction2.save()
+        user_acc_transaction.save()
 
+        get_transactions = RegularPurchase.get_all()
         assert get_transactions
         assert len(get_transactions) == 2
 
@@ -102,7 +99,12 @@ def test_user_account_purchase_insert(app, auth, client):
         client.get('/')
         initial_user_balance = dao.get_user_balance_by_id(1)
 
-        transaction = valid_transaction(payment_method='user_account')
+        transaction = valid_transaction(
+            Transaction=UserAccountPurchase,
+            payment_method='user_account',
+            client_account_id=1
+        )
+        print(transaction.total)
         transaction.save()
 
         user_balance = dao.get_user_balance_by_id(1)
@@ -111,3 +113,32 @@ def test_user_account_purchase_insert(app, auth, client):
         assert transaction
         assert user_balance == initial_user_balance - transaction.total
         assert canteen_balance == 0
+
+
+def test_user_account_purchase_get_all(app, auth, client):
+    """Should get all purchase records including products"""
+    auth.login()
+    with app.app_context(), app.test_request_context(), client:
+        client.get('/')
+
+        user_acc_transaction = valid_transaction(
+            Transaction=UserAccountPurchase,
+            payment_method='user_account',
+            client_account_id=1
+        )
+        user_acc_transaction2 = UserAccountPurchase(
+            canteen_id=1,
+            client_account_id=1,
+            products=[
+                Product(id=2, quantity=4, canteen_id=1)
+            ],
+            payment_method='user_account'
+        )
+        canteen_transaction = valid_transaction()
+        user_acc_transaction.save()
+        user_acc_transaction2.save()
+        canteen_transaction.save()
+
+        get_transactions = UserAccountPurchase.get_all()
+        assert get_transactions
+        assert len(get_transactions) == 2

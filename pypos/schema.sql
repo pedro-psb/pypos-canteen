@@ -84,6 +84,7 @@ CREATE TABLE product_category_item (
 CREATE TABLE user_account (
   id INTEGER PRIMARY KEY,
   balance NUMBER NOT NULL DEFAULT 0,
+  negative_limit REAL NOT NULL DEFAULT 50,
   user_id INTEGER UNIQUE NOT NULL,
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -106,6 +107,7 @@ CREATE TABLE generic_transaction (
 );
 
 CREATE TABLE user_account_transaction (
+  pending INTEGER NOT NULL DEFAULT 0,
   user_account_id INTEGER NOT NULL,
   generic_transaction_id INTEGER NOT NULL,
   FOREIGN KEY(user_account_id) REFERENCES user_account(id),
