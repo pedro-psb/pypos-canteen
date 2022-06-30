@@ -3,6 +3,7 @@ from flask import render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
 from pypos.models.client_transaction_model import ClientTransaction
+from pypos.models.transactions_dao import Product, RegularPurchase, UserAccountPurchase, UserRecharge
 from . import bp
 
 # Public
@@ -241,33 +242,58 @@ def manage_clients():
 @ login_required(permissions=['acess_client_dashboard'])
 def client_index():
     transactions = [
-        ClientTransaction(
-            datetime='2000-12-12 12:12:12',
-            transaction_type='deposit',
-            value='15.00').dict(),
-        ClientTransaction(
-            datetime='2000-5-2 6:43:11',
-            transaction_type='deposit',
-            value='3.43',
-            pending=True).dict(),
-        ClientTransaction(
-            datetime='2001-6-5 1:2:2',
-            transaction_type='withdraw',
-            value='12.25').dict(),
+        RegularPurchase(
+            canteen_id=1,
+            client_account_id=1,  # owner-user
+            products=[
+                Product(id=1, quantity=2, canteen_id=1),
+                Product(id=2, quantity=3, canteen_id=1)
+            ],
+            payment_method='cash'
+        ),
+        UserAccountPurchase(
+            canteen_id=1,
+            client_account_id=1,  # owner-user
+            products=[
+                Product(id=1, quantity=2, canteen_id=1),
+                Product(id=2, quantity=3, canteen_id=1)
+            ],
+            payment_method='user_account'
+        ),
+        UserAccountPurchase(
+            canteen_id=1,
+            client_account_id=1,  # owner-user
+            products=[
+                Product(id=1, quantity=1, canteen_id=1),
+                Product(id=2, quantity=1, canteen_id=1)
+            ],
+            payment_method='user_account',
+            pending=True
+        ),
     ]
 
-    # Sum partial balance
-    partial_memory = 0
+    # Sum partial balance and add specific html render settings (should be here)
+    row_total = 0
+    valid_transactions = []
     for t in transactions:
-        if t['transaction_type'] == 'deposit' and not t['pending']:
-            partial_memory = partial_memory + t['value']
-        elif t['transaction_type'] == 'withdraw':
-            partial_memory = partial_memory - t['value']
-
-        t['partial'] = partial_memory
-
+        presentation_data = {}
+        if isinstance(t, UserAccountPurchase):
+            row_total -= t.total
+            presentation_data = {'badge': 'bg-danger', 'name': 'purchase'}
+        elif isinstance(t, UserRecharge):
+            if not t.pending:
+                row_total += t.total
+                presentation_data = {'badge': 'bg-success', 'name': 'recharge'}
+            else:
+                presentation_data = {'badge': 'bg-warning',
+                                     'name': 'recharge (pending)'}
+        else:
+            continue
+        presentation_data['row_total'] = row_total
+        t.presentation = presentation_data
+        valid_transactions.append(t.dict())
     data = {
-        'transactions': transactions
+        'transactions': valid_transactions
     }
     return render_template("user/client_index.html", data=data)
 

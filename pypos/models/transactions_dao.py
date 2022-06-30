@@ -3,7 +3,7 @@ import json
 from multiprocessing.sharedctypes import Value
 from pprint import pprint
 from sqlite3 import Connection, Cursor
-from typing import List
+from typing import List, Optional
 from xxlimited import foo
 
 from flask import session
@@ -30,22 +30,28 @@ class Product(BaseModel):
         return values
 
 
-class Recharge:
+class UserRecharge:
+    pending: bool = False
     date_time: datetime = datetime.now()
     canteen_account_id: int
     user_account_id: int
     total: float
-    payment_method_id: int
+    payment_method: int
+    presentation: Optional[dict]
+    
+    @root_validator()
+    
 
     def get_all(cls):
         pass
 
-    def do(cls):
+    def save(cls):
         pass
 
 
 class RegularPurchase(BaseModel):
     """A purchase paid with cash or card in the POS"""
+    presentation: Optional[dict]
     date_time: str = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     products: List[Product]
     canteen_id: int
@@ -158,6 +164,7 @@ class RegularPurchase(BaseModel):
 
 class UserAccountPurchase(BaseModel):
     """A purchase paid with the user account balance in the POS"""
+    presentation: Optional[dict]
     date_time: str = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     products: List[Product]
     canteen_id: int
@@ -165,6 +172,7 @@ class UserAccountPurchase(BaseModel):
     discount: float = 0
     total: float = 0
     client_account_id: int
+    pending: bool = False
 
     @root_validator
     def calculate_total(cls, values):
@@ -177,7 +185,8 @@ class UserAccountPurchase(BaseModel):
         db = get_db()
         canteen_id = session.get('canteen_id', 1)
         query = """
-        SELECT gt.canteen_id, gt.date_time, pay.payment_method, pay.discount, gt.total,
+        SELECT gt.canteen_id, gt.date_time, gt.total,
+        pay.payment_method, pay.discount, uat.pending,
         group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity ||
         '","price":"' || p.price || '","sub_total":"' || tpi.sub_total ||
         '","id":"' || p.id || '","canteen_id":"' || p.canteen_id || '"}') AS products
@@ -268,6 +277,7 @@ class UserAccountPurchase(BaseModel):
 
 
 class CanteenWithdraw:
+    presentation: Optional[dict]
     date_time: datetime = datetime.now()
     canteen_id: int
     amount: float

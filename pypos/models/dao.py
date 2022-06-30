@@ -34,3 +34,9 @@ def get_generic_transaction_by_id(transaction_id):
         transaction['products'] = products
         transaction = RegularPurchase(**transaction)
         return transaction
+    
+def get_all_client_transactions(client_id):
+    # get account_id
+    # query purchases and recharges
+    # transform each row in a ClientPurchase or ClientRecharge
+    pass
