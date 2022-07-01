@@ -31,15 +31,15 @@ class Product(BaseModel):
 
 
 class UserRecharge:
-    pending: bool = False
     date_time: datetime = datetime.now()
     canteen_account_id: int
     user_account_id: int
-    total: float
     payment_method: int
+    pending: bool = False
+    total: float
     presentation: Optional[dict]
     
-    @root_validator()
+    # @root_validator()
     
 
     def get_all(cls):
@@ -144,6 +144,7 @@ class RegularPurchase(BaseModel):
 
         insert_into_table(
             db, 'canteen_account_transaction',
+            operation_add=True,
             generic_transaction_id=transaction_id,
             canteen_account_id=canteen_account_id
         )
@@ -186,7 +187,7 @@ class UserAccountPurchase(BaseModel):
         canteen_id = session.get('canteen_id', 1)
         query = """
         SELECT gt.canteen_id, gt.date_time, gt.total,
-        pay.payment_method, pay.discount, uat.pending,
+        pay.payment_method, pay.discount, pay.pending,
         group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity ||
         '","price":"' || p.price || '","sub_total":"' || tpi.sub_total ||
         '","id":"' || p.id || '","canteen_id":"' || p.canteen_id || '"}') AS products
@@ -259,6 +260,7 @@ class UserAccountPurchase(BaseModel):
 
         insert_into_table(
             db, 'user_account_transaction',
+            operation_add=False,
             generic_transaction_id=transaction_id,
             user_account_id=client_account_id
         )
@@ -285,7 +287,7 @@ class CanteenWithdraw:
     def get_all(cls):
         pass
 
-    def do(cls):
+    def save(cls):
         pass
 
 

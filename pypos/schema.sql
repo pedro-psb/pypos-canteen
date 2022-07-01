@@ -107,7 +107,7 @@ CREATE TABLE generic_transaction (
 );
 
 CREATE TABLE user_account_transaction (
-  pending INTEGER NOT NULL DEFAULT 0,
+  operation_add INTEGER NOT NULL,
   user_account_id INTEGER NOT NULL,
   generic_transaction_id INTEGER NOT NULL,
   FOREIGN KEY(user_account_id) REFERENCES user_account(id),
@@ -115,6 +115,7 @@ CREATE TABLE user_account_transaction (
 );
 
 CREATE TABLE canteen_account_transaction (
+  operation_add INTEGER NOT NULL,
   canteen_account_id INTEGER NOT NULL,
   generic_transaction_id INTEGER NOT NULL,
   FOREIGN KEY(canteen_account_id) REFERENCES canteen_account(id),
@@ -123,6 +124,7 @@ CREATE TABLE canteen_account_transaction (
 
 CREATE TABLE payment_info (
   discount NUMBER NOT NULL DEFAULT 0,
+  pending INTEGER NOT NULL DEFAULT 0,
   payment_method TEXT NOT NULL,
   generic_transaction_id INTEGER NOT NULL,
   FOREIGN KEY(generic_transaction_id) REFERENCES generic_transaction(id),
@@ -132,6 +134,12 @@ CREATE TABLE payment_info (
 CREATE TABLE payment_method (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL
+);
+
+CREATE TABLE payment_voucher (
+  time_stamp TEXT NOT NULL,
+  generic_transaction_id INTEGER NOT NULL,
+  FOREIGN KEY (generic_transaction_id) REFERENCES generic_transaction(id)
 );
 
 CREATE TABLE transaction_product_item (

@@ -65,14 +65,8 @@ def test_regular_purchase_get_all(app, auth, client):
             ],
             payment_method='cash'
         )
-        user_acc_transaction = valid_transaction(
-            Transaction=UserAccountPurchase,
-            payment_method='user_account',
-            client_account_id=1
-        )
         canteen_transaction.save()
         canteen_transaction2.save()
-        user_acc_transaction.save()
 
         get_transactions = RegularPurchase.get_all()
         assert get_transactions
@@ -134,10 +128,8 @@ def test_user_account_purchase_get_all(app, auth, client):
             ],
             payment_method='user_account'
         )
-        canteen_transaction = valid_transaction()
         user_acc_transaction.save()
         user_acc_transaction2.save()
-        canteen_transaction.save()
 
         get_transactions = UserAccountPurchase.get_all()
         assert get_transactions
