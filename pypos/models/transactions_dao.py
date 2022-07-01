@@ -8,7 +8,9 @@ from xxlimited import foo
 
 from flask import session
 from pypos.db import get_db
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel, ValidationError, root_validator
+
+from pypos.models import dao
 
 transaction_presentations = {
     'regular_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
@@ -18,25 +20,6 @@ transaction_presentations = {
     'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
     'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
 }
-payment_options = {
-    'cash': 'cash_balance',
-    'pix': 'bank_account_balance',
-    'debit_card': 'bank_account_balance',
-    'credit_card': 'bank_account_balance',
-    'DOC/TED': 'bank_account_balance',
-}
-
-
-def add_to_account(table_name: str,
-                   account_id: int,
-                   account_type: str,
-                   total: float,
-                   conn: Connection):
-    query = f"UPDATE {table_name} SET {account_type}={account_type}+? WHERE id=?;"
-    cur = conn.execute(query, (total, account_id))
-    if cur.rowcount < 1:
-        raise ValueError(
-            "Some error occurred while adding to the canteen account")
 
 
 class Product(BaseModel):
@@ -62,6 +45,7 @@ class UserRecharge(BaseModel):
     # default
     date_time: datetime = datetime.now()
     discount: float = 0
+    id: Optional[int]
 
     # required
     canteen_id: int
@@ -69,6 +53,7 @@ class UserRecharge(BaseModel):
     payment_method: str
     pending: bool
     total: float
+    timestamp_code: Optional[str]
 
     # calculated
     canteen_account_id: Optional[int]
@@ -99,6 +84,13 @@ class UserRecharge(BaseModel):
         values['user_account_id'] = user_account_id
         return values
 
+    @root_validator()
+    def timestamp_required_on_pending(cls, values):
+        if values['pending'] and not values['timestamp_code']:
+            raise ValueError(
+                'If transaction is pending, timestamp_code must be informed')
+        return values
+
     def get_all(self):
         pass
 
@@ -108,7 +100,7 @@ class UserRecharge(BaseModel):
 
         # insert generic_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'generic_transaction',
             date_time=self.date_time,
             canteen_id=self.canteen_id,
@@ -119,14 +111,14 @@ class UserRecharge(BaseModel):
         # add to canteen account or create payment voucher
 
         if not self.pending:
-            add_to_account(
+            dao.add_to_account(
                 table_name='canteen_account',
                 total=self.total,
                 account_id=self.canteen_account_id,
-                account_type=payment_options[self.payment_method],
+                account_type=dao.payment_options[self.payment_method],
                 conn=conn
             )
-            add_to_account(
+            dao.add_to_account(
                 table_name='user_account',
                 total=self.total,
                 account_id=self.user_account_id,
@@ -134,7 +126,7 @@ class UserRecharge(BaseModel):
                 conn=conn
             )
         else:
-            insert_into_table(
+            dao.insert_into_table(
                 db, 'payment_voucher',
                 timestamp_code=self.timestamp_code,
                 generic_transaction_id=transaction_id,
@@ -142,7 +134,7 @@ class UserRecharge(BaseModel):
 
         # insert payment_info
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'payment_info',
             discount=self.discount,
             payment_method=self.payment_method,
@@ -152,20 +144,21 @@ class UserRecharge(BaseModel):
 
         # insert canteen_account_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'canteen_account_transaction',
             operation_add=True,
             generic_transaction_id=transaction_id,
             canteen_account_id=self.canteen_account_id
         )
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'user_account_transaction',
             operation_add=True,
             generic_transaction_id=transaction_id,
             user_account_id=self.user_account_id
         )
         conn.commit()
+        self.id = transaction_id
         return transaction_id
 
 
@@ -243,7 +236,7 @@ class RegularPurchase(BaseModel):
 
         # insert generic_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'generic_transaction',
             date_time=self.date_time,
             canteen_id=self.canteen_id,
@@ -253,7 +246,7 @@ class RegularPurchase(BaseModel):
         # insert payment_info
 
         transaction_id = db.lastrowid
-        insert_into_table(
+        dao.insert_into_table(
             db, 'payment_info',
             discount=self.discount,
             payment_method=self.payment_method,
@@ -262,7 +255,7 @@ class RegularPurchase(BaseModel):
 
         # insert canteen_account_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'canteen_account_transaction',
             operation_add=True,
             generic_transaction_id=transaction_id,
@@ -359,7 +352,7 @@ class UserAccountPurchase(BaseModel):
 
         # insert generic_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'generic_transaction',
             date_time=self.date_time,
             canteen_id=self.canteen_id,
@@ -369,7 +362,7 @@ class UserAccountPurchase(BaseModel):
         # insert payment_info
 
         transaction_id = db.lastrowid
-        insert_into_table(
+        dao.insert_into_table(
             db, 'payment_info',
             discount=self.discount,
             payment_method='user_account',
@@ -378,7 +371,7 @@ class UserAccountPurchase(BaseModel):
 
         # insert user_account_transaction
 
-        insert_into_table(
+        dao.insert_into_table(
             db, 'user_account_transaction',
             operation_add=False,
             generic_transaction_id=transaction_id,
@@ -411,34 +404,3 @@ class CanteenWithdraw:
         pass
 
 
-# util
-
-def insert_into_table(db: Cursor, table: str, **values):
-    """Return a tuple of a insert query with it's values."""
-    keys = [n for n in values]
-    values_placeholder = ["?"] * len(keys)
-    keys = ",".join(keys)
-    values_placeholder = ",".join(values_placeholder)
-
-    query = "INSERT INTO {}({}) VALUES({});".format(
-        table, keys, values_placeholder)
-    values = [n for n in values.values()]
-    values = tuple(values)
-    db.execute(query, (values))
-    return db.lastrowid
-
-
-def insert_many_into_table(db: Cursor, table: str, list_of_values: List):
-    """Return a tuple of a insert query with it's values."""
-    keys = [n for n in values]
-    values_placeholder = ["?"] * len(keys)
-    keys = ",".join(keys)
-    values_placeholder = ",".join(values_placeholder)
-
-    query = "INSERT INTO {}({}) VALUES({});".format(
-        table, keys, values_placeholder)
-    values = [n for n in values.values()]
-    values = tuple(values)
-
-    db.execute(query, (values))
-    return db.lastrowid
