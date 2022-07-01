@@ -7,7 +7,9 @@ from pypos.models import dao
 from pypos.models.transactions_dao import (
     Product,
     RegularPurchase,
-    UserAccountPurchase
+    UserAccountPurchase,
+    UserRecharge,
+    transaction_presentations
 )
 
 #   ("torta", 15.5, 1),
@@ -31,6 +33,20 @@ def valid_transaction(Transaction=RegularPurchase,
     return transaction
 
 
+def valid_recharge_transaction(payment_method='pix',
+                               user_id=1,
+                               total=20,
+                               pending=False):
+    transaction = UserRecharge(
+        canteen_id=1,
+        user_id=user_id,
+        total=total,
+        payment_method=payment_method,
+        pending=pending
+    )
+    return transaction
+
+
 def test_product_model(app):
     with app.app_context():
         product = Product(
@@ -49,6 +65,20 @@ def test_regular_purchase_model(app):
         transaction = valid_transaction()
         assert transaction
         assert transaction.total == 61.0
+
+
+def test_user_recharge_model(app):
+    with app.app_context():
+        transaction = valid_recharge_transaction(total=20)
+        transaction_pending = valid_recharge_transaction(pending=True)
+        assert transaction
+        
+        # calculated values
+        assert transaction.canteen_account_id == 1
+        assert transaction.user_account_id == 1
+        assert transaction.presentation == transaction_presentations['user_recharge']
+        assert transaction_pending.presentation ==\
+            transaction_presentations['user_recharge_pending']
 
 
 def test_regular_purchase_get_all(app, auth, client):
@@ -134,3 +164,26 @@ def test_user_account_purchase_get_all(app, auth, client):
         get_transactions = UserAccountPurchase.get_all()
         assert get_transactions
         assert len(get_transactions) == 2
+
+
+def test_user_recharge_save(app, auth, client):
+    auth.login()
+    with app.app_context(), app.test_request_context(), client:
+        client.get('/')
+        initial_user_balance = dao.get_user_balance_by_id(1)
+        initial_canteen_balance = dao.get_canteen_balance_by_id(
+            1, cash_or_bank='bank_account_balance')
+
+        transaction = valid_recharge_transaction(total=10)
+        transaction.save()
+
+        user_balance = dao.get_user_balance_by_id(1)
+        canteen_balance = dao.get_canteen_balance_by_id(
+            1, cash_or_bank='bank_account_balance')
+        assert transaction
+        assert user_balance == initial_user_balance + transaction.total
+        assert canteen_balance == initial_canteen_balance + transaction.total
+
+
+def test_user_recharge_get_all(app, auth, client):
+    pass

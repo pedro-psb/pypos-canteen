@@ -137,7 +137,7 @@ CREATE TABLE payment_method (
 );
 
 CREATE TABLE payment_voucher (
-  time_stamp TEXT NOT NULL,
+  timestamp_code TEXT NOT NULL,
   generic_transaction_id INTEGER NOT NULL,
   FOREIGN KEY (generic_transaction_id) REFERENCES generic_transaction(id)
 );

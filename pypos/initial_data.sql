@@ -52,5 +52,5 @@ VALUES
   ("money"),
   ("debit_card"),
   ("credit_card"),
-  ("user_account");
+  ("pix");
   

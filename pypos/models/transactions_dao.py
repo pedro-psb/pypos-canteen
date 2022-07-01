@@ -10,6 +10,34 @@ from flask import session
 from pypos.db import get_db
 from pydantic import BaseModel, root_validator
 
+transaction_presentations = {
+    'regular_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+    'user_recharge': {'name': 'recharge', 'badge': 'bg-danger'},
+    'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
+    'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
+}
+payment_options = {
+    'cash': 'cash_balance',
+    'pix': 'bank_account_balance',
+    'debit_card': 'bank_account_balance',
+    'credit_card': 'bank_account_balance',
+    'DOC/TED': 'bank_account_balance',
+}
+
+
+def add_to_account(table_name: str,
+                   account_id: int,
+                   account_type: str,
+                   total: float,
+                   conn: Connection):
+    query = f"UPDATE {table_name} SET {account_type}={account_type}+? WHERE id=?;"
+    cur = conn.execute(query, (total, account_id))
+    if cur.rowcount < 1:
+        raise ValueError(
+            "Some error occurred while adding to the canteen account")
+
 
 class Product(BaseModel):
     id: int
@@ -19,7 +47,7 @@ class Product(BaseModel):
     price: float = 0
     sub_total: float = 0
 
-    @root_validator
+    @ root_validator
     def load_product_data(cls, values):
         db = get_db()
         data = db.execute("SELECT * FROM product WHERE id=?",
@@ -30,23 +58,115 @@ class Product(BaseModel):
         return values
 
 
-class UserRecharge:
+class UserRecharge(BaseModel):
+    # default
     date_time: datetime = datetime.now()
-    canteen_account_id: int
-    user_account_id: int
-    payment_method: int
-    pending: bool = False
+    discount: float = 0
+
+    # required
+    canteen_id: int
+    user_id: int
+    payment_method: str
+    pending: bool
     total: float
+
+    # calculated
+    canteen_account_id: Optional[int]
+    user_account_id: Optional[int]
     presentation: Optional[dict]
-    
-    # @root_validator()
-    
 
-    def get_all(cls):
+    @ root_validator()
+    def set_presentation(cls, values):
+        if values['pending']:
+            values['presentation'] = transaction_presentations['user_recharge_pending']
+        else:
+            values['presentation'] = transaction_presentations['user_recharge']
+        return values
+
+    @ root_validator()
+    def set_account_ids(cls, values):
+        conn = get_db()
+        db = conn.cursor()
+
+        canteen_account_id = db.execute(
+            "SELECT id FROM canteen_account WHERE canteen_id=?",
+            (values['canteen_id'],)).fetchone()[0]
+        user_account_id = db.execute(
+            "SELECT id FROM canteen_account WHERE canteen_id=?",
+            (values['user_id'],)).fetchone()[0]
+
+        values['canteen_account_id'] = canteen_account_id
+        values['user_account_id'] = user_account_id
+        return values
+
+    def get_all(self):
         pass
 
-    def save(cls):
-        pass
+    def save(self):
+        conn = get_db()
+        db = conn.cursor()
+
+        # insert generic_transaction
+
+        insert_into_table(
+            db, 'generic_transaction',
+            date_time=self.date_time,
+            canteen_id=self.canteen_id,
+            total=self.total
+        )
+        transaction_id = db.lastrowid
+
+        # add to canteen account or create payment voucher
+
+        if not self.pending:
+            add_to_account(
+                table_name='canteen_account',
+                total=self.total,
+                account_id=self.canteen_account_id,
+                account_type=payment_options[self.payment_method],
+                conn=conn
+            )
+            add_to_account(
+                table_name='user_account',
+                total=self.total,
+                account_id=self.user_account_id,
+                account_type='balance',
+                conn=conn
+            )
+        else:
+            insert_into_table(
+                db, 'payment_voucher',
+                timestamp_code=self.timestamp_code,
+                generic_transaction_id=transaction_id,
+            )
+
+        # insert payment_info
+
+        insert_into_table(
+            db, 'payment_info',
+            discount=self.discount,
+            payment_method=self.payment_method,
+            pending=self.pending,
+            generic_transaction_id=transaction_id
+        )
+
+        # insert canteen_account_transaction
+
+        insert_into_table(
+            db, 'canteen_account_transaction',
+            operation_add=True,
+            generic_transaction_id=transaction_id,
+            canteen_account_id=self.canteen_account_id
+        )
+
+        insert_into_table(
+            db, 'user_account_transaction',
+            operation_add=True,
+            generic_transaction_id=transaction_id,
+            user_account_id=self.user_account_id
+        )
+        conn.commit()
+        return transaction_id
 
 
 class RegularPurchase(BaseModel):
@@ -59,13 +179,13 @@ class RegularPurchase(BaseModel):
     discount: float = 0
     total: float = 0
 
-    @root_validator
+    @ root_validator
     def calculate_total(cls, values):
         total = sum(product.sub_total for product in values['products'])
         values['total'] = total
         return values
 
-    @classmethod
+    @ classmethod
     def get_all(cls):
         db = get_db()
         canteen_id = session.get('canteen_id', 1)
@@ -113,7 +233,7 @@ class RegularPurchase(BaseModel):
         if self.payment_method == 'cash':
             query = 'UPDATE canteen_account SET cash_balance=cash_balance+? WHERE id=?;'
             db.execute(query, (self.total, canteen_account_id))
-        elif self.payment_method == 'debit_card':
+        elif self.payment_method in virtual_payment_methods:
             query = 'UPDATE canteen_account SET bank_account_balance=bank_account_balance+? WHERE id=?;'
             db.execute(query, (self.total, canteen_account_id))
 
@@ -175,13 +295,13 @@ class UserAccountPurchase(BaseModel):
     client_account_id: int
     pending: bool = False
 
-    @root_validator
+    @ root_validator
     def calculate_total(cls, values):
         total = sum(product.sub_total for product in values['products'])
         values['total'] = total
         return values
 
-    @classmethod
+    @ classmethod
     def get_all(cls):
         db = get_db()
         canteen_id = session.get('canteen_id', 1)
@@ -304,7 +424,6 @@ def insert_into_table(db: Cursor, table: str, **values):
         table, keys, values_placeholder)
     values = [n for n in values.values()]
     values = tuple(values)
-
     db.execute(query, (values))
     return db.lastrowid
 
