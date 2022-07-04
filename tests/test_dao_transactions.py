@@ -10,6 +10,8 @@ from pypos.models.transactions_dao import (
     RegularPurchase,
     UserAccountPurchase,
     UserRecharge,
+    accept_pending_transaction,
+    reject_pending_transaction,
     transaction_presentations
 )
 
@@ -237,9 +239,8 @@ def test_user_recharge_pending_accept(app, auth, client):
         transaction = valid_recharge_transaction(
             total=10, pending=True)
         transaction_id = transaction.save()
-
         # accept call
-        dao.accept_pending_transaction(transaction)
+        accept_pending_transaction(transaction)
         is_transaction_pending = dao.is_transaction_pending(transaction_id)
 
         # after accept balance
@@ -265,7 +266,7 @@ def test_user_recharge_pending_reject(app, auth, client):
         transaction_id = transaction.save()
 
         # accept call
-        dao.reject_pending_transaction(transaction_id)
+        reject_pending_transaction(transaction_id)
         is_transaction_pending = dao.is_transaction_pending(transaction_id)
 
         # after reject balance

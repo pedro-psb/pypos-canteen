@@ -1,3 +1,12 @@
+$(document).ready(function () {
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-search__field').focus();
+    });
+
+    $('#user_select').select2();
+    console.log($('#user_select'))
+});
+
 function add_item_to_order(id, price, name) {
     const order_items = document.querySelector('#order');
     const order_ids = order_items.querySelectorAll('tr');

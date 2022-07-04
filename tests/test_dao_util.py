@@ -27,6 +27,6 @@ def test_get_generic_transaction_by_id(app, auth, client):
         transaction = valid_transaction()
         transaction_id = transaction.save()
 
-        get_transaction = dao.get_generic_transaction_by_id(transaction_id)
+        get_transaction = get_generic_transaction_by_id(transaction_id)
         assert get_transaction
         assert get_transaction == transaction

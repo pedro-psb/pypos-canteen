@@ -54,8 +54,9 @@
                             <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
                                 dy=".3em">Thumbnail</text>
                         </svg>
-                        
-                        <p class="text-left small p-2 pb-0"><span class="badge bg-secondary ">{{ product.category }}</span></span></p>
+
+                        <p class="text-left small p-2 pb-0"><span class="badge bg-secondary ">{{ product.category
+                                }}</span></span></p>
                         <div class="card-body d-flex justify-content-between align-items-center pt-0">
                             <h3 class="h6 card-title text-muted card_name">{{ product.name }}</h3>
                             <span class="fs-6 badge bg-secondary card_price">{{ product.price }}</span>
@@ -114,50 +115,77 @@
                 </tfoot>
             </table>
 
-            <h3 class="h4">Payment</h3>
-            <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
-                <div class="p-1">
-                    <input class="btn-check" type="radio" name="payment_method" id="payment_method1" value="money"
-                        checked>
-                    <label class="btn btn-primary btn-sm" for="payment_method1">
-                        Money
-                    </label>
+            <form method="post" action="{{ url_for('canteen.point_of_sale.add_transaction_product') }}">
+                <h3 class="h4">Payment</h3>
+                <div id="" class="d-flex align-items-stretch mb-3">
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="payment_method" id="payment_method1" value="money"
+                            checked>
+                        <label class="btn btn-primary btn-sm" for="payment_method1">
+                            Money
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="payment_method" id="payment_method2"
+                            value="debit_card">
+                        <label class="btn btn-primary btn-sm" for="payment_method2">
+                            Debit Card
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="payment_method" id="payment_method3"
+                            value="credit_card">
+                        <label class="btn btn-primary btn-sm" for="payment_method3">
+                            Credit Card
+                        </label>
+                    </div>
+                    <div class="p-1">
+                        <input class="btn-check" type="radio" name="payment_method" id="payment_method4"
+                            value="user_account">
+                        <label class="btn btn-primary btn-sm" for="payment_method4">
+                            User Account
+                        </label>
+                    </div>
                 </div>
-                <div class="p-1">
-                    <input class="btn-check" type="radio" name="payment_method" id="payment_method2" value="debit_card">
-                    <label class="btn btn-primary btn-sm" for="payment_method2">
-                        Debit Card
-                    </label>
-                </div>
-                <div class="p-1">
-                    <input class="btn-check" type="radio" name="payment_method" id="payment_method3"
-                        value="credit_card">
-                    <label class="btn btn-primary btn-sm" for="payment_method3">
-                        Credit Card
-                    </label>
-                </div>
-                <div class="p-1">
-                    <input class="btn-check" type="radio" name="payment_method" id="payment_method4"
-                        value="user_account">
-                    <label class="btn btn-primary btn-sm" for="payment_method4">
-                        User Account
-                    </label>
-                </div>
-            </div>
 
-            <div class="d-flex justify-content-end">
-                <div class="col">
-                    <button id="clear_order_button" class="m-2 btn btn-danger" type="reset">Cancel</button>
+                <!-- payment method -->
+                <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
+                    <select name="payment_method" class="form-select" aria-label="Default select example">
+                        {% for payment_method in data.payment_methods %}
+                        {% if loop.index == 0 %}
+                        <option value="{{ payment_method[0] }}" selected>{{ payment_method[1] }}</option>
+                        {% else %}
+                        <option value="{{ payment_method[0] }}">{{ payment_method[1] }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="col">
-                    <form method="post" action="{{ url_for('canteen.point_of_sale.add_transaction_product') }}">
+
+                <!-- client select -->
+                <h3 class="h4">Client</h3>
+                <div id="user_select_div" class="d-flex align-items-stretch mb-3">
+                    <select id="user_select" name="user_select" class="form-select" aria-label="Default select example">
+                        <option selected value="">-- Select a client --</option>
+                        {% for user in data.user_list %}
+                        <option value="{{ user.id }}">{{ user.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- buttons -->
+                <div class="d-flex justify-content-end">
+                    <div class="col">
+                        <button id="clear_order_button" class="m-2 btn btn-danger" type="reset">Cancel</button>
+                    </div>
+                    <div class="col">
                         <input id="form_products" hidden name="products">
                         <input id="form_discount" hidden name="discount">
                         <input id="form_payment_method" hidden name="payment_method">
                         <button class="m-2 btn btn-success" type="submit">Submit</button>
-                    </form>
+
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

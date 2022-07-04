@@ -14,7 +14,7 @@ CREATE TABLE canteen_account(
   canteen_id INTEGER UNIQUE NOT NULL,
   FOREIGN KEY (canteen_id) REFERENCES canteen(id)
 );
-INSERT INTO "canteen_account" VALUES(1,0,10,1);
+INSERT INTO "canteen_account" VALUES(1,61,0,1);
 CREATE TABLE canteen_account_transaction (
   operation_add INTEGER NOT NULL,
   canteen_account_id INTEGER NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE generic_transaction (
   active INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (canteen_id) REFERENCES canteen(id)
 );
-INSERT INTO "generic_transaction" VALUES(1,'2022-07-01 12:35:56.481178',10,1,1);
+INSERT INTO "generic_transaction" VALUES(1,'2022-07-04 13:40:14',61,1,1);
 CREATE TABLE payment_info (
   discount NUMBER NOT NULL DEFAULT 0,
   pending INTEGER NOT NULL DEFAULT 0,
@@ -40,7 +40,7 @@ CREATE TABLE payment_info (
   FOREIGN KEY(generic_transaction_id) REFERENCES generic_transaction(id),
   FOREIGN KEY(payment_method) REFERENCES payment_method(name)
 );
-INSERT INTO "payment_info" VALUES(0,0,'pix',1);
+INSERT INTO "payment_info" VALUES(0,0,'cash',1);
 CREATE TABLE payment_method (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL
@@ -151,6 +151,8 @@ CREATE TABLE transaction_product_item (
   FOREIGN KEY (product_id) REFERENCES product(id),
   FOREIGN KEY (generic_transaction_id) REFERENCES generic_transaction(id)
 );
+INSERT INTO "transaction_product_item" VALUES(1,2,31,1);
+INSERT INTO "transaction_product_item" VALUES(2,3,30,1);
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE,
@@ -187,5 +189,4 @@ CREATE TABLE user_account_transaction (
   FOREIGN KEY(user_account_id) REFERENCES user_account(id),
   FOREIGN KEY(generic_transaction_id) REFERENCES generic_transaction(id)
 );
-INSERT INTO "user_account_transaction" VALUES(1,1,1);
 COMMIT;

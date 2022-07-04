@@ -21,6 +21,14 @@ transaction_presentations = {
     'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
 }
 
+payment_options = {
+    'cash': 'cash_balance',
+    'pix': 'bank_account_balance',
+    'debit_card': 'bank_account_balance',
+    'credit_card': 'bank_account_balance',
+    'DOC/TED': 'bank_account_balance',
+}
+
 
 class Product(BaseModel):
     id: int
@@ -115,7 +123,7 @@ class UserRecharge(BaseModel):
                 table_name='canteen_account',
                 total=self.total,
                 account_id=self.canteen_account_id,
-                account_type=dao.payment_options[self.payment_method],
+                account_type=payment_options[self.payment_method],
                 conn=conn
             )
             dao.add_to_account(
@@ -272,7 +280,6 @@ class RegularPurchase(BaseModel):
             VALUES {product_item_values};"""
         db.execute(product_item_query)
         conn.commit()
-
         return transaction_id
 
 
@@ -403,4 +410,52 @@ class CanteenWithdraw:
     def save(cls):
         pass
 
+# Utils (can't go to dao module because of circular imports)
 
+
+def get_generic_transaction_by_id(transaction_id):
+    db = get_db()
+    transaction_query = """SELECT gt.date_time, gt.total, gt.canteen_id,
+        pay.discount, pay.payment_method FROM generic_transaction gt
+        INNER JOIN payment_info pay ON gt.id = pay.generic_transaction_id
+        WHERE gt.id=? AND gt.active=1;"""
+    products_query = """SELECT p.canteen_id, p.id, p.name, p.price, tpi.quantity, 
+        tpi.sub_total FROM product p INNER JOIN transaction_product_item tpi 
+        ON p.id = tpi.product_id WHERE tpi.generic_transaction_id=? AND p.active=1;"""
+
+    transaction = dict(db.execute(transaction_query,
+                       (transaction_id,)).fetchone())
+    products = db.execute(products_query, (transaction_id,)).fetchall()
+    products = [dict(p) for p in products]
+    transaction['products'] = products
+    transaction = RegularPurchase(**transaction)
+    return transaction
+
+
+def accept_pending_transaction(transaction: UserRecharge):
+    # TODO can I use typehints from other modules without doing circular imports?
+    con = get_db()
+    db = con.cursor()
+    dao.add_to_account(
+        table_name='canteen_account',
+        total=transaction.total,
+        account_id=transaction.canteen_account_id,
+        account_type=payment_options[transaction.payment_method],
+        conn=con
+    )
+    dao.add_to_account(
+        table_name='user_account',
+        total=transaction.total,
+        account_id=transaction.user_account_id,
+        account_type='balance',
+        conn=con
+    )
+    db.execute("""UPDATE payment_info SET pending=0
+               WHERE generic_transaction_id=?;""", (transaction.id,))
+
+
+def reject_pending_transaction(transaction_id):
+    con = get_db()
+    db = con.cursor()
+    db.execute("""UPDATE payment_info SET pending=0
+               WHERE generic_transaction_id=?;""", (transaction_id,))

@@ -196,7 +196,20 @@ def pos_main():
         LEFT JOIN product_category pc ON p.category = pc.id
         WHERE p.active=1 AND p.canteen_id=?;
     ''', (canteen_id,)).fetchall()
-    data = {'products': [dict(prod) for prod in products]}
+    data = {
+        'products': [dict(prod) for prod in products],
+        'payment_methods': [
+            ('cash', 'Cash'), ('debit_card', 'Debit Card'),
+            ('credit_card', 'Credit Card'), ('user_account', 'User Account')
+        ],
+        'user_list': [
+            {'id': '1', 'name': 'Foo'},
+            {'id': '2', 'name': 'Bar'},
+            {'id': '3', 'name': 'Spam'},
+            {'id': '4', 'name': 'Eggs'},
+            {'id': '5', 'name': 'Placeholder'},
+        ]}
+    print(data)
     return render_template("user/pos_main.html", data=data)
 
 
