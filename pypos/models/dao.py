@@ -4,6 +4,22 @@ from typing import List
 from pypos.db import get_db
 
 
+def get_user_account_by_user_id(user_id) -> int:
+    con = get_db()
+    db = con.cursor()
+    query = "SELECT id FROM user_account WHERE user_id=?;"
+    user_account_id = db.execute(query, [user_id]).fetchone()[0]
+    return user_account_id
+
+
+def get_canteen_account_id_by_canteen_id(canteen_id) -> int:
+    con = get_db()
+    db = con.cursor()
+    query = "SELECT id FROM canteen_account WHERE canteen_id=?;"
+    canteen_account_id = db.execute(query, [canteen_id]).fetchone()[0]
+    return canteen_account_id
+
+
 def get_user_balance_by_id(id):
     conn = get_db()
     db = conn.cursor()
@@ -20,11 +36,71 @@ def get_canteen_balance_by_id(id, cash_or_bank='cash_balance'):
     return canteen_balance
 
 
-def get_all_client_transactions(client_id):
-    # get account_id
-    # query purchases and recharges
-    # transform each row in a ClientPurchase or ClientRecharge
-    pass
+def get_generic_transaction_by_id(transaction_id):
+    con = get_db()
+    db = con.cursor()
+    query = f"SELECT * FROM generic_transaction WHERE id=?;"
+    generic_transaction = db.execute(query, [transaction_id]).fetchone()
+    return dict(generic_transaction)
+
+def get_user_recharge_transaction_by_id(transaction_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT gt.id, gt.total, gt.date_time,
+    pay.payment_method, pay.pending, pay.discount,
+    uat.user_account_id, cat.canteen_account_id
+    FROM generic_transaction gt
+    INNER JOIN payment_info pay ON pay.generic_transaction_id = gt.id
+    INNER JOIN user_account_transaction uat ON uat.generic_transaction_id = gt.id
+    INNER JOIN canteen_account_transaction cat ON cat.generic_transaction_id = gt.id
+    WHERE gt.id=?;"""
+    generic_transaction = db.execute(query, [transaction_id]).fetchone()
+    return dict(generic_transaction)
+
+
+def get_all_transactions_by_canteen_id(canteen_id):
+    con = get_db()
+    db = con.cursor()
+    """Get all transactions and related 1 to 1 entities (except product_item and products)"""
+    query = """
+        SELECT gt.id, gt.total, gt.date_time, pay.payment_method, pay.discount, pay.pending,
+        uat.operation_add AS uat_add, cat.operation_add AS cat_add,
+        ua.id AS uat_id, u.id AS user_id, u.username AS user_name,
+        payv.timestamp_code
+        FROM generic_transaction gt
+        LEFT JOIN payment_info pay ON gt.id = pay.generic_transaction_id
+        LEFT JOIN payment_voucher payv ON payv.generic_transaction_id = gt.id
+        LEFT JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
+        LEFT JOIN canteen_account_transaction cat ON cat.generic_transaction_id=gt.id
+        LEFT JOIN user_account ua  ON uat.user_account_id=ua.id
+        LEFT JOIN user u  ON ua.user_id = u.id
+        WHERE gt.canteen_id=? AND gt.active=1;
+    """
+    all_transactions = db.execute(query, [canteen_id]).fetchall()
+    row_total = 0
+    if all_transactions:
+        for i, transaction in enumerate(all_transactions):
+            all_transactions[i] = dict(transaction)
+
+            # get transaction_type_data based on user account and canteen acount operations
+            transaction_type_map = get_transaction_type(
+                uat_add=transaction['uat_add'], cat_add=transaction['cat_add'])
+            row_total_calculator = transaction_type_map['row_total_calculator']
+
+            row_total = row_total_calculator(row_total, transaction['total'])
+            all_transactions[i]['transaction_type'] = transaction_type_map['print_name']
+            all_transactions[i]['row_total'] = row_total
+
+    return all_transactions
+
+
+def get_payment_voucher_code_by_transaction_id(transaction_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT timestamp_code FROM payment_voucher
+    WHERE generic_transaction_id=?;"""
+    payment_voucher_code = db.execute(query, [transaction_id]).fetchone()[0]
+    return payment_voucher_code
 
 
 def get_transaction_pending_state(transaction_id):
@@ -32,7 +108,7 @@ def get_transaction_pending_state(transaction_id):
     db = con.cursor()
     query = """SELECT pay.pending FROM generic_transaction gt
     INNER JOIN payment_info pay ON pay.generic_transaction_id = gt.id
-    WHERE gt.id=?;"""
+    WHERE gt.id=? AND active=1;"""
     pending_state = db.execute(query, (transaction_id,)).fetchone()[0]
     return pending_state
 
@@ -94,9 +170,9 @@ def add_to_account(table_name: str,
                    account_id: int,
                    account_type: str,
                    total: float,
-                   conn: Connection):
+                   con: Connection):
     query = f"UPDATE {table_name} SET {account_type}={account_type}+? WHERE id=?;"
-    cur = conn.execute(query, (total, account_id))
+    cur = con.execute(query, (total, account_id))
     if cur.rowcount < 1:
         raise ValueError(
             "Some error occurred while adding to the canteen account")
@@ -111,3 +187,46 @@ def is_transaction_pending(transaction_id):
     WHERE gt.id=?;"""
     is_pending = db.execute(query, (transaction_id,)).fetchone()[0]
     return is_pending
+
+
+# TODO implement this map over the ifs. Or don't
+transaction_type_map = {
+    'user_recharge': {
+        'print_name': 'User Recharge',
+        'uat_add': 1,
+        'cat_add': None,
+        'row_total_calculator': lambda x, y: x + y
+    },
+    'user_account_purchase': {
+        'print_name': 'User Account Purchase',
+        'uat_add': -1,
+        'cat_add': None,
+        'row_total_calculator': lambda x, y: x
+    },
+    'regular_purchase': {
+        'print_name': 'Regular Purchase',
+        'uat_add': None,
+        'cat_add': 1,
+        'row_total_calculator': lambda x, y: x + y
+    },
+    'canteen_withdraw': {
+        'print_name': 'Canteen Withdraw',
+        'uat_add': None,
+        'cat_add': -1,
+        'row_total_calculator': lambda x, y: x - y
+    },
+}
+
+
+def get_transaction_type(uat_add, cat_add):
+    if uat_add == 1 and cat_add == 1:
+        transaction_type = 'user_recharge'
+    elif uat_add == -1 and not cat_add:
+        transaction_type = 'user_account_purchase'
+    elif not uat_add and cat_add == 1:
+        transaction_type = 'regular_purchase'
+    elif not uat_add and cat_add == -1:
+        transaction_type = 'canteen_withdraw'
+    else:
+        transaction_type = 'Unknow combination'
+    return transaction_type_map[transaction_type]

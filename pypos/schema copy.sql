@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS product_category_item;
 DROP TABLE IF EXISTS transaction_product_item;
-DROP TABLE IF EXISTS transaction_product;
+DROP TABLE IF EXISTS generic_transaction;
 DROP TABLE IF EXISTS role_permission;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS role;
@@ -82,7 +82,7 @@ CREATE TABLE product_category_item (
   FOREIGN KEY (product_category_id) REFERENCES product_category(id)
 );
 
-CREATE TABLE transaction_product (
+CREATE TABLE generic_transaction (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   date TEXT NOT NULL,
   payment_method INTEGER NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE transaction_product_item (
   transaction_product_id INTEGER NOT NULL,
   quantity INTEGER NOT NULL,
   FOREIGN KEY (product_id) REFERENCES product(id),
-  FOREIGN KEY (transaction_product_id) REFERENCES transaction_product(id)
+  FOREIGN KEY (transaction_product_id) REFERENCES generic_transaction(id)
 );
 
 CREATE TABLE payment_method (

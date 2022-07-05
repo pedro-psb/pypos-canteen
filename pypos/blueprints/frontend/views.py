@@ -1,12 +1,23 @@
 import json
+from pprint import pprint
 from flask import render_template, session
 
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
+from pypos.models import dao
 from pypos.models.client_transaction_model import ClientTransaction
 from pypos.models.transactions_dao import Product, RegularPurchase, UserAccountPurchase, UserRecharge
 from . import bp
 
 # Public
+
+PAYMENT_METHODS = [
+    ('cash', 'Cash'), ('debit_card', 'Debit Card'),
+    ('credit_card', 'Credit Card'), ('user_account', 'User Account')
+]
+PAYMENT_METHODS_NO_USER = [
+    ('cash', 'Cash'), ('debit_card', 'Debit Card'),
+    ('credit_card', 'Credit Card')
+]
 
 
 @bp.route('/index')
@@ -198,10 +209,7 @@ def pos_main():
     ''', (canteen_id,)).fetchall()
     data = {
         'products': [dict(prod) for prod in products],
-        'payment_methods': [
-            ('cash', 'Cash'), ('debit_card', 'Debit Card'),
-            ('credit_card', 'Credit Card'), ('user_account', 'User Account')
-        ],
+        'payment_methods': PAYMENT_METHODS,
         'user_list': [
             {'id': '1', 'name': 'Foo'},
             {'id': '2', 'name': 'Bar'},
@@ -216,30 +224,16 @@ def pos_main():
 @ bp.route('/canteen/reports')
 @ login_required(permissions=['acess_reports'])
 def pos_reports():
+    # TODO make a link to the transaction details with a popover
     canteen_id = session.get('canteen_id')
-    query = """
-        SELECT tp.date, pm.name AS payment_method, tp.discount, tp.total_value,
-        group_concat('{"name":"' || p.name || '","quantity":"' || tpi.quantity || '"}') AS products
-        FROM transaction_product tp
-        INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
-        INNER JOIN product p ON p.id = tpi.product_id
-        INNER JOIN payment_method pm ON tp.payment_method = pm.id
-        GROUP BY tp.id HAVING p.canteen_id=?;
-    """
-    db = get_db()
-    all_transactions = db.execute(query, (canteen_id,)).fetchall()
 
-    for key, transaction in enumerate(all_transactions):
-        transaction_parsed = dict(transaction)
-        products_string = transaction_parsed.get('products')
-        product_parsed = json.loads(f'[{products_string}]')
-
-        transaction_parsed['products'] = product_parsed
-        all_transactions[key] = transaction_parsed
-
-    print(all_transactions)
-    data = {'transactions': all_transactions}
-
+    all_transactions = dao.get_all_transactions_by_canteen_id(canteen_id)
+    pending_transactions = [t for t in all_transactions if t['pending']]
+    regular_transactions = [t for t in all_transactions if not t['pending']]
+    data = {
+        'transactions': regular_transactions,
+        'pending_transactions': pending_transactions
+    }
     return render_template("user/pos_reports.html", data=data)
 
 
@@ -321,7 +315,10 @@ def client_manage():
 @ login_required(permissions=['acess_client_dashboard',
                               'acess_client_account_management'])
 def client_deposit():
-    return render_template("user/client_deposit.html")
+    data = {
+        'payment_methods': PAYMENT_METHODS_NO_USER
+    }
+    return render_template("user/client_deposit.html", data=data)
 
 
 def select_non_employee_roles():

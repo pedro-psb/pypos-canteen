@@ -9,6 +9,12 @@ DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS permission;
 DROP TABLE IF EXISTS payment_method;
 DROP TABLE IF EXISTS canteen;
+DROP TABLE IF EXISTS user_account;
+DROP TABLE IF EXISTS canteen_account;
+DROP TABLE IF EXISTS generic_transaction;
+DROP TABLE IF EXISTS user_account_transaction;
+DROP TABLE IF EXISTS canteen_account_transaction;
+DROP TABLE IF EXISTS pay;
 
 CREATE TABLE canteen (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

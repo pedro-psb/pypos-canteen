@@ -117,7 +117,7 @@
 
             <form method="post" action="{{ url_for('canteen.point_of_sale.add_transaction_product') }}">
                 <h3 class="h4">Payment</h3>
-                <div id="" class="d-flex align-items-stretch mb-3">
+                <!-- <div id="" class="d-flex align-items-stretch mb-3">
                     <div class="p-1">
                         <input class="btn-check" type="radio" name="payment_method" id="payment_method1" value="money"
                             checked>
@@ -146,7 +146,7 @@
                             User Account
                         </label>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- payment method -->
                 <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
@@ -163,8 +163,8 @@
 
                 <!-- client select -->
                 <h3 class="h4">Client</h3>
-                <div id="user_select_div" class="d-flex align-items-stretch mb-3">
-                    <select id="user_select" name="user_select" class="form-select" aria-label="Default select example">
+                <div id="client_id_div" class="d-flex align-items-stretch mb-3">
+                    <select id="client_id" name="client_id" class="form-select" aria-label="Default select example">
                         <option selected value="">-- Select a client --</option>
                         {% for user in data.user_list %}
                         <option value="{{ user.id }}">{{ user.name }}</option>

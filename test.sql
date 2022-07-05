@@ -12,7 +12,7 @@ FROM product p LEFT JOIN product_category pc ON p.category = pc.id
 WHERE p.canteen_id=2;
 
 /*
--- SELECT pm.name FROM transaction_product tp
+-- SELECT pm.name FROM generic_transaction tp
 -- INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
 -- INNER JOIN product p ON p.id = tpi.product_id
 -- INNER JOIN payment_method pm ON tp.payment_method = pm.id
@@ -22,7 +22,7 @@ WHERE p.canteen_id=2;
 /* Nested structure of Transactions
 -- SELECT tp.date, tp.payment_method, tp.discount, tp.total_value,
 -- group_concat('{"name":' || p.name || ',"quantity":' || tpi.quantity || '}') as products
--- FROM transaction_product tp
+-- FROM generic_transaction tp
 -- INNER JOIN transaction_product_item tpi ON tp.id=tpi.transaction_product_id
 -- INNER JOIN product p ON p.id = tpi.product_id
 -- GROUP BY tp.id;

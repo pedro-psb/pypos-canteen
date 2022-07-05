@@ -26,7 +26,7 @@ foo_transaction = {
          'canteen.product.add_product', foo_product),
         ('SELECT COUNT(*) FROM product_category WHERE canteen_id=?;',
          'canteen.product.add_category', foo_category),
-        ('SELECT COUNT(*) FROM transaction_product WHERE canteen_id=?;',
+        ('SELECT COUNT(*) FROM generic_transaction WHERE canteen_id=?;',
          'canteen.point_of_sale.add_transaction_product', foo_transaction)
     ))
 def test_categories_are_isolated_by_canteen(client, auth, app, query, endpoint_adress, form_data):

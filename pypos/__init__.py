@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, render_template, url_for, redirect
 
+from pypos.blueprints import user_space
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -38,6 +40,7 @@ def register_blueprints(app):
     app.register_blueprint(auth.bp)
     app.register_blueprint(canteen_space.bp)
     app.register_blueprint(frontend.bp)
+    app.register_blueprint(user_space.bp)
 
 
 def register_views(app):

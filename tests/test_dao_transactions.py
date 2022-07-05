@@ -1,3 +1,4 @@
+import json
 from multiprocessing.sharedctypes import Value
 from pprint import pprint
 from flask import g, session
@@ -31,6 +32,22 @@ def valid_transaction(Transaction=RegularPurchase,
             Product(id=1, quantity=2, canteen_id=1),
             Product(id=2, quantity=3, canteen_id=1)
         ],
+        payment_method=payment_method
+    )
+    return transaction
+
+
+def valid_transaction_json_data(Transaction=RegularPurchase,
+                                payment_method='cash',
+                                client_account_id=None
+                                ):
+    transaction = Transaction(
+        canteen_id=1,
+        client_account_id=client_account_id,
+        products=json.dumps([
+            {'id': '1', 'quantity': '1'},
+            {'id': '2', 'quantity': '3'},
+        ]),
         payment_method=payment_method
     )
     return transaction
@@ -79,6 +96,13 @@ def test_regular_purchase_model(app):
         transaction = valid_transaction()
         assert transaction
         assert transaction.total == 61.0
+
+
+def test_regular_purchase_model_json_products(app):
+    with app.app_context():
+        transaction = valid_transaction_json_data()
+        assert transaction
+        assert transaction.total == 45.5
 
 
 def test_user_recharge_model(app):
@@ -218,7 +242,9 @@ def test_user_recharge_pending_save(app, auth, client):
         transaction_id = transaction.save()
         transaction_pending_state = dao.get_transaction_pending_state(
             transaction_id)
-
+        payment_voucher_code = dao.get_payment_voucher_code_by_transaction_id(
+            transaction_id)
+        
         user_balance = dao.get_user_balance_by_id(1)
         canteen_balance = dao.get_canteen_balance_by_id(
             1, cash_or_bank='bank_account_balance')
@@ -226,6 +252,7 @@ def test_user_recharge_pending_save(app, auth, client):
         assert user_balance == initial_user_balance
         assert canteen_balance == initial_canteen_balance
         assert transaction_pending_state == True
+        assert payment_voucher_code == transaction.timestamp_code
 
 
 def test_user_recharge_pending_accept(app, auth, client):
@@ -240,7 +267,7 @@ def test_user_recharge_pending_accept(app, auth, client):
             total=10, pending=True)
         transaction_id = transaction.save()
         # accept call
-        accept_pending_transaction(transaction)
+        accept_pending_transaction(transaction_id)
         is_transaction_pending = dao.is_transaction_pending(transaction_id)
 
         # after accept balance

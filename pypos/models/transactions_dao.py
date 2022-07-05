@@ -1,14 +1,12 @@
 from datetime import datetime
 import json
-from multiprocessing.sharedctypes import Value
 from pprint import pprint
 from sqlite3 import Connection, Cursor
 from typing import List, Optional
-from xxlimited import foo
 
 from flask import session
 from pypos.db import get_db
-from pydantic import BaseModel, ValidationError, root_validator
+from pydantic import BaseModel, ValidationError, parse_obj_as, root_validator
 
 from pypos.models import dao
 
@@ -30,9 +28,13 @@ payment_options = {
 }
 
 
+class NullFieldError(Exception):
+    pass
+
+
 class Product(BaseModel):
     id: int
-    canteen_id: int
+    canteen_id: Optional[int]
     quantity: int
     name: str = ''
     price: float = 0
@@ -51,7 +53,8 @@ class Product(BaseModel):
 
 class UserRecharge(BaseModel):
     # default
-    date_time: datetime = datetime.now()
+    date_time: datetime = datetime.strftime(
+        datetime.now(), "%Y-%m-%d %H:%M:%S")
     discount: float = 0
     id: Optional[int]
 
@@ -70,7 +73,7 @@ class UserRecharge(BaseModel):
 
     @ root_validator()
     def set_presentation(cls, values):
-        if values['pending']:
+        if values.get('pending'):
             values['presentation'] = transaction_presentations['user_recharge_pending']
         else:
             values['presentation'] = transaction_presentations['user_recharge']
@@ -78,23 +81,26 @@ class UserRecharge(BaseModel):
 
     @ root_validator()
     def set_account_ids(cls, values):
-        conn = get_db()
-        db = conn.cursor()
+        try:
+            conn = get_db()
+            db = conn.cursor()
 
-        canteen_account_id = db.execute(
-            "SELECT id FROM canteen_account WHERE canteen_id=?",
-            (values['canteen_id'],)).fetchone()[0]
-        user_account_id = db.execute(
-            "SELECT id FROM canteen_account WHERE canteen_id=?",
-            (values['user_id'],)).fetchone()[0]
+            canteen_account_id = db.execute(
+                "SELECT id FROM canteen_account WHERE canteen_id=?",
+                (values['canteen_id'],)).fetchone()[0]
+            user_account_id = db.execute(
+                "SELECT id FROM user_account WHERE user_id=?",
+                (values['user_id'],)).fetchone()[0]
 
-        values['canteen_account_id'] = canteen_account_id
-        values['user_account_id'] = user_account_id
+            values['canteen_account_id'] = canteen_account_id
+            values['user_account_id'] = user_account_id
+        except:
+            raise ValueError('canteen_id or user_id are invalid')
         return values
 
     @root_validator()
     def timestamp_required_on_pending(cls, values):
-        if values['pending'] and not values['timestamp_code']:
+        if values.get('pending') and not values.get('timestamp_code'):
             raise ValueError(
                 'If transaction is pending, timestamp_code must be informed')
         return values
@@ -124,14 +130,14 @@ class UserRecharge(BaseModel):
                 total=self.total,
                 account_id=self.canteen_account_id,
                 account_type=payment_options[self.payment_method],
-                conn=conn
+                con=conn
             )
             dao.add_to_account(
                 table_name='user_account',
                 total=self.total,
                 account_id=self.user_account_id,
                 account_type='balance',
-                conn=conn
+                con=conn
             )
         else:
             dao.insert_into_table(
@@ -173,14 +179,27 @@ class UserRecharge(BaseModel):
 class RegularPurchase(BaseModel):
     """A purchase paid with cash or card in the POS"""
     presentation: Optional[dict]
+    canteen_id: int
     date_time: str = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     products: List[Product]
-    canteen_id: int
     payment_method: str
     discount: float = 0
     total: float = 0
 
-    @ root_validator
+    @root_validator(pre=True)
+    def parse_products(cls, values):
+        products = values.get('products')
+        if not products:
+            raise ValueError('Products not informed')
+        elif isinstance(products, str):
+            values['products'] = []
+            products = json.loads(products)
+            for p in products:
+                p['canteen_id'] = values['canteen_id']
+                values['products'].append(p)
+        return values
+
+    @root_validator
     def calculate_total(cls, values):
         total = sum(product.sub_total for product in values['products'])
         values['total'] = total
@@ -231,12 +250,9 @@ class RegularPurchase(BaseModel):
 
         # add to cash/bank balance in canteen account
 
-        if self.payment_method == 'cash':
-            query = 'UPDATE canteen_account SET cash_balance=cash_balance+? WHERE id=?;'
-            db.execute(query, (self.total, canteen_account_id))
-        elif self.payment_method in virtual_payment_methods:
-            query = 'UPDATE canteen_account SET bank_account_balance=bank_account_balance+? WHERE id=?;'
-            db.execute(query, (self.total, canteen_account_id))
+        canteen_account_type = payment_options[self.payment_method]
+        query = f'UPDATE canteen_account SET {canteen_account_type}={canteen_account_type}+? WHERE id=?;'
+        db.execute(query, (self.total, canteen_account_id))
 
         if db.rowcount < 1:
             raise ValueError(
@@ -288,20 +304,56 @@ class UserAccountPurchase(BaseModel):
     presentation: Optional[dict]
     date_time: str = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     products: List[Product]
-    canteen_id: int
+
+    canteen_id: Optional[int]
+    canteen_account_id: Optional[int]
+    client_id: Optional[int]
+    client_account_id: Optional[int]
+
     payment_method: str
     discount: float = 0
     total: float = 0
-    client_account_id: int
     pending: bool = False
 
-    @ root_validator
+    @root_validator(pre=True)
+    def parse_products(cls, values):
+        products = values.get('products')
+        if not products:
+            raise ValueError('Products not informed')
+        elif isinstance(products, str):
+            values['products'] = []
+            products = json.loads(products)
+            for p in products:
+                p['canteen_id'] = values['canteen_id']
+                values['products'].append(p)
+        return values
+
+    @root_validator
+    def get_client_and_canteen_account_id(cls, values):
+        client_id = values.get('client_id')
+        client_account_id = values.get('client_account_id')
+        canteen_id = values.get('canteen_id')
+        canteen_account_id = values.get('canteen_account_id')
+        if not client_account_id:
+            if not client_id:
+                raise ValueError("Must provide client_id or client_account_id")
+            values['client_account_id'] = dao.get_user_account_by_user_id(
+                client_id)
+        if not canteen_account_id:
+            if not canteen_id:
+                raise ValueError(
+                    "Must provide canteen_id or canteen_account_id")
+            values['canteen_account_id'] = dao.get_canteen_account_id_by_canteen_id(
+                canteen_id)
+        return values
+
+    @root_validator
     def calculate_total(cls, values):
         total = sum(product.sub_total for product in values['products'])
         values['total'] = total
         return values
 
-    @ classmethod
+    @classmethod
     def get_all(cls):
         db = get_db()
         canteen_id = session.get('canteen_id', 1)
@@ -334,26 +386,11 @@ class UserAccountPurchase(BaseModel):
     def save(self):
         conn = get_db()
         db = conn.cursor()
-
-        # get client/canteen account ids
-
-        user_id = session.get('user_id')  # employee
-        canteen_id = session.get('canteen_id')
-        if not user_id or not canteen_id:
-            raise ValueError('User must be logged in')
-
-        client_account_id = db.execute(
-            "SELECT id as client_account_id FROM user_account WHERE user_id=?",
-            (self.client_account_id,)).fetchone()[0]
-        canteen_account_id = db.execute(
-            "SELECT id as bank_account_id FROM canteen_account WHERE canteen_id=?",
-            (canteen_id,)).fetchone()[0]
-
         # add to client account
 
         db.execute("""UPDATE user_account SET balance = balance-:total
                    WHERE id = :acc_id AND balance + negative_limit >= :total; """,
-                   {"total": self.total, "acc_id": client_account_id})
+                   {"total": self.total, "acc_id": self.client_account_id})
         if db.rowcount < 1:
             raise ValueError("User don't have enought balance")
 
@@ -380,9 +417,9 @@ class UserAccountPurchase(BaseModel):
 
         dao.insert_into_table(
             db, 'user_account_transaction',
-            operation_add=False,
+            operation_add=-1,
             generic_transaction_id=transaction_id,
-            user_account_id=client_account_id
+            user_account_id=self.client_account_id
         )
 
         # insert product_items
@@ -432,30 +469,35 @@ def get_generic_transaction_by_id(transaction_id):
     return transaction
 
 
-def accept_pending_transaction(transaction: UserRecharge):
+def accept_pending_transaction(transaction_id):
     # TODO can I use typehints from other modules without doing circular imports?
     con = get_db()
     db = con.cursor()
+    transaction = dao.get_user_recharge_transaction_by_id(transaction_id)
     dao.add_to_account(
         table_name='canteen_account',
-        total=transaction.total,
-        account_id=transaction.canteen_account_id,
-        account_type=payment_options[transaction.payment_method],
-        conn=con
+        total=transaction["total"],
+        account_id=transaction["canteen_account_id"],
+        account_type=payment_options[transaction["payment_method"]],
+        con=con
     )
     dao.add_to_account(
         table_name='user_account',
-        total=transaction.total,
-        account_id=transaction.user_account_id,
+        total=transaction["total"],
+        account_id=transaction["user_account_id"],
         account_type='balance',
-        conn=con
+        con=con
     )
     db.execute("""UPDATE payment_info SET pending=0
-               WHERE generic_transaction_id=?;""", (transaction.id,))
+               WHERE generic_transaction_id=?;""", [transaction["id"]])
+    con.commit()
 
 
 def reject_pending_transaction(transaction_id):
     con = get_db()
     db = con.cursor()
     db.execute("""UPDATE payment_info SET pending=0
-               WHERE generic_transaction_id=?;""", (transaction_id,))
+               WHERE generic_transaction_id=?;""", [transaction_id])
+    db.execute("""UPDATE generic_transaction SET active=0
+               WHERE id=?;""", [transaction_id])
+    con.commit()
