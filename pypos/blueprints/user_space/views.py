@@ -16,3 +16,18 @@ def add_user_recharge():
         print(e)
         return redirect(url_for('page.client_deposit'))
     return redirect(url_for('page.client_index'))
+
+
+@bp.route('/user_child_insert', methods=['POST'])
+def user_child_insert():
+    pass
+
+
+@bp.route('/user_child_update', methods=['POST'])
+def user_child_update():
+    pass
+
+
+@bp.route('/user_child_remove', methods=['POST'])
+def user_child_remove():
+    pass

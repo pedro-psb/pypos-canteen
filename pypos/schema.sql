@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS product_category_item;
 DROP TABLE IF EXISTS transaction_product_item;
 DROP TABLE IF EXISTS transaction_product;
 DROP TABLE IF EXISTS role_permission;
+DROP TABLE IF EXISTS user_child;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS product_category;
@@ -34,6 +35,15 @@ CREATE TABLE user (
   active INTEGER DEFAULT 1 NOT NULL,
   canteen_id INTEGER NOT NULL,
   FOREIGN KEY(canteen_id) REFERENCES canteen(id)
+);
+
+CREATE TABLE user_child (
+  age INTEGER,
+  grade TEXT,
+  user_provider_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  FOREIGN KEY (user_provider_id) REFERENCES user(id),
+  FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
 CREATE TABLE role (

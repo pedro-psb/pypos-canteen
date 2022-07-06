@@ -1,7 +1,11 @@
 
 from sqlite3 import Connection, Cursor
-from typing import List
+from typing import List, Optional
+from wsgiref.validate import validator
+
+from pydantic import BaseModel
 from pypos.db import get_db
+from pypos.models.user_model import User, UserChildCreateForm, UserChildUpdateForm
 
 
 def get_client_list_by_canteen_id(canteen_id: int) -> int:
@@ -15,6 +19,7 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     user_list = db.execute(query, [canteen_id]).fetchall()
     user_list = [dict(user) for user in user_list]
     return user_list
+
 
 def get_product_list_by_canteen_id(canteen_id: int) -> int:
     """Gets a client or client_dependent from a canteen"""
@@ -174,6 +179,26 @@ def get_transaction_pending_state(transaction_id):
     WHERE gt.id=? AND active=1;"""
     pending_state = db.execute(query, (transaction_id,)).fetchone()[0]
     return pending_state
+
+# Create
+
+
+def create_user_child(form_data: UserChildCreateForm):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT pay.pending FROM generic_transaction gt
+    INNER JOIN payment_info pay ON pay.generic_transaction_id = gt.id
+    WHERE gt.id=? AND active=1;"""
+    pending_state = db.execute(query, []).fetchone()[0]
+    return pending_state
+
+
+def update_user_child(form_data: UserChildUpdateForm):
+    pass
+
+
+def create_user_child(user_child_id):
+    pass
 
 # Util
 

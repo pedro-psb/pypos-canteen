@@ -17,7 +17,7 @@ class User(BaseModel):
     password: NotEmptyString
     phone_number: str = ""
     role_name: Optional[str]
-    role_id: NotEmptyString
+    role_id: Optional[NotEmptyString]
     canteen_name: Optional[str]
     canteen_id: int
     username: NotEmptyString
@@ -126,7 +126,20 @@ class UserOwner(User):
         return canteen_id
 
 
+class UserChildCreateForm(User):
+    age: Optional[int]
+    grade: Optional[str]
+    user_provider_id: int
+
+
+class UserChildUpdateForm(UserUpdate):
+    age: Optional[int]
+    grade: Optional[str]
+
+
 # TODO implement this later
+
+
 class Canteen(BaseModel):
     name: str
     id: Optional[int]

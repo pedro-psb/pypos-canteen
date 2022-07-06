@@ -12,8 +12,7 @@ from pypos.models.transactions_dao import (
     UserAccountPurchase,
     UserRecharge,
     accept_pending_transaction,
-    reject_pending_transaction,
-    transaction_presentations
+    reject_pending_transaction
 )
 
 #   ("torta", 15.5, 1),
@@ -114,9 +113,6 @@ def test_user_recharge_model(app):
         # calculated values
         assert transaction.canteen_account_id == 1
         assert transaction.user_account_id == 1
-        assert transaction.presentation == transaction_presentations['user_recharge']
-        assert transaction_pending.presentation ==\
-            transaction_presentations['user_recharge_pending']
 
         # test pending-timestamp_code dependency
         with pytest.raises(ValueError):
