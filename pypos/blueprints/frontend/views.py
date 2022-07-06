@@ -247,12 +247,50 @@ def client_index():
 @ bp.route('/client/manage')
 @ login_required(permissions=['acess_client_dashboard'])
 def client_manage():
-    return render_template("user/client_manage.html")
+    user_child_list = [
+        {
+            'name': 'Joao',
+            'age': '4',
+            'grade': '2dn grade',
+            'id': '1'
+        },
+        {
+            'name': 'Maria',
+            'age': '6',
+            'grade': '4th grade',
+            'id': '2'
+        },
+        {
+            'name': 'Jose',
+            'age': '7',
+            'grade': '6th grade',
+            'id': '3'
+        },
+    ]
+    data = {
+        'user_child_list': user_child_list,
+    }
+    return render_template("user/client_manage.html", data=data)
 
 
-@ bp.route('/client/deposit')
-@ login_required(permissions=['acess_client_dashboard',
-                              'acess_client_account_management'])
+@bp.route('/client/manage/add_dependent')
+@login_required(permissions=['acess_client_dashboard'])
+def client_manage_add():
+    return render_template("user/client_manage_add.html")
+
+
+@bp.route('/client/manage/update_dependent/<int:user_id>')
+@login_required(permissions=['acess_client_dashboard'])
+def client_manage_update(user_id):
+    data = {
+        'user_id': user_id
+    }
+    return render_template('user/client_manage_update.html', data=data)
+
+
+@bp.route('/client/deposit')
+@login_required(permissions=['acess_client_dashboard',
+                             'acess_client_account_management'])
 def client_deposit():
     data = {
         'payment_methods': PAYMENT_METHODS_NO_USER

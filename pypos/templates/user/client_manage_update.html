@@ -1,0 +1,49 @@
+{% extends "base_user.html" %}
+{% block title %}Client Account Management{% endblock %}
+{% block content %}
+<h1>Client Account Management</h1>
+<hr>
+<div class="container">
+    <h2 class="text-center mb-3">Update Dependent {{ data.user_id }}</h2>
+    <form method="post" action="{{ '' }}" class="row g-5">
+        <!-- img -->
+        <div class="col-3">
+            <div id="profile_image" class="mb-3">
+                <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="300" height="300">
+            </div>
+            <div class="">
+                <input type="file" class="form-control" id="description" name="file" placeholder="bar">
+            </div>
+        </div>
+        <!-- fields -->
+        <div class="col-9 w-50">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="username" placeholder="My Name">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="foo@bar.com">
+                </div>
+                <div class="col-12 mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                </div>
+                <div class="col-6 mb-3">
+                    <label for="age" class="form-label">Age</label>
+                    <input type="text" class="form-control" id="age" name="age" placeholder="7">
+                </div>
+                <div class="col-6 mb-3">
+                    <label for="grade" class="form-label">Grade</label>
+                    <input type="text" class="form-control" id="grade" name="grade" placeholder="2nd grade">
+                </div>
+                <div class="text-center">
+                    <a class="btn btn-secondary w-auto align-bottom" href="{{ url_for('page.client_manage') }}">Cancel</a>
+                    <button class="btn btn-primary w-auto align-bottom" type="submit">Update Info</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

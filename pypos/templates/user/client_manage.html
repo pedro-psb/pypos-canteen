@@ -2,4 +2,36 @@
 {% block title %}Client Account Management{% endblock %}
 {% block content %}
 <h1>Client Account Management</h1>
+<hr>
+<div class="container">
+    <div class="mb-3">
+        <h2>Dependents
+            <a class="btn btn-primary" href="{{ url_for('page.client_manage_add') }}">+</a>
+        </h2>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Age</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for child in data.user_child_list %}
+            <tr>
+
+                <td>{{ child.name }}</td>
+                <td>{{ child.grade }}</td>
+                <td>{{ child.age }}</td>
+                <td>
+                    <a class="btn btn-secondary" href="{{ url_for('page.client_manage', user_id=1) }}">Delete</a>
+                    <a class="btn btn-primary" href="{{ url_for('page.client_manage_update', user_id=child.id) }}">Update</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
