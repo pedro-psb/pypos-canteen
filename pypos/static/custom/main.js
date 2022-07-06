@@ -3,8 +3,7 @@ $(document).ready(function () {
         document.querySelector('.select2-search__field').focus();
     });
 
-    $('#user_select').select2();
-    console.log($('#user_select'))
+    $('#client_id').select2();
 });
 
 function add_item_to_order(id, price, name) {
@@ -144,4 +143,29 @@ discount.addEventListener('input', update_form);
 clear_order.addEventListener('click', function () {
     document.querySelector('#order').innerHTML = null;
     update_form();
+});
+
+// User Account Purchase Toggle
+function hide(elements) {
+    elements = elements.length ? elements : [elements];
+    for (var index = 0; index < elements.length; index++) {
+        elements[index].style.display = 'none';
+    }
+}
+
+function show(elements, specifiedDisplay) {
+    elements = elements.length ? elements : [elements];
+    for (var index = 0; index < elements.length; index++) {
+        elements[index].style.display = specifiedDisplay || 'block';
+    }
+}
+
+let payment_method = document.querySelector('#payment_method')
+let client_select = document.querySelector('#client_select_div')
+payment_method.addEventListener('change', function () {
+    if (payment_method.value == "user_account") {
+        show(client_select)
+    } else {
+        hide(client_select)
+    }
 });

@@ -201,23 +201,11 @@ def manage_products_update_category(id):
 def pos_main():
     db = get_db()
     canteen_id = session.get('canteen_id')
-
-    products = db.execute('''
-        SELECT p.name, p.id, p.price, pc.name as category FROM product p
-        LEFT JOIN product_category pc ON p.category = pc.id
-        WHERE p.active=1 AND p.canteen_id=?;
-    ''', (canteen_id,)).fetchall()
     data = {
-        'products': [dict(prod) for prod in products],
+        'products': dao.get_product_list_by_canteen_id(canteen_id),
         'payment_methods': PAYMENT_METHODS,
-        'user_list': [
-            {'id': '1', 'name': 'Foo'},
-            {'id': '2', 'name': 'Bar'},
-            {'id': '3', 'name': 'Spam'},
-            {'id': '4', 'name': 'Eggs'},
-            {'id': '5', 'name': 'Placeholder'},
-        ]}
-    print(data)
+        'user_list': dao.get_client_list_by_canteen_id(canteen_id)
+    }
     return render_template("user/pos_main.html", data=data)
 
 
@@ -278,29 +266,10 @@ def client_index():
             pending=True
         ),
     ]
-
-    # Sum partial balance and add specific html render settings (should be here)
-    row_total = 0
-    valid_transactions = []
-    for t in transactions:
-        presentation_data = {}
-        if isinstance(t, UserAccountPurchase):
-            row_total -= t.total
-            presentation_data = {'badge': 'bg-danger', 'name': 'purchase'}
-        elif isinstance(t, UserRecharge):
-            if not t.pending:
-                row_total += t.total
-                presentation_data = {'badge': 'bg-success', 'name': 'recharge'}
-            else:
-                presentation_data = {'badge': 'bg-warning',
-                                     'name': 'recharge (pending)'}
-        else:
-            continue
-        presentation_data['row_total'] = row_total
-        t.presentation = presentation_data
-        valid_transactions.append(t.dict())
+    user_id = session['user_id']
+    all_user_transaction = dao.get_all_transactions_by_user_id(user_id)
     data = {
-        'transactions': valid_transactions
+        'transactions': all_user_transaction
     }
     return render_template("user/client_index.html", data=data)
 

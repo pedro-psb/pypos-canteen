@@ -10,15 +10,6 @@ from pydantic import BaseModel, ValidationError, parse_obj_as, root_validator
 
 from pypos.models import dao
 
-transaction_presentations = {
-    'regular_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
-    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
-    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
-    'user_recharge': {'name': 'recharge', 'badge': 'bg-danger'},
-    'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
-    'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
-}
-
 payment_options = {
     'cash': 'cash_balance',
     'pix': 'bank_account_balance',
@@ -26,7 +17,6 @@ payment_options = {
     'credit_card': 'bank_account_balance',
     'DOC/TED': 'bank_account_balance',
 }
-
 
 class NullFieldError(Exception):
     pass
@@ -74,9 +64,9 @@ class UserRecharge(BaseModel):
     @ root_validator()
     def set_presentation(cls, values):
         if values.get('pending'):
-            values['presentation'] = transaction_presentations['user_recharge_pending']
+            values['presentation'] = dao.transaction_type_map['user_recharge_pending']['presentation']
         else:
-            values['presentation'] = transaction_presentations['user_recharge']
+            values['presentation'] = dao.transaction_type_map['user_recharge']['presentation']
         return values
 
     @ root_validator()

@@ -4,6 +4,29 @@ from typing import List
 from pypos.db import get_db
 
 
+def get_client_list_by_canteen_id(canteen_id: int) -> int:
+    """Gets a client or client_dependent from a canteen"""
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT id, username AS name FROM user
+    WHERE canteen_id=? AND active=1 AND
+    role_name IN ('client', 'client_dependent');"""
+    user_list = db.execute(query, [canteen_id]).fetchall()
+    user_list = [dict(user) for user in user_list]
+    return user_list
+
+def get_product_list_by_canteen_id(canteen_id: int) -> int:
+    """Gets a client or client_dependent from a canteen"""
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT p.name, p.id, p.price, pc.name as category
+    FROM product p LEFT JOIN product_category pc ON p.category = pc.id
+    WHERE p.active=1 AND p.canteen_id=?;"""
+    product_list = db.execute(query, [canteen_id]).fetchall()
+    product_list = [dict(product) for product in product_list]
+    return product_list
+
+
 def get_user_account_by_user_id(user_id) -> int:
     con = get_db()
     db = con.cursor()
@@ -42,6 +65,7 @@ def get_generic_transaction_by_id(transaction_id):
     query = f"SELECT * FROM generic_transaction WHERE id=?;"
     generic_transaction = db.execute(query, [transaction_id]).fetchone()
     return dict(generic_transaction)
+
 
 def get_user_recharge_transaction_by_id(transaction_id):
     con = get_db()
@@ -91,6 +115,44 @@ def get_all_transactions_by_canteen_id(canteen_id):
             all_transactions[i]['transaction_type'] = transaction_type_map['print_name']
             all_transactions[i]['row_total'] = row_total
 
+    return all_transactions
+
+
+def get_all_transactions_by_user_id(user_id):
+    con = get_db()
+    db = con.cursor()
+    """Get all user transactions data (except product_item and products)"""
+    query = """
+        SELECT gt.id, gt.total, gt.date_time, pay.payment_method, pay.discount, pay.pending,
+        uat.operation_add AS uat_add, cat.operation_add AS cat_add,
+        ua.id AS uat_id, u.id AS user_id, u.username AS user_name,
+        payv.timestamp_code
+        FROM generic_transaction gt
+        INNER JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
+        LEFT JOIN payment_info pay ON gt.id = pay.generic_transaction_id
+        LEFT JOIN payment_voucher payv ON payv.generic_transaction_id = gt.id
+        LEFT JOIN canteen_account_transaction cat ON cat.generic_transaction_id=gt.id
+        LEFT JOIN user_account ua  ON uat.user_account_id=ua.id
+        LEFT JOIN user u  ON ua.user_id = u.id
+        WHERE ua.user_id=? AND gt.active=1;
+    """
+    all_transactions = db.execute(query, [user_id]).fetchall()
+    row_total = 0
+    if all_transactions:
+        for i, transaction in enumerate(all_transactions):
+            all_transactions[i] = dict(transaction)
+
+            # get transaction_type_data based on user account and canteen acount operations
+            transaction_type_map = get_transaction_type(
+                uat_add=transaction['uat_add'],
+                cat_add=transaction['cat_add'],
+                pending=transaction['pending'])
+            row_total_calculator = transaction_type_map['row_total_calculator']
+
+            row_total = row_total_calculator(row_total, transaction['total'])
+            all_transactions[i]['presentation'] = transaction_type_map['presentation_user']
+            all_transactions[i]['transaction_type'] = transaction_type_map['print_name']
+            all_transactions[i]['row_total'] = row_total
     return all_transactions
 
 
@@ -190,37 +252,72 @@ def is_transaction_pending(transaction_id):
 
 
 # TODO implement this map over the ifs. Or don't
+canteen_transaction_presentation = {
+    'regular_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+    'user_recharge': {'name': 'recharge', 'badge': 'bg-danger'},
+    'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
+    'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
+}
+
+
+# user_transaction_presentation = {
+#     'regular_purchase': {'name': 'purchase', 'badge': 'bg-secondary'},
+#     'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
+#     'user_recharge': {'name': 'recharge', 'badge': 'bg-success'},
+#     'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
+#     'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
+# }
+
 transaction_type_map = {
     'user_recharge': {
         'print_name': 'User Recharge',
         'uat_add': 1,
         'cat_add': None,
-        'row_total_calculator': lambda x, y: x + y
+        'row_total_calculator': lambda x, y: x + y,
+        'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
+        'presentation_user': {'name': 'recharge', 'badge': 'bg-success'}
+    },
+    'user_recharge_pending': {
+        'print_name': 'User Recharge Pending',
+        'uat_add': 1,
+        'cat_add': None,
+        'row_total_calculator': lambda x, y: x,
+        'presentation': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
+        'presentation_user': {'name': 'recharge (pending)', 'badge': 'bg-secondary'}
     },
     'user_account_purchase': {
         'print_name': 'User Account Purchase',
         'uat_add': -1,
         'cat_add': None,
-        'row_total_calculator': lambda x, y: x
+        'row_total_calculator': lambda x, y: x,
+        'presentation': {'name': 'purchase', 'badge': 'bg-secondary'},
+        'presentation_user': {'name': 'purchase', 'badge': 'bg-danger'}
     },
     'regular_purchase': {
         'print_name': 'Regular Purchase',
         'uat_add': None,
         'cat_add': 1,
-        'row_total_calculator': lambda x, y: x + y
+        'row_total_calculator': lambda x, y: x + y,
+        'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
+        'presentation_user': {'name': 'recharge', 'badge': 'bg-secondary'}
     },
     'canteen_withdraw': {
         'print_name': 'Canteen Withdraw',
         'uat_add': None,
         'cat_add': -1,
-        'row_total_calculator': lambda x, y: x - y
+        'row_total_calculator': lambda x, y: x - y,
+        'presentation': {'name': 'purchase', 'badge': 'bg-danger'},
+        'presentation_user': {'name': 'purchase', 'badge': 'bg-secondary'}
     },
 }
 
 
-def get_transaction_type(uat_add, cat_add):
-    if uat_add == 1 and cat_add == 1:
+def get_transaction_type(uat_add, cat_add, pending=False):
+    if uat_add == 1 and cat_add == 1 and not pending:
         transaction_type = 'user_recharge'
+    elif uat_add == 1 and cat_add == 1 and pending:
+        transaction_type = 'user_recharge_pending'
     elif uat_add == -1 and not cat_add:
         transaction_type = 'user_account_purchase'
     elif not uat_add and cat_add == 1:
@@ -228,5 +325,5 @@ def get_transaction_type(uat_add, cat_add):
     elif not uat_add and cat_add == -1:
         transaction_type = 'canteen_withdraw'
     else:
-        transaction_type = 'Unknow combination'
+        raise ValueError('Unknow combination')
     return transaction_type_map[transaction_type]

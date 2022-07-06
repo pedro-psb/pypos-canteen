@@ -21,6 +21,7 @@
                 <tr>
                     <th>Date</th>
                     <th>Type</th>
+                    <th>Payment Method</th>
                     <th>Value</th>
                     <th>Partial</th>
                 </tr>
@@ -32,8 +33,9 @@
                     <td>
                         <span class="badge {{ transaction.presentation.badge }}">{{ transaction.presentation.name }} </span>
                     </td>
+                    <td>{{ transaction.payment_method }}</td>
                     <td>{{ '$%0.2f' | format(transaction.total) }}</td>
-                    <td>{{ '$%0.2f' | format(transaction.presentation.row_total|float) }}</td>
+                    <td>{{ '$%0.2f' | format(transaction.row_total|float) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

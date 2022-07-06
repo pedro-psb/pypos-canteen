@@ -150,7 +150,8 @@
 
                 <!-- payment method -->
                 <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
-                    <select name="payment_method" class="form-select" aria-label="Default select example">
+                    <select id="payment_method" name="payment_method" class="form-select"
+                        aria-label="Default select example">
                         {% for payment_method in data.payment_methods %}
                         {% if loop.index == 0 %}
                         <option value="{{ payment_method[0] }}" selected>{{ payment_method[1] }}</option>
@@ -162,9 +163,9 @@
                 </div>
 
                 <!-- client select -->
-                <h3 class="h4">Client</h3>
-                <div id="client_id_div" class="d-flex align-items-stretch mb-3">
-                    <select id="client_id" name="client_id" class="form-select" aria-label="Default select example">
+                <div style="display: none;" id="client_select_div" class="mb-3">
+                    <h3 class="h4">Client</h3>
+                    <select id="client_select" name="client_id" class="form-select" aria-label="Default select example">
                         <option selected value="">-- Select a client --</option>
                         {% for user in data.user_list %}
                         <option value="{{ user.id }}">{{ user.name }}</option>
