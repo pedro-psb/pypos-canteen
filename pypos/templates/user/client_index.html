@@ -7,7 +7,7 @@
     <div class="row align-items-center">
         <div class="col input-group" style="max-width:300px;">
             <p class="input-group-text btn-secondary">Balance</p>
-            <p class="form-control">R$20.00</p>
+            <p class="form-control">{{ '$%0.2f' | format(data.balance|float) }}</p>
         </div>
         <div class="col">
             <a href="{{ url_for('page.client_deposit') }}" class="btn btn-primary w-auto">Manual Deposit</a>

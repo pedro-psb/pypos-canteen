@@ -8,9 +8,10 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     """Gets a client or client_dependent from a canteen"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT id, username AS name FROM user
-    WHERE canteen_id=? AND active=1 AND
-    role_name IN ('client', 'client_dependent');"""
+    query = """SELECT u.id, u.username AS name, ua.balance FROM user u
+    INNER JOIN user_account ua ON u.id=ua.user_id
+    WHERE u.canteen_id=? AND u.active=1 AND
+    u.role_name IN ('client', 'client_dependent');"""
     user_list = db.execute(query, [canteen_id]).fetchall()
     user_list = [dict(user) for user in user_list]
     return user_list
@@ -119,9 +120,9 @@ def get_all_transactions_by_canteen_id(canteen_id):
 
 
 def get_all_transactions_by_user_id(user_id):
+    """Get all user transactions data (except product_item and products)"""
     con = get_db()
     db = con.cursor()
-    """Get all user transactions data (except product_item and products)"""
     query = """
         SELECT gt.id, gt.total, gt.date_time, pay.payment_method, pay.discount, pay.pending,
         uat.operation_add AS uat_add, cat.operation_add AS cat_add,
@@ -147,7 +148,7 @@ def get_all_transactions_by_user_id(user_id):
                 uat_add=transaction['uat_add'],
                 cat_add=transaction['cat_add'],
                 pending=transaction['pending'])
-            row_total_calculator = transaction_type_map['row_total_calculator']
+            row_total_calculator = transaction_type_map['row_total_calculator_user']
 
             row_total = row_total_calculator(row_total, transaction['total'])
             all_transactions[i]['presentation'] = transaction_type_map['presentation_user']
@@ -275,6 +276,7 @@ transaction_type_map = {
         'uat_add': 1,
         'cat_add': None,
         'row_total_calculator': lambda x, y: x + y,
+        'row_total_calculator_user': lambda x, y: x + y,
         'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
         'presentation_user': {'name': 'recharge', 'badge': 'bg-success'}
     },
@@ -283,6 +285,7 @@ transaction_type_map = {
         'uat_add': 1,
         'cat_add': None,
         'row_total_calculator': lambda x, y: x,
+        'row_total_calculator_user': lambda x, y: x,
         'presentation': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
         'presentation_user': {'name': 'recharge (pending)', 'badge': 'bg-secondary'}
     },
@@ -291,6 +294,7 @@ transaction_type_map = {
         'uat_add': -1,
         'cat_add': None,
         'row_total_calculator': lambda x, y: x,
+        'row_total_calculator_user': lambda x, y: x - y,
         'presentation': {'name': 'purchase', 'badge': 'bg-secondary'},
         'presentation_user': {'name': 'purchase', 'badge': 'bg-danger'}
     },
@@ -299,6 +303,7 @@ transaction_type_map = {
         'uat_add': None,
         'cat_add': 1,
         'row_total_calculator': lambda x, y: x + y,
+        'row_total_calculator_user': lambda x, y: x,
         'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
         'presentation_user': {'name': 'recharge', 'badge': 'bg-secondary'}
     },
@@ -307,6 +312,7 @@ transaction_type_map = {
         'uat_add': None,
         'cat_add': -1,
         'row_total_calculator': lambda x, y: x - y,
+        'row_total_calculator_user': lambda x, y: x,
         'presentation': {'name': 'purchase', 'badge': 'bg-danger'},
         'presentation_user': {'name': 'purchase', 'badge': 'bg-secondary'}
     },

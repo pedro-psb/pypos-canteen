@@ -3,7 +3,7 @@ $(document).ready(function () {
         document.querySelector('.select2-search__field').focus();
     });
 
-    $('#client_id').select2();
+    $('#client_select').select2();
 });
 
 function add_item_to_order(id, price, name) {

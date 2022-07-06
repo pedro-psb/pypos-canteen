@@ -11,12 +11,12 @@ from . import bp
 # Public
 
 PAYMENT_METHODS = [
-    ('cash', 'Cash'), ('debit_card', 'Debit Card'),
+    ('cash', 'Cash'), ('debit_card', 'Debit Card'), ('pix', 'PIX'),
     ('credit_card', 'Credit Card'), ('user_account', 'User Account')
 ]
 PAYMENT_METHODS_NO_USER = [
     ('cash', 'Cash'), ('debit_card', 'Debit Card'),
-    ('credit_card', 'Credit Card')
+    ('credit_card', 'Credit Card'), ('pix', 'PIX'),
 ]
 
 
@@ -236,40 +236,10 @@ def manage_clients():
 @ bp.route('/client')
 @ login_required(permissions=['acess_client_dashboard'])
 def client_index():
-    transactions = [
-        RegularPurchase(
-            canteen_id=1,
-            client_account_id=1,  # owner-user
-            products=[
-                Product(id=1, quantity=2, canteen_id=1),
-                Product(id=2, quantity=3, canteen_id=1)
-            ],
-            payment_method='cash'
-        ),
-        UserAccountPurchase(
-            canteen_id=1,
-            client_account_id=1,  # owner-user
-            products=[
-                Product(id=1, quantity=2, canteen_id=1),
-                Product(id=2, quantity=3, canteen_id=1)
-            ],
-            payment_method='user_account'
-        ),
-        UserAccountPurchase(
-            canteen_id=1,
-            client_account_id=1,  # owner-user
-            products=[
-                Product(id=1, quantity=1, canteen_id=1),
-                Product(id=2, quantity=1, canteen_id=1)
-            ],
-            payment_method='user_account',
-            pending=True
-        ),
-    ]
     user_id = session['user_id']
-    all_user_transaction = dao.get_all_transactions_by_user_id(user_id)
     data = {
-        'transactions': all_user_transaction
+        'transactions': dao.get_all_transactions_by_user_id(user_id),
+        'balance': dao.get_user_balance_by_id(user_id)
     }
     return render_template("user/client_index.html", data=data)
 

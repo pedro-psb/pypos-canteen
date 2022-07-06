@@ -165,10 +165,10 @@
                 <!-- client select -->
                 <div style="display: none;" id="client_select_div" class="mb-3">
                     <h3 class="h4">Client</h3>
-                    <select id="client_select" name="client_id" class="form-select" aria-label="Default select example">
+                    <select style="width: 100%" id="client_select" name="client_id" class="form-select" aria-label="Default select example">
                         <option selected value="">-- Select a client --</option>
                         {% for user in data.user_list %}
-                        <option value="{{ user.id }}">{{ user.name }}</option>
+                        <option value="{{ user.id }}">{{ user.name }} ({{ user.balance }})</option>
                         {% endfor %}
                     </select>
                 </div>
