@@ -66,7 +66,7 @@ class User(BaseModel):
         query = "SELECT * FROM user WHERE username=?;"
         user_exist = db.execute(query, (username,)).fetchone()
         if user_exist:
-            raise ValidationError('username already taken')
+            raise ValueError('username already taken')
         return username
 
     @validator('email')
@@ -75,12 +75,11 @@ class User(BaseModel):
         query = "SELECT * FROM user WHERE email=?;"
         email_exist = db.execute(query, (email,)).fetchone()
         if email_exist:
-            raise ValidationError('email is already taken')
+            raise ValueError('email is already taken')
         return email
 
     class Config:
         anystr_strip_whitespace = True
-        max_anystr_length = 100
 
 
 class UserUpdate(User):
@@ -95,7 +94,22 @@ class UserUpdate(User):
     role_name: Optional[str]
     role_id: Optional[NotEmptyString]
     canteen_id: Optional[int]
+    
+    @validator('username')
+    def username_doesnt_exist(cls, username, values):
+        db = get_db()
+        query = "SELECT * FROM user WHERE username=?;"
+        user_exist = db.execute(query, (username,)).fetchone()
+        if not user_exist:
+            raise ValidationError("username doesn't exist")
+        return username
 
+    @validator('email')
+    def email_isnt_taken(cls, email):
+        """TODO needs some validation:
+        - if email is the same as from same user, should pass
+        - if email is the same as from different user, shouldn't pass"""
+        return email
 
 class UserClient(User):
     password_confirm: NotEmptyString
@@ -135,6 +149,7 @@ class UserChildCreateForm(User):
 class UserChildUpdateForm(UserUpdate):
     age: Optional[int]
     grade: Optional[str]
+    
 
 
 # TODO implement this later

@@ -1,5 +1,5 @@
 
-from sqlite3 import Connection, Cursor
+from sqlite3 import Connection, Cursor, DatabaseError, OperationalError
 from typing import List, Optional
 from wsgiref.validate import validator
 
@@ -180,25 +180,86 @@ def get_transaction_pending_state(transaction_id):
     pending_state = db.execute(query, (transaction_id,)).fetchone()[0]
     return pending_state
 
+
+def get_user_child_count(canteen_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT count(*) FROM user u INNER JOIN user_child uc
+    ON u.id = uc.user_id WHERE canteen_id=?;"""
+    user_child_count = db.execute(query, [canteen_id]).fetchone()[0]
+    return user_child_count
+
+
+def get_user_count(canteen_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT count(*) FROM user WHERE canteen_id=?;"""
+    user_count = db.execute(query, [canteen_id]).fetchone()[0]
+    return user_count
+
+
+def get_user_by_id(user_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT * FROM user u INNER JOIN user_child WHERE u.id=?;"""
+    user_data = db.execute(query, [user_id]).fetchone()
+    user_data = dict(user_data)
+    return user_data
 # Create
 
 
 def create_user_child(form_data: UserChildCreateForm):
     con = get_db()
     db = con.cursor()
-    query = """SELECT pay.pending FROM generic_transaction gt
-    INNER JOIN payment_info pay ON pay.generic_transaction_id = gt.id
-    WHERE gt.id=? AND active=1;"""
-    pending_state = db.execute(query, []).fetchone()[0]
-    return pending_state
+
+    # Insert regular user
+    query = """INSERT INTO user (username, password, email, phone_number,
+    role_name, canteen_id) VALUES (?,?,?,?,?,?);"""
+    db.execute(query, [
+        form_data.username, form_data.password, form_data.email,
+        form_data.phone_number, form_data.role_name, form_data.canteen_id
+    ])
+    user_id = db.lastrowid
+
+    # Insert user_child extension
+    query = """INSERT INTO user_child (age, grade, user_provider_id, user_id)
+    VALUES (?,?,?,?);"""
+    db.execute(query, [
+        form_data.age, form_data.grade,
+        form_data.user_provider_id, user_id
+    ])
+
+    # Suceed
+    con.commit()
+    return user_id
 
 
 def update_user_child(form_data: UserChildUpdateForm):
-    pass
+    con = get_db()
+    db = con.cursor()
+
+    # update regular user
+    query = """UPDATE user SET username=:username, password=:password, email=:email,
+    phone_number=:phone_number, role_name=:role_name
+    WHERE id=:id;"""
+    db.execute(query, form_data.dict())
+
+    # update user_child extension
+    query = """UPDATE user_child SET age=:age, grade=:grade WHERE user_id=:id;"""
+    db.execute(query, form_data.dict())
+
+    # Suceed
+    con.commit()
 
 
-def create_user_child(user_child_id):
-    pass
+def delete_user_soft(user_id):
+    con = get_db()
+    db = con.cursor()
+
+    # update regular user
+    query = """UPDATE user SET active=0 WHERE id=?"""
+    db.execute(query, [user_id])
+    con.commit()
 
 # Util
 
