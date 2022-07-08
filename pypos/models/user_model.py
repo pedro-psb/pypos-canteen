@@ -147,6 +147,8 @@ class UserOwner(User):
 
 
 class UserChildCreateForm(User):
+    role_name = 'dependent_user'
+    email: Optional[str]
     age: Optional[int]
     grade: Optional[str]
     user_provider_id: int

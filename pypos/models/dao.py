@@ -189,10 +189,11 @@ def get_user_child_count(canteen_id):
     user_child_count = db.execute(query, [canteen_id]).fetchone()[0]
     return user_child_count
 
+
 def get_user_child_list(canteen_id):
     con = get_db()
     db = con.cursor()
-    query = """SELECT u.username, u.id, uc.age, uc.grade FROM user u
+    query = """SELECT u.username, u.email, u.phone_number, u.id, uc.age, uc.grade FROM user u
     INNER JOIN user_child uc ON u.id = uc.user_id WHERE canteen_id=? AND u.active=1;"""
     user_child_list = db.execute(query, [canteen_id]).fetchall()
     user_child_list = [dict(u) for u in user_child_list]
@@ -238,7 +239,8 @@ def create_user_child(form_data: UserChildCreateForm):
         form_data.age, form_data.grade,
         form_data.user_provider_id, user_id
     ])
-
+    if db.rowcount < 1:
+        raise ValueError('Some error ocurred with the database insert funcion')
     # Suceed
     con.commit()
     return user_id
@@ -257,7 +259,6 @@ def update_user_child(form_data: UserChildUpdateForm):
     # update user_child extension
     query = """UPDATE user_child SET age=:age, grade=:grade WHERE user_id=:id;"""
     db.execute(query, form_data.dict())
-
     # Suceed
     con.commit()
 
