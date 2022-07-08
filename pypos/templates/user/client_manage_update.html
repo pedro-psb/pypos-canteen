@@ -4,8 +4,8 @@
 <h1>Client Account Management</h1>
 <hr>
 <div class="container">
-    <h2 class="text-center mb-3">Update Dependent {{ data.user_id }}</h2>
-    <form method="post" action="{{ '' }}" class="row g-5">
+    <h2 class="text-center mb-3">Update Dependent</h2>
+    <form method="post" action="{{ url_for('user_space.user_child_insert') }}" class="row g-5">
         <!-- img -->
         <div class="col-3">
             <div id="profile_image" class="mb-3">
@@ -19,27 +19,33 @@
         <div class="col-9 w-50">
             <div class="row">
                 <div class="col-12 mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="username" placeholder="My Name">
+                    <label for="name" class="form-label">Name {{ data.id }}</label>
+                    <input type="text" class="form-control" id="name" name="username" placeholder="My Name"
+                        value="{{ data.username }}">
                 </div>
                 <div class="col-12 mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="foo@bar.com">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="foo@bar.com"
+                        value="{{ data.email }}">
                 </div>
                 <div class="col-12 mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="********">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="age" class="form-label">Age</label>
-                    <input type="text" class="form-control" id="age" name="age" placeholder="7">
+                    <input type="text" class="form-control" id="age" name="age" placeholder="7"
+                        value="{{ data.age }}">
                 </div>
                 <div class="col-6 mb-3">
                     <label for="grade" class="form-label">Grade</label>
-                    <input type="text" class="form-control" id="grade" name="grade" placeholder="2nd grade">
+                    <input type="text" class="form-control" id="grade" name="grade" placeholder="2nd grade"
+                        value="{{ data.grade }}">
                 </div>
+                <input hidden name="id" value="{{ data.user_id }}">
                 <div class="text-center">
-                    <a class="btn btn-secondary w-auto align-bottom" href="{{ url_for('page.client_manage') }}">Cancel</a>
+                    <a class="btn btn-secondary w-auto align-bottom"
+                        href="{{ url_for('page.client_manage') }}">Cancel</a>
                     <button class="btn btn-primary w-auto align-bottom" type="submit">Update Info</button>
                 </div>
             </div>

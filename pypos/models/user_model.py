@@ -1,6 +1,6 @@
 import re
 from typing import Optional
-from pydantic import BaseModel, ConstrainedStr, ValidationError, root_validator, validator
+from pydantic import BaseModel, ConstrainedStr, root_validator, validator
 from werkzeug.security import generate_password_hash
 
 from pypos.db import get_db
@@ -42,7 +42,7 @@ class User(BaseModel):
         role_name = db.execute(
             "SELECT name FROM role WHERE id=?;", (id,)).fetchone()[0]
         if not role_name:
-            raise ValidationError("The role doesn't exist")
+            raise ValueError("The role doesn't exist")
 
         # Update role_name with accurate value
         if not values['role_name']:
@@ -55,7 +55,7 @@ class User(BaseModel):
         db = get_db()
         canteen_name = db.execute(query, (str(canteen_id),)).fetchone()
         if not canteen_name:
-            raise ValidationError("Canteen ID is invalid.")
+            raise ValueError("Canteen ID is invalid.")
         if not values.get('canteen_name'):
             values['canteen_name'] = canteen_name[0]
         return canteen_id
@@ -88,7 +88,7 @@ class UserUpdate(User):
     #       which makes all parameters optional.
     id: Optional[int]
     username: Optional[NotEmptyString]
-    email: Optional[NotEmptyString]
+    email: Optional[str]
     password: Optional[NotEmptyString]
     phone_number: Optional[str] = ""
     role_name: Optional[str]
@@ -97,13 +97,19 @@ class UserUpdate(User):
     
     @validator('username')
     def username_doesnt_exist(cls, username, values):
-        db = get_db()
-        query = "SELECT * FROM user WHERE username=?;"
-        user_exist = db.execute(query, (username,)).fetchone()
-        if not user_exist:
-            raise ValidationError("username doesn't exist")
+        """TODO needs some special validation:
+        - if username is already taken (expeting the original username), shouln't pass"""
+        # db = get_db()
+        # query = "SELECT * FROM user WHERE username=?;"
+        # user_exist = db.execute(query, (username,)).fetchone()
+        # if not user_exist:
+        #     raise ValueError("username doesn't exist")
         return username
 
+    @validator('email')
+    def email_must_match_pattern(cls, email):
+        return email
+    
     @validator('email')
     def email_isnt_taken(cls, email):
         """TODO needs some validation:
@@ -117,7 +123,7 @@ class UserClient(User):
     @root_validator(pre=True)
     def password_matches(cls, values):
         if not values['password_confirm'] == values['password']:
-            raise ValidationError("Passwords doesn't match")
+            raise ValueError("Passwords doesn't match")
         return values
 
 
@@ -131,7 +137,7 @@ class UserOwner(User):
         db = get_db()
         canteen_exist = db.execute(query, (canteen_name,)).fetchone()
         if canteen_exist:
-            raise ValidationError("Canteen name already taken.")
+            raise ValueError("Canteen name already taken.")
         return canteen_name
 
     @validator('canteen_id')

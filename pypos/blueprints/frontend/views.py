@@ -247,26 +247,6 @@ def client_index():
 @ bp.route('/client/manage')
 @ login_required(permissions=['acess_client_dashboard'])
 def client_manage():
-    user_child_list = [
-        {
-            'name': 'Joao',
-            'age': '4',
-            'grade': '2dn grade',
-            'id': '1'
-        },
-        {
-            'name': 'Maria',
-            'age': '6',
-            'grade': '4th grade',
-            'id': '2'
-        },
-        {
-            'name': 'Jose',
-            'age': '7',
-            'grade': '6th grade',
-            'id': '3'
-        },
-    ]
     canteen_id = session['canteen_id']
     user_child_list = dao.get_user_child_list(canteen_id)
     data = {
@@ -284,10 +264,16 @@ def client_manage_add():
 @bp.route('/client/manage/update_dependent/<int:user_id>')
 @login_required(permissions=['acess_client_dashboard'])
 def client_manage_update(user_id):
-    data = {
-        'user_id': user_id
-    }
-    return render_template('user/client_manage_update.html', data=data)
+    user_data = dao.get_user_by_id(user_id)
+    user_data = stringify_nones_in_dict(user_data)
+    return render_template('user/client_manage_update.html', data=user_data)
+
+
+def stringify_nones_in_dict(data: dict) -> dict:
+    for k, v in data.items():
+        if not v:
+            data[k] = ""
+    return data
 
 
 @bp.route('/client/deposit')

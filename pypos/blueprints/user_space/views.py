@@ -1,3 +1,5 @@
+from pypos.models import dao
+from pypos.models.user_model import UserChildUpdateForm
 from . import bp
 from flask import redirect, request, session, url_for
 from pypos.models.transactions_dao import UserRecharge
@@ -20,7 +22,14 @@ def add_user_recharge():
 
 @bp.route('/user_child_insert', methods=['POST'])
 def user_child_insert():
-    pass
+    form_data = dict(request.form)
+    user_data = dao.get_user_by_id(form_data['id'])
+    if not form_data['password']:
+        form_data['password'] = user_data['password']
+    user_data.update(form_data)
+    user_data = UserChildUpdateForm(**user_data)
+    dao.update_user_child(user_data)
+    return redirect(url_for('page.client_manage'))
 
 
 @bp.route('/user_child_update', methods=['POST'])
