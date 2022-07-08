@@ -185,9 +185,18 @@ def get_user_child_count(canteen_id):
     con = get_db()
     db = con.cursor()
     query = """SELECT count(*) FROM user u INNER JOIN user_child uc
-    ON u.id = uc.user_id WHERE canteen_id=?;"""
+    ON u.id = uc.user_id WHERE canteen_id=? AND u.active=1;"""
     user_child_count = db.execute(query, [canteen_id]).fetchone()[0]
     return user_child_count
+
+def get_user_child_list(canteen_id):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT u.username, u.id, uc.age, uc.grade FROM user u
+    INNER JOIN user_child uc ON u.id = uc.user_id WHERE canteen_id=? AND u.active=1;"""
+    user_child_list = db.execute(query, [canteen_id]).fetchall()
+    user_child_list = [dict(u) for u in user_child_list]
+    return user_child_list
 
 
 def get_user_count(canteen_id):

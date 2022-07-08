@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS product_category;
 DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS permission;
 DROP TABLE IF EXISTS payment_method;
+DROP TABLE IF EXISTS payment_info;
+DROP TABLE IF EXISTS payment_voucher;
 DROP TABLE IF EXISTS canteen;
 DROP TABLE IF EXISTS user_account;
 DROP TABLE IF EXISTS canteen_account;

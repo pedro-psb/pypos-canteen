@@ -267,6 +267,8 @@ def client_manage():
             'id': '3'
         },
     ]
+    canteen_id = session['canteen_id']
+    user_child_list = dao.get_user_child_list(canteen_id)
     data = {
         'user_child_list': user_child_list,
     }
