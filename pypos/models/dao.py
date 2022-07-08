@@ -263,7 +263,7 @@ def update_user_child(form_data: UserChildUpdateForm):
     con.commit()
 
 
-def delete_user_soft(user_id):
+def delete_user(user_id):
     con = get_db()
     db = con.cursor()
 

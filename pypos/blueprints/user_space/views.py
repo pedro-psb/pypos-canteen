@@ -61,4 +61,9 @@ def user_child_update():
 
 @bp.route('/user_child_remove', methods=['POST'])
 def user_child_remove():
-    pass
+    try:
+        form_data = request.form
+        dao.delete_user(form_data['id'])
+    except Exception as e:
+        print(e)
+    return redirect(url_for('page.client_manage'))

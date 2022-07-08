@@ -28,8 +28,13 @@
                 <td>{{ child.grade }}</td>
                 <td>{{ child.age }}</td>
                 <td>
-                    <a class="btn btn-secondary" href="{{ url_for('page.client_manage', user_id=1) }}">Delete</a>
-                    <a class="btn btn-primary" href="{{ url_for('page.client_manage_update', user_id=child.id) }}">Update</a>
+                    <form action="{{ url_for('user_space.user_child_remove') }}" method="post">
+                        <input hidden type="integer" name="id" value="{{ child.id }}">
+                        <button type="submit" class="btn btn-secondary"
+                            href="{{ url_for('page.client_manage', user_id=1) }}">Delete</button>
+                        <a class="btn btn-primary"
+                            href="{{ url_for('page.client_manage_update', user_id=child.id) }}">Update</a>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

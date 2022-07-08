@@ -115,7 +115,6 @@ def login():
             session['permissions'] = user_permissions
             session['canteen_id'] = user['canteen_id']
             session['canteen_name'] = user['canteen_name']
-
             # redirect to the right place
             if 'acess_client_dashboard' in session['permissions']:
                 return redirect(url_for('page.client_index'))

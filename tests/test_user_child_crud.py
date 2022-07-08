@@ -60,7 +60,7 @@ def test_user_child_delete(app):
         user_id = dao.create_user_child(form)
         user_active_before = dao.get_user_by_id(user_id)['active']
         
-        dao.delete_user_soft(user_id)
+        dao.delete_user(user_id)
         user_active = dao.get_user_by_id(user_id)['active']
         assert user_active_before == 1
         assert user_active == 0
