@@ -2,4 +2,46 @@
 {% block title %}Manage Clients{% endblock %}
 {% block content %}
 <h1>Manage Clients</h1>
+<hr class="p-3">
+<div class="container">
+    <div class="mb-3">
+        <h2>Clients
+            <a class="btn btn-primary disabled" href="#">+</a>
+        </h2>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>E-mail</th>
+                <th>Phone</th>
+                <th>Dependents</th>
+                <th>Balance</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in data.clients %}
+            <tr>
+                <td class="text-end">
+                    <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="50" height="50">
+                </td>
+                <td>{{ client.username }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone_number }}</td>
+                <td>{{ client.dependents }}</td> <!-- it is a string of comma separeted values-->
+                <td>{{ client.balance }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{{ url_for('page.manage_clients_recharge', account_id=client.account_id) }}"
+                            class="btn btn-sm btn-outline-success">Recharge
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -139,8 +139,8 @@ def manage_products():
     return render_template("user/management_products.html", data=data)
 
 
-@ bp.route('/canteen/manage-products/add_product')
-@ login_required(permissions=['acess_product_management'])
+@bp.route('/canteen/manage-products/add_product')
+@login_required(permissions=['acess_product_management'])
 def manage_products_add_product():
     db = get_db()
     canteen_id = session.get('canteen_id')
@@ -153,14 +153,14 @@ def manage_products_add_product():
     return render_template("user/management_products_add_product.html", data=data)
 
 
-@ bp.route('/canteen/manage-products/add_category')
-@ login_required(permissions=['acess_product_management'])
+@bp.route('/canteen/manage-products/add_category')
+@login_required(permissions=['acess_product_management'])
 def manage_products_add_category():
     return render_template("user/management_products_add_category.html")
 
 
-@ bp.route('/canteen/manage-products/update_product/<int:id>')
-@ login_required(permissions=['acess_product_management'])
+@bp.route('/canteen/manage-products/update_product/<int:id>')
+@login_required(permissions=['acess_product_management'])
 def manage_products_update_product(id):
     db = get_db()
     canteen_id = session.get('canteen_id')
@@ -177,8 +177,8 @@ def manage_products_update_product(id):
     return render_template("user/management_products_update_product.html", data=data)
 
 
-@ bp.route('/canteen/manage-products/update_category/<int:id>')
-@ login_required(permissions=['acess_product_management'])
+@bp.route('/canteen/manage-products/update_category/<int:id>')
+@login_required(permissions=['acess_product_management'])
 def manage_products_update_category(id):
     db = get_db()
     canteen_id = session.get('canteen_id')
@@ -196,8 +196,8 @@ def manage_products_update_category(id):
 # Cashier
 
 
-@ bp.route('/canteen/point-of-sale')
-@ login_required(permissions=['acess_pos'])
+@bp.route('/canteen/point-of-sale')
+@login_required(permissions=['acess_pos'])
 def pos_main():
     db = get_db()
     canteen_id = session.get('canteen_id')
@@ -209,8 +209,8 @@ def pos_main():
     return render_template("user/pos_main.html", data=data)
 
 
-@ bp.route('/canteen/reports')
-@ login_required(permissions=['acess_reports'])
+@bp.route('/canteen/reports')
+@login_required(permissions=['acess_reports'])
 def pos_reports():
     # TODO make a link to the transaction details with a popover
     canteen_id = session.get('canteen_id')
@@ -225,16 +225,64 @@ def pos_reports():
     return render_template("user/pos_reports.html", data=data)
 
 
-@ bp.route('/canteen/manage-clients')
-@ login_required(permissions=['acess_client_management'])
+@bp.route('/canteen/manage-clients')
+@login_required(permissions=['acess_client_management'])
 def manage_clients():
-    return render_template("user/management_clients.html")
+    clients = [
+            {
+                'username': 'Fulano',
+                'email': 'foo@gmail.com',
+                'phone': '55 31 99223049',
+                'dependents': 'Joao, Maria, Eduardo',
+                'balance': '23.00',
+                'account_id': '1',
+            },
+            {
+                'username': 'Sara',
+                'email': 'foo@gmail.com',
+                'phone': '55 31 99878452',
+                'dependents': 'Jose, Mariana',
+                'balance': '-34.00',
+                'account_id': '2',
+            },
+            {
+                'username': 'Roberto',
+                'email': 'roberto@gmail.com',
+                'phone': '55 31 99787454',
+                'dependents': 'Flor',
+                'balance': '123.00',
+                'account_id': '3',
+            },
+        ]
+    canteen_id = session['canteen_id']
+    clients = dao.get_client_list_by_canteen_id(canteen_id)
+    data = {
+        'clients': clients
+    }
+    
+    return render_template("user/management_clients.html", data=data)
+
+
+@bp.route('/canteen/manage-clients/add')
+@login_required(permissions=['acess_client_management'])
+def manage_clients_add():
+    return render_template("user/management_clients_add.html")
+
+
+@bp.route('/canteen/manage-clients/recharge')
+@login_required(permissions=['acess_client_management'])
+def manage_clients_recharge():
+    data = {
+        "payment_methods": PAYMENT_METHODS_NO_USER
+    }
+    return render_template("user/management_clients_recharge.html", data=data)
+
 
 # Client
 
 
-@ bp.route('/client')
-@ login_required(permissions=['acess_client_dashboard'])
+@bp.route('/client')
+@login_required(permissions=['acess_client_dashboard'])
 def client_index():
     user_id = session['user_id']
     data = {
@@ -244,8 +292,8 @@ def client_index():
     return render_template("user/client_index.html", data=data)
 
 
-@ bp.route('/client/manage')
-@ login_required(permissions=['acess_client_dashboard'])
+@bp.route('/client/manage')
+@login_required(permissions=['acess_client_dashboard'])
 def client_manage():
     canteen_id = session['canteen_id']
     user_child_list = dao.get_user_child_list(canteen_id)

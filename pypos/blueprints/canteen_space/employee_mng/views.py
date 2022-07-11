@@ -77,3 +77,4 @@ def update_role_by_id(id):
 
 def soft_delete_by_id(id):
     pass
+

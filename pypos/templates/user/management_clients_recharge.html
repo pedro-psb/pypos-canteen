@@ -1,0 +1,31 @@
+{% extends "base_user.html" %}
+{% block title %}Manage Clients{% endblock %}
+{% block content %}
+<h1>Manage Clients</h1>
+<hr class="p-3">
+<div class="container">
+    <div class="mb-3">
+        <h2>Recharge Client's Account</h2>
+    </div>
+    <form method='post' action="#" class="w-100 m-auto form-signin row g-3" style="max-width:400px;">
+        <div>
+            <label for="total" class="form-label">Deposit Value</label>
+            <input type="number" class="form-control" name="total" placeholder="20.00">
+        </div>
+        <div>
+            <label for="payment_method" class="form_label">Deposit Method</label>
+            <select class="form-select" id="payment_method" name="payment_method">
+                {% for payment_method in data.payment_methods %}
+                {% if loop.index == 0 %}
+                <option value="{{ payment_method[0] }}" selected>{{ payment_method[1] }}</option>
+                {% else %}
+                <option value="{{ payment_method[0] }}">{{ payment_method[1] }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Recharge</button>
+        <a href="{{ url_for('page.manage_clients') }}" class="btn btn-secondary" type="submit">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -3,8 +3,11 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
+SELECT u.id, u.username AS name, ua.balance, ua.id AS account_id, u.phone_number, u.email, u.role_name
+FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
+WHERE u.canteen_id=1 AND u.active=1
+AND u.role_name IN ('client', 'client_dependent');
 
-SELECT username, email FROM user;
 
 /* PRODUCT CATEGORY IS WORKING
 SELECT p.id, p.name, p.price, p.active, pc.name as category_name

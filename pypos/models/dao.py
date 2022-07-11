@@ -9,11 +9,12 @@ from pypos.models.user_model import User, UserChildCreateForm, UserChildUpdateFo
 
 
 def get_client_list_by_canteen_id(canteen_id: int) -> int:
-    """Gets a client or client_dependent from a canteen"""
+    """Gets all clients or client_dependents data from a canteen"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT u.id, u.username AS name, ua.balance FROM user u
-    INNER JOIN user_account ua ON u.id=ua.user_id
+    query = """SELECT u.id, u.username AS name, ua.balance,
+    u.phone_number, u.email, u.role_name, ua.id AS account_id
+    FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
     WHERE u.canteen_id=? AND u.active=1 AND
     u.role_name IN ('client', 'client_dependent');"""
     user_list = db.execute(query, [canteen_id]).fetchall()

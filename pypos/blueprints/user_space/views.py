@@ -22,6 +22,22 @@ def add_user_recharge():
     return redirect(url_for('page.client_index'))
 
 
+@bp.route('/manage-client/user_recharge', methods=['POST'])
+def add_user_recharge_from_pos():
+    """Make Client Recharge from the manager's Manage Clients page"""
+    try:
+        form_data = dict(request.form)
+        form_data['canteen_id'] = session['canteen_id']
+        form_data['user_id'] = session['user_id']
+        form_data['pending'] = False
+        transaction = UserRecharge(**form_data)
+        transaction.save()
+    except Exception as e:
+        print(e)
+        return redirect(url_for('page.client_deposit'))
+    return redirect(url_for('page.client_index'))
+
+
 @bp.route('/user_child_insert', methods=['POST'])
 def user_child_insert():
     try:
@@ -29,7 +45,7 @@ def user_child_insert():
         form_data = remove_empty_fields(form_data)
         form_data['canteen_id'] = session['canteen_id']
         form_data['user_provider_id'] = session['user_id']
-        
+
         user_data = UserChildCreateForm(**form_data)
         dao.create_user_child(user_data)
     except ValueError as e:
@@ -40,7 +56,7 @@ def user_child_insert():
 
 def remove_empty_fields(form_data: dict):
     new_form = {}
-    for k,v in form_data.items():
+    for k, v in form_data.items():
         if v:
             new_form[k] = v
     return new_form
