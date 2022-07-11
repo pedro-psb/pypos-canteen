@@ -22,22 +22,6 @@ def add_user_recharge():
     return redirect(url_for('page.client_index'))
 
 
-@bp.route('/manage-client/user_recharge', methods=['POST'])
-def add_user_recharge_from_pos():
-    """Make Client Recharge from the manager's Manage Clients page"""
-    try:
-        form_data = dict(request.form)
-        form_data['canteen_id'] = session['canteen_id']
-        form_data['user_id'] = session['user_id']
-        form_data['pending'] = False
-        transaction = UserRecharge(**form_data)
-        transaction.save()
-    except Exception as e:
-        print(e)
-        return redirect(url_for('page.client_deposit'))
-    return redirect(url_for('page.client_index'))
-
-
 @bp.route('/user_child_insert', methods=['POST'])
 def user_child_insert():
     try:

@@ -242,10 +242,11 @@ def manage_clients_add():
     return render_template("user/management_clients_add.html")
 
 
-@bp.route('/canteen/manage-clients/recharge')
+@bp.route('/canteen/manage-clients/recharge/<int:account_id>')
 @login_required(permissions=['acess_client_management'])
-def manage_clients_recharge():
+def manage_clients_recharge(account_id):
     data = {
+        "account_id": account_id,
         "payment_methods": PAYMENT_METHODS_NO_USER
     }
     return render_template("user/management_clients_recharge.html", data=data)

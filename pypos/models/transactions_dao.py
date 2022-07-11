@@ -3,10 +3,11 @@ import json
 from pprint import pprint
 from sqlite3 import Connection, Cursor
 from typing import List, Optional
+from wsgiref.validate import validator
 
 from flask import session
 from pypos.db import get_db
-from pydantic import BaseModel, ValidationError, parse_obj_as, root_validator
+from pydantic import BaseModel, PositiveFloat, ValidationError, parse_obj_as, root_validator
 
 from pypos.models import dao
 
@@ -17,6 +18,7 @@ payment_options = {
     'credit_card': 'bank_account_balance',
     'DOC/TED': 'bank_account_balance',
 }
+
 
 class NullFieldError(Exception):
     pass
@@ -49,11 +51,11 @@ class UserRecharge(BaseModel):
     id: Optional[int]
 
     # required
-    canteen_id: int
-    user_id: int
+    canteen_id: Optional[int]
+    user_id: Optional[int]
     payment_method: str
     pending: bool
-    total: float
+    total: PositiveFloat
     timestamp_code: Optional[str]
 
     # calculated
@@ -61,7 +63,7 @@ class UserRecharge(BaseModel):
     user_account_id: Optional[int]
     presentation: Optional[dict]
 
-    @ root_validator()
+    @root_validator()
     def set_presentation(cls, values):
         if values.get('pending'):
             values['presentation'] = dao.transaction_type_map['user_recharge_pending']['presentation']
@@ -69,23 +71,31 @@ class UserRecharge(BaseModel):
             values['presentation'] = dao.transaction_type_map['user_recharge']['presentation']
         return values
 
-    @ root_validator()
-    def set_account_ids(cls, values):
-        try:
+    # One or the other cases
+    @root_validator()
+    def canteen_id_or_canteen_account_id_required(cls, values):
+        if not values.get('canteen_id') and not values.get('canteen_account_id'):
+            raise ValueError("Must provide canteen_id or canteen_account_id")
+        if not values.get('canteen_account_id'):
             conn = get_db()
             db = conn.cursor()
-
             canteen_account_id = db.execute(
                 "SELECT id FROM canteen_account WHERE canteen_id=?",
-                (values['canteen_id'],)).fetchone()[0]
+                [values['canteen_id']]).fetchone()[0]
+            values['canteen_account_id'] = canteen_account_id
+        return values
+
+    @root_validator()
+    def user_id_or_user_account_id_required(cls, values):
+        if not values.get('user_id') and not values.get('user_account_id'):
+            raise ValueError("Must provide user_id or user_account_id")
+        if not values.get('user_account_id'):
+            conn = get_db()
+            db = conn.cursor()
             user_account_id = db.execute(
                 "SELECT id FROM user_account WHERE user_id=?",
                 (values['user_id'],)).fetchone()[0]
-
-            values['canteen_account_id'] = canteen_account_id
             values['user_account_id'] = user_account_id
-        except:
-            raise ValueError('canteen_id or user_id are invalid')
         return values
 
     @root_validator()
