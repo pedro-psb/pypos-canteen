@@ -12,9 +12,11 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     """Gets all clients or client_dependents data from a canteen"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT u.id, u.username AS name, ua.balance,
-    u.phone_number, u.email, u.role_name, ua.id AS account_id
+    query = """SELECT u.id, u.username, ua.balance,
+    u.phone_number, u.email, u.role_name, ua.id AS account_id,
+    (SELECT username FROM user WHERE id=uc.user_provider_id) AS user_provider_name
     FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
+    LEFT JOIN user_child uc ON uc.user_id=u.id
     WHERE u.canteen_id=? AND u.active=1 AND
     u.role_name IN ('client', 'client_dependent');"""
     user_list = db.execute(query, [canteen_id]).fetchall()

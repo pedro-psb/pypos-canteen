@@ -228,38 +228,11 @@ def pos_reports():
 @bp.route('/canteen/manage-clients')
 @login_required(permissions=['acess_client_management'])
 def manage_clients():
-    clients = [
-            {
-                'username': 'Fulano',
-                'email': 'foo@gmail.com',
-                'phone': '55 31 99223049',
-                'dependents': 'Joao, Maria, Eduardo',
-                'balance': '23.00',
-                'account_id': '1',
-            },
-            {
-                'username': 'Sara',
-                'email': 'foo@gmail.com',
-                'phone': '55 31 99878452',
-                'dependents': 'Jose, Mariana',
-                'balance': '-34.00',
-                'account_id': '2',
-            },
-            {
-                'username': 'Roberto',
-                'email': 'roberto@gmail.com',
-                'phone': '55 31 99787454',
-                'dependents': 'Flor',
-                'balance': '123.00',
-                'account_id': '3',
-            },
-        ]
     canteen_id = session['canteen_id']
     clients = dao.get_client_list_by_canteen_id(canteen_id)
     data = {
         'clients': clients
     }
-    
     return render_template("user/management_clients.html", data=data)
 
 

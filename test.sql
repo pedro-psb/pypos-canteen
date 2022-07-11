@@ -3,10 +3,11 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT u.id, u.username AS name, ua.balance, ua.id AS account_id, u.phone_number, u.email, u.role_name
+SELECT u.id, u.username, (SELECT username FROM user WHERE id=uc.user_provider_id)
 FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
-WHERE u.canteen_id=1 AND u.active=1
-AND u.role_name IN ('client', 'client_dependent');
+LEFT JOIN user_child uc ON uc.user_id=u.id
+WHERE u.canteen_id=1 AND u.active=1 AND
+u.role_name IN ('client', 'client_dependent');
 
 
 /* PRODUCT CATEGORY IS WORKING
