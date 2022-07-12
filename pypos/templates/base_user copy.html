@@ -6,13 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <!-- MDB -->
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.3.0/mdb.min.css" rel="stylesheet" /> -->
-
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/user-style.css') }}">
     <script src="https://unpkg.com/htmx.org@1.7.0"
@@ -21,6 +14,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.3.0/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.3.0/mdb.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {% block custom_header %}{% endblock %}
@@ -124,113 +124,105 @@
             </path>
         </symbol>
     </svg>
-    <!--Main Navigation-->
-    <header>
-        <!-- Sidebar -->
-        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-gray-dark">
-            <div class="d-flex align-content-between flex-wrap">
-            <div class="position-sticky">
-                <div class="list-group list-group-flush mx-3 mt-4">
-                    <ul class="nav nav-pills flex-column mb-auto">
-                        {% if 'acess_canteen_index' in session['permissions'] %}
-                        <li class="nav-item ">
-                            <a href="{{ url_for('page.canteen_index') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.canteen_index') else 'text-white' }}" aria-current="page">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#home"></use>
-                                </svg>
-                                Home
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_employee_management' in session['permissions'] %}
-                        <li>
-                            <h6 class="dropdown-header">Manager</h6>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('page.manage_employees') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.manage_employees') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#speedometer2"></use>
-                                </svg>
-                                Manage Employees
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_product_management' in session['permissions'] %}
-                        <li>
-                            <a href="{{ url_for('page.manage_products') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.manage_products') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#table"></use>
-                                </svg>
-                                Manage Products
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_pos' in session['permissions'] %}
-                        <li>
-                            <h6 class="dropdown-header">Cashier</h6>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('page.pos_main') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.pos_main') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#grid"></use>
-                                </svg>
-                                Point of Sale
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_reports' in session['permissions'] %}
-                        <li>
-                            <a href="{{ url_for('page.pos_reports') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.pos_reports') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#table"></use>
-                                </svg>
-                                Reports
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_client_management' in session['permissions'] %}
-                        <li>
-                            <a href="{{ url_for('page.manage_clients') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.manage_clients') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#people-circle"></use>
-                                </svg>
-                                Manage Users
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_client_dashboard' in session['permissions'] %}
-                        <li>
-                            <a href="{{ url_for('page.client_index') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.client_index') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#people-circle"></use>
-                                </svg>
-                                Home
-                            </a>
-                        </li>
-                        {% endif %}
-                        {% if 'acess_client_account_management' in session['permissions'] %}
-                        <li>
-                            <a href="{{ url_for('page.client_manage') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.client_manage') else 'text-white' }}">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#people-circle"></use>
-                                </svg>
-                                Manage Dependents
-                            </a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                    <hr>
-                </div>
-            </div>
-            <div class="dropdown p-3 mb-3" style="position: absolute; bottom: 0;">
+    <main class="d-flex flex-nowrap">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 300px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi pe-none me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-5">{{ session['canteen_name'] }}</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                {% if 'acess_canteen_index' in session['permissions'] %}
+                <li class="nav-item">
+                    <a href="{{ url_for('page.canteen_index') }}" class="nav-link active" aria-current="page">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#home"></use>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_employee_management' in session['permissions'] %}
+                <li>
+                    <h6 class="dropdown-header">Manager</h6>
+                </li>
+                <li>
+                    <a href="{{ url_for('page.manage_employees') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#speedometer2"></use>
+                        </svg>
+                        Manage Employees
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_product_management' in session['permissions'] %}
+                <li>
+                    <a href="{{ url_for('page.manage_products') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#table"></use>
+                        </svg>
+                        Manage Products
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_pos' in session['permissions'] %}
+                <li>
+                    <h6 class="dropdown-header">Cashier</h6>
+                </li>
+                <li>
+                    <a href="{{ url_for('page.pos_main') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#grid"></use>
+                        </svg>
+                        Point of Sale
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_reports' in session['permissions'] %}
+                <li>
+                    <a href="{{ url_for('page.pos_reports') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#table"></use>
+                        </svg>
+                        Reports
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_client_management' in session['permissions'] %}
+                <li>
+                    <a href="{{ url_for('page.manage_clients') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#people-circle"></use>
+                        </svg>
+                        Manage Users
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_client_dashboard' in session['permissions'] %}
+                <li>
+                    <a href="{{ url_for('page.client_index') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#people-circle"></use>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                {% endif %}
+                {% if 'acess_client_account_management' in session['permissions'] %}
+                <li>
+                    <a href="{{ url_for('page.client_manage') }}" class="nav-link text-white">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#people-circle"></use>
+                        </svg>
+                        Manage Dependents
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <hr>
+            <div class="dropdown">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                     id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="32" height="32">
@@ -246,41 +238,11 @@
                 </ul>
             </div>
         </div>
-        </nav>
-        <!-- Sidebar -->
-
-        <!-- Navbar -->
-        <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light text-white bg-dark fixed-top">
-            <!-- Container wrapper -->
-            <div class="container-fluid">
-                <!-- Toggle button -->
-                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
-                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-
-                <!-- Brand -->
-                <a class="navbar-brand" href="#">
-                    <svg class="bi pe-none text-white me-2" width="40" height="32">
-                        <use xlink:href="#bootstrap"></use>
-                    </svg>
-                    <span class="fs-5 text-white">{{ session['canteen_name'] }}</span>
-                </a>
-            </div>
-            <!-- Container wrapper -->
-        </nav>
-        <!-- Navbar -->
-    </header>
-    <!--Main Navigation-->
-
-    <!--Main layout-->
-    <main style="margin-top: 58px;">
-        <div class="flex-column m-3 p-4">
+        <div class="flex-column m-3 p-4 w-100">
             {% block content %}{% endblock %}
         </div>
     </main>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.3.0/mdb.min.js"></script> -->
 
 </body>
 

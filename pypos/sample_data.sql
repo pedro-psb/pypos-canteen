@@ -14,8 +14,7 @@ VALUES
 (100, 1),
 (10, 2),
 (0, 3),
-(0, 4),
-(0, 5);
+(0, 4);
 
 INSERT INTO user_child (age,grade,user_provider_id, user_id)
 VALUES

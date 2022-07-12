@@ -5,7 +5,7 @@
     <h1>Point of Sale Dashboard</h1>
     <hr>
     <div class="row">
-        <div class="col-12 col-lg-7">
+        <div class="col-12 col-lg-7 mb-3">
             <!-- searchbar -->
             <div class="row">
                 <div class="mb-3 col-4">
@@ -87,14 +87,14 @@
             </div>
         </div>
         <!-- order -->
-        <div class="col-12 col-lg-5">
+        <div class="col-12 col-lg-5 my-3">
             <h2>Order</h2>
             <h3 class="h4">Items</h3>
             <table class="table">
                 <thead>
                     <tr>
                         <th></th>
-                        <th class="w-25">Item</th>
+                        <th class="w-50">Item</th>
                         <th class="w-auto">Price</th>
                         <th class="w-auto">Qtd</th>
                         <th class="w-auto">Total</th>
@@ -149,7 +149,7 @@
                 </div> -->
 
                 <!-- payment method -->
-                <div id="payment_method_input" class="d-flex align-items-stretch mb-3">
+                <div id="payment_method_input" class="d-flex align-items-stretch w-50 mb-3">
                     <select id="payment_method" name="payment_method" class="form-select"
                         aria-label="Default select example">
                         {% for payment_method in data.payment_methods %}
@@ -163,12 +163,17 @@
                 </div>
 
                 <!-- client select -->
-                <div style="display: none;" id="client_select_div" class="mb-3">
+                <div style="display: none;" id="client_select_div" class="w-50 mb-3">
                     <h3 class="h4">Client</h3>
-                    <select style="width: 100%" id="client_select" name="client_id" class="form-select" aria-label="Default select example">
+                    <select style="width: 100%" id="client_select" name="client_id" class="form-select"
+                        aria-label="Default select example">
                         <option selected value="">-- Select a client --</option>
                         {% for user in data.user_list %}
-                        <option value="{{ user.id }}">{{ user.name }} ({{ user.balance }})</option>
+                        {% if not user.user_provider_name %}
+                        <option value="{{ user.id }}">({{ user.balance }}) {{ user.username }}</option>
+                        {% else %}
+                        <option value="{{ user.id }}">({{user.balance }}) {{ user.user_provider_name }} | {{ user.username }}</option>
+                        {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -176,14 +181,13 @@
                 <!-- buttons -->
                 <div class="d-flex justify-content-end">
                     <div class="col">
-                        <button id="clear_order_button" class="m-2 btn btn-danger" type="reset">Cancel</button>
+                        <button id="clear_order_button" class="m-2 btn btn-danger" data-mdb-ripple="False" type="reset">Cancel</button>
                     </div>
                     <div class="col">
                         <input id="form_products" hidden name="products">
                         <input id="form_discount" hidden name="discount">
                         <input id="form_payment_method" hidden name="payment_method">
                         <button class="m-2 btn btn-success" type="submit">Submit</button>
-
                     </div>
                 </div>
             </form>

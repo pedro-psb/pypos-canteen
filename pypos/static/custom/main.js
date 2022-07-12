@@ -92,9 +92,6 @@ function update_form() {
     document.querySelector('#form_discount').value = order.discount;
     document.querySelector('#form_payment_method').value = order.payment_method;
     update_order_total();
-    console.log(document.querySelector('#form_products').value)
-    console.log(document.querySelector('#form_discount').value)
-    console.log(document.querySelector('#form_payment_method').value)
 }
 
 function update_order_total() {
@@ -169,3 +166,9 @@ payment_method.addEventListener('change', function () {
         hide(client_select)
     }
 });
+
+// let btn_class = document.querySelectorAll(".btn")
+
+// btn_class.forEach(function(item) {
+//     item.removeEventListener('mousedown', ripple)
+// })
