@@ -18,3 +18,8 @@ build/
 *.env
 TODO.md
 /instance
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

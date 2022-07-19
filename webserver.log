@@ -1,0 +1,204 @@
+Retrieving logs...
+============= i-0f3cd8b3ce15fb65c ==============
+----------------------------------------
+/var/log/web.stdout.log
+----------------------------------------
+Jul 20 22:33:51 ip-172-31-32-42 web: [2022-07-20 22:33:51 +0000] [3532] [INFO] Starting gunicorn 20.1.0
+Jul 20 22:33:51 ip-172-31-32-42 web: [2022-07-20 22:33:51 +0000] [3532] [INFO] Listening at: http://127.0.0.1:8000 (3532)
+Jul 20 22:33:51 ip-172-31-32-42 web: [2022-07-20 22:33:51 +0000] [3532] [INFO] Using worker: gthread
+Jul 20 22:33:51 ip-172-31-32-42 web: [2022-07-20 22:33:51 +0000] [3587] [INFO] Booting worker with pid: 3587
+Jul 20 22:35:12 ip-172-31-32-42 web: [2022-07-20 22:35:12,442] ERROR in app: Exception on /auth/register_client [POST]
+Jul 20 22:35:12 ip-172-31-32-42 web: Traceback (most recent call last):
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/flask/app.py", line 2077, in wsgi_app
+Jul 20 22:35:12 ip-172-31-32-42 web: response = self.full_dispatch_request()
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/flask/app.py", line 1525, in full_dispatch_request
+Jul 20 22:35:12 ip-172-31-32-42 web: rv = self.handle_user_exception(e)
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/flask/app.py", line 1523, in full_dispatch_request
+Jul 20 22:35:12 ip-172-31-32-42 web: rv = self.dispatch_request()
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/flask/app.py", line 1509, in dispatch_request
+Jul 20 22:35:12 ip-172-31-32-42 web: return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/current/pypos/blueprints/auth/views.py", line 25, in register_client
+Jul 20 22:35:12 ip-172-31-32-42 web: user = UserClient(**form_data)
+Jul 20 22:35:12 ip-172-31-32-42 web: File "pydantic/main.py", line 339, in pydantic.main.BaseModel.__init__
+Jul 20 22:35:12 ip-172-31-32-42 web: File "pydantic/main.py", line 1038, in pydantic.main.validate_model
+Jul 20 22:35:12 ip-172-31-32-42 web: File "pydantic/fields.py", line 871, in pydantic.fields.ModelField.validate
+Jul 20 22:35:12 ip-172-31-32-42 web: File "pydantic/fields.py", line 1121, in pydantic.fields.ModelField._apply_validators
+Jul 20 22:35:12 ip-172-31-32-42 web: File "pydantic/class_validators.py", line 280, in pydantic.class_validators._generic_validator_cls.lambda3
+Jul 20 22:35:12 ip-172-31-32-42 web: File "/var/app/current/pypos/models/user_model.py", line 76, in email_isnt_taken
+Jul 20 22:35:12 ip-172-31-32-42 web: email_exist = db.execute(query, (email,)).fetchone()
+Jul 20 22:35:12 ip-172-31-32-42 web: sqlite3.OperationalError: no such table: user
+Jul 20 22:38:04 ip-172-31-32-42 web: [2022-07-20 22:38:04 +0000] [3532] [INFO] Handling signal: term
+Jul 20 22:38:05 ip-172-31-32-42 web: [2022-07-20 22:38:05 +0000] [3587] [INFO] Worker exiting (pid: 3587)
+Jul 20 22:38:05 ip-172-31-32-42 web: None
+Jul 20 22:38:05 ip-172-31-32-42 web: [2022-07-20 22:38:05 +0000] [3532] [INFO] Shutting down: Master
+Jul 20 22:38:06 ip-172-31-32-42 web: [2022-07-20 22:38:06 +0000] [3702] [INFO] Starting gunicorn 20.1.0
+Jul 20 22:38:06 ip-172-31-32-42 web: [2022-07-20 22:38:06 +0000] [3702] [INFO] Listening at: http://127.0.0.1:8000 (3702)
+Jul 20 22:38:06 ip-172-31-32-42 web: [2022-07-20 22:38:06 +0000] [3702] [INFO] Using worker: gthread
+Jul 20 22:38:06 ip-172-31-32-42 web: [2022-07-20 22:38:06 +0000] [3708] [INFO] Booting worker with pid: 3708
+Jul 20 22:46:35 ip-172-31-32-42 web: [2022-07-20 22:46:35 +0000] [3702] [INFO] Handling signal: term
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3708] [INFO] Worker exiting (pid: 3708)
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3702] [INFO] Shutting down: Master
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3826] [INFO] Starting gunicorn 20.1.0
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3826] [INFO] Listening at: http://127.0.0.1:8000 (3826)
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3826] [INFO] Using worker: gthread
+Jul 20 22:46:36 ip-172-31-32-42 web: [2022-07-20 22:46:36 +0000] [3832] [INFO] Booting worker with pid: 3832
+
+
+----------------------------------------
+/var/log/eb-engine.log
+----------------------------------------
+2022/07/20 22:33:49.363260 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-pxpmpxp8pe-stack/ace82cd0-087b-11ed-9f38-06b53ddf9ef9 -r AWSEBAutoScalingGroup --region us-west-2
+2022/07/20 22:33:49.885584 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-pxpmpxp8pe-stack/ace82cd0-087b-11ed-9f38-06b53ddf9ef9 -r AWSEBBeanstalkMetadata --region us-west-2
+2022/07/20 22:33:50.442536 [INFO] Generating rsyslog config from Procfile
+2022/07/20 22:33:50.443880 [INFO] Running command /bin/sh -c systemctl restart rsyslog.service
+2022/07/20 22:33:50.464741 [INFO] Executing instruction: PostBuildEbExtension
+2022/07/20 22:33:50.464768 [INFO] Starting executing the config set Infra-EmbeddedPostBuild.
+2022/07/20 22:33:50.464789 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-init -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-pxpmpxp8pe-stack/ace82cd0-087b-11ed-9f38-06b53ddf9ef9 -r AWSEBAutoScalingGroup --region us-west-2 --configsets Infra-EmbeddedPostBuild
+2022/07/20 22:33:50.787611 [INFO] Finished executing the config set Infra-EmbeddedPostBuild.
+
+2022/07/20 22:33:50.787646 [INFO] Executing instruction: CleanEbExtensions
+2022/07/20 22:33:50.787670 [INFO] Cleaned ebextensions subdirectories from app staging directory.
+2022/07/20 22:33:50.787680 [INFO] Executing instruction: RunAppDeployPreDeployHooks
+2022/07/20 22:33:50.787696 [INFO] Executing platform hooks in .platform/hooks/predeploy/
+2022/07/20 22:33:50.787712 [INFO] The dir .platform/hooks/predeploy/ does not exist
+2022/07/20 22:33:50.787717 [INFO] Finished running scripts in /var/app/staging/.platform/hooks/predeploy
+2022/07/20 22:33:50.787723 [INFO] Executing instruction: stop X-Ray
+2022/07/20 22:33:50.787727 [INFO] stop X-Ray ...
+2022/07/20 22:33:50.787739 [INFO] Running command /bin/sh -c systemctl show -p PartOf xray.service
+2022/07/20 22:33:50.794975 [WARN] stopProcess Warning: process xray is not registered 
+2022/07/20 22:33:50.794995 [INFO] Running command /bin/sh -c systemctl stop xray.service
+2022/07/20 22:33:50.803202 [INFO] Executing instruction: stop proxy
+2022/07/20 22:33:50.803223 [INFO] Running command /bin/sh -c systemctl show -p PartOf httpd.service
+2022/07/20 22:33:50.809664 [WARN] deregisterProcess Warning: process httpd is not registered, skipping...
+
+2022/07/20 22:33:50.809689 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/07/20 22:33:50.815760 [WARN] deregisterProcess Warning: process nginx is not registered, skipping...
+
+2022/07/20 22:33:50.815774 [INFO] Executing instruction: FlipApplication
+2022/07/20 22:33:50.815779 [INFO] Fetching environment variables...
+2022/07/20 22:33:50.815882 [INFO] Purge old process...
+2022/07/20 22:33:50.815896 [INFO] Removing /var/app/current/ if it exists
+2022/07/20 22:33:50.815906 [INFO] Renaming /var/app/staging/ to /var/app/current/
+2022/07/20 22:33:50.815922 [INFO] Register application processes...
+2022/07/20 22:33:50.815926 [INFO] Registering the proc: web
+
+2022/07/20 22:33:50.815937 [INFO] Running command /bin/sh -c systemctl show -p PartOf web.service
+2022/07/20 22:33:50.821790 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/07/20 22:33:50.909673 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/07/20 22:33:50.914027 [INFO] Running command /bin/sh -c systemctl is-enabled eb-app.target
+2022/07/20 22:33:50.917569 [INFO] Copying file /opt/elasticbeanstalk/config/private/aws-eb.target to /etc/systemd/system/eb-app.target
+2022/07/20 22:33:50.918721 [INFO] Running command /bin/sh -c systemctl enable eb-app.target
+2022/07/20 22:33:51.017980 [INFO] Created symlink from /etc/systemd/system/multi-user.target.wants/eb-app.target to /etc/systemd/system/eb-app.target.
+
+2022/07/20 22:33:51.018012 [INFO] Running command /bin/sh -c systemctl start eb-app.target
+2022/07/20 22:33:51.023372 [INFO] Running command /bin/sh -c systemctl enable web.service
+2022/07/20 22:33:51.114469 [INFO] Created symlink from /etc/systemd/system/multi-user.target.wants/web.service to /etc/systemd/system/web.service.
+
+2022/07/20 22:33:51.114501 [INFO] Running command /bin/sh -c systemctl show -p PartOf web.service
+2022/07/20 22:33:51.119976 [INFO] Running command /bin/sh -c systemctl is-active web.service
+2022/07/20 22:33:51.123581 [INFO] Running command /bin/sh -c systemctl start web.service
+2022/07/20 22:33:51.142035 [INFO] Executing instruction: start X-Ray
+2022/07/20 22:33:51.142051 [INFO] X-Ray is not enabled.
+2022/07/20 22:33:51.142057 [INFO] Executing instruction: start proxy with new configuration
+2022/07/20 22:33:51.142077 [INFO] Running command /bin/sh -c /usr/sbin/nginx -t -c /var/proxy/staging/nginx/nginx.conf
+2022/07/20 22:33:51.199442 [INFO] nginx: the configuration file /var/proxy/staging/nginx/nginx.conf syntax is ok
+nginx: configuration file /var/proxy/staging/nginx/nginx.conf test is successful
+
+2022/07/20 22:33:51.199521 [INFO] Running command /bin/sh -c cp -rp /var/proxy/staging/nginx/* /etc/nginx
+2022/07/20 22:33:51.206519 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/07/20 22:33:51.218276 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/07/20 22:33:51.364099 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/07/20 22:33:51.373957 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/07/20 22:33:51.385147 [INFO] Running command /bin/sh -c systemctl is-active nginx.service
+2022/07/20 22:33:51.393970 [INFO] Running command /bin/sh -c systemctl start nginx.service
+2022/07/20 22:33:51.462779 [INFO] Executing instruction: configureSqsd
+2022/07/20 22:33:51.462807 [INFO] This is a web server environment instance, skip configure sqsd daemon ...
+2022/07/20 22:33:51.462812 [INFO] Executing instruction: startSqsd
+2022/07/20 22:33:51.462816 [INFO] This is a web server environment instance, skip start sqsd daemon ...
+2022/07/20 22:33:51.462819 [INFO] Executing instruction: Track pids in healthd
+2022/07/20 22:33:51.462824 [INFO] This is an enhanced health env...
+2022/07/20 22:33:51.462837 [INFO] Running command /bin/sh -c systemctl show -p ConsistsOf aws-eb.target | cut -d= -f2
+2022/07/20 22:33:51.473645 [INFO] healthd.service nginx.service cfn-hup.service
+
+2022/07/20 22:33:51.473666 [INFO] Running command /bin/sh -c systemctl show -p ConsistsOf eb-app.target | cut -d= -f2
+2022/07/20 22:33:51.485129 [INFO] web.service
+
+2022/07/20 22:33:51.485295 [INFO] Executing instruction: RunAppDeployPostDeployHooks
+2022/07/20 22:33:51.485323 [INFO] Executing platform hooks in .platform/hooks/postdeploy/
+2022/07/20 22:33:51.485339 [INFO] The dir .platform/hooks/postdeploy/ does not exist
+2022/07/20 22:33:51.485343 [INFO] Finished running scripts in /var/app/current/.platform/hooks/postdeploy
+2022/07/20 22:33:51.485350 [INFO] Executing cleanup logic
+2022/07/20 22:33:51.485445 [INFO] CommandService Response: {"status":"SUCCESS","api_version":"1.0","results":[{"status":"SUCCESS","msg":"Engine execution has succeeded.","returncode":0,"events":[{"msg":"Instance deployment successfully used commands in the 'Procfile' to start your application.","timestamp":1658356429006,"severity":"INFO"},{"msg":"Instance deployment completed successfully.","timestamp":1658356431485,"severity":"INFO"}]}]}
+
+2022/07/20 22:33:51.485577 [INFO] Platform Engine finished execution on command: app-deploy
+
+2022/07/20 22:48:51.150089 [INFO] Starting...
+2022/07/20 22:48:51.150136 [INFO] Starting EBPlatform-PlatformEngine
+2022/07/20 22:48:51.150156 [INFO] reading event message file
+2022/07/20 22:48:51.150311 [INFO] Engine received EB command cfn-hup-exec
+
+2022/07/20 22:48:51.234231 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-pxpmpxp8pe-stack/ace82cd0-087b-11ed-9f38-06b53ddf9ef9 -r AWSEBAutoScalingGroup --region us-west-2
+2022/07/20 22:48:51.533493 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-pxpmpxp8pe-stack/ace82cd0-087b-11ed-9f38-06b53ddf9ef9 -r AWSEBBeanstalkMetadata --region us-west-2
+2022/07/20 22:48:51.852813 [INFO] checking whether command tail-log is applicable to this instance...
+2022/07/20 22:48:51.852826 [INFO] this command is applicable to the instance, thus instance should execute command
+2022/07/20 22:48:51.852830 [INFO] Engine command: (tail-log)
+
+2022/07/20 22:48:51.852878 [INFO] Executing instruction: GetTailLogs
+2022/07/20 22:48:51.852883 [INFO] Tail Logs...
+2022/07/20 22:48:51.853152 [INFO] Running command /bin/sh -c tail -n 100 /var/log/web.stdout.log
+2022/07/20 22:48:51.854943 [INFO] Running command /bin/sh -c tail -n 100 /var/log/eb-engine.log
+
+
+----------------------------------------
+/var/log/eb-hooks.log
+----------------------------------------
+
+
+----------------------------------------
+/var/log/nginx/access.log
+----------------------------------------
+172.31.33.159 - - [20/Jul/2022:22:34:39 +0000] "GET / HTTP/1.1" 200 13089 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:39 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 193529 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:40 +0000] "GET /static/custom/public-style.css HTTP/1.1" 200 100 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:40 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 79742 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:41 +0000] "GET /static/favicon.ico HTTP/1.1" 200 318 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:44 +0000] "GET /login HTTP/1.1" 200 14311 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:45 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:45 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:45 +0000] "GET /static/custom/public-login.css HTTP/1.1" 200 515 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:45 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "POST /auth/login HTTP/1.1" 302 199 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "GET /login HTTP/1.1" 200 14311 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "GET /static/custom/public-style.css HTTP/1.1" 200 100 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 200 79742 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "GET /static/custom/public-login.css HTTP/1.1" 200 515 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:53 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 193529 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:34:59 +0000] "GET /register HTTP/1.1" 200 15020 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/login" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:00 +0000] "GET /static/custom/public-login.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:00 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:00 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:00 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:12 +0000] "POST /auth/register_client HTTP/1.1" 500 265 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:47 +0000] "GET / HTTP/1.1" 200 13089 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:47 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:47 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:47 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:55 +0000] "GET / HTTP/1.1" 200 13089 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:55 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:55 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:35:55 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:38:12 +0000] "GET / HTTP/1.1" 200 13089 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:38:12 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:38:12 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.33.159 - - [20/Jul/2022:22:38:12 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.6.89 - - [20/Jul/2022:22:42:23 +0000] "GET / HTTP/1.1" 200 13089 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/register" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.6.89 - - [20/Jul/2022:22:42:23 +0000] "GET /static/css/bootstrap.min.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.6.89 - - [20/Jul/2022:22:42:23 +0000] "GET /static/custom/public-style.css HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+172.31.6.89 - - [20/Jul/2022:22:42:23 +0000] "GET /static/js/bootstrap.bundle.min.js HTTP/1.1" 304 0 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" "189.13.173.90"
+
+
+----------------------------------------
+/var/log/nginx/error.log
+----------------------------------------
+
+
