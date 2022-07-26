@@ -6,8 +6,8 @@
 {% block content %}
 <div class="container text-center">
     <div class="form-body text-center">
-        <div class="form-signin w-100 m-auto">
-            <form data-bitwarden-watching="1" action="{{ url_for('auth.login') }}" method="post">
+        <div class="form-signin w-100 rounded m-auto">
+            <form action="{{ url_for('auth.login') }}" method="post">
                 <h1 class="mb-3 p-3 fw-normal">Login</h1>
 
                 <div class="form-floating">

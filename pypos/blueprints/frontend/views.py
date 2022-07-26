@@ -25,6 +25,10 @@ PAYMENT_METHODS_NO_USER = [
 def index():
     return render_template("public/index.html")
 
+@bp.route('/getting-started')
+def getting_started():
+    return render_template("public/getting-started.html")
+
 
 @bp.route('/user/choose_role')
 @public_acess_only

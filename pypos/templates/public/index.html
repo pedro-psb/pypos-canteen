@@ -2,6 +2,15 @@
 {% block title %}Pypos Canteen{% endblock %}
 {% block content %}
 <div class="container col-6">
-    <h1>Pypos Canteen</h1>
+    <section class="mb-5">
+        <h1>Welcome to Pypos</h1>
+        <h2>A python point of sale scholar canteen system</h2>
+        <p>To try out this demo site, check the avaliable pre-populated accounts or create your own! <br> Instructions can be found on:</p>
+        <a href="{{ url_for('page.getting_started') }}" class="btn btn-light">Getting Started</a>
+    </section> 
+    <section>
+        <h2>Checkout the video demo!</h2>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/dgBCEB2jVU0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </section>
 </div>
 {% endblock %}

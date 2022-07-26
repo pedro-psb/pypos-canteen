@@ -6,11 +6,10 @@
 {% block content %}
 <div class="container text-center">
     <div class="form-body text-center">
-        <div class="form-signin w-100 m-auto">
+        <div class="form-signin w-100 m-auto rounded">
             <form action="{{ url_for('auth.register_client') }}" method="post">
                 <h1 class="mb-3 p-3 fw-normal">Create Account</h1>
-                <p>To join a canteen you must create an account too.</p>
-                <p>The canteen should expose their Passphrase/ID for you. If not, request them to do so.</p>
+                <p>Join a canteen as a client</p>
                 <div class="form-floating">
                     <input type="text" class="form-control" id="canteen_id" name="canteen_id" placeholder="canteen_id">
                     <label for="canteen_id">Canteen ID</label>

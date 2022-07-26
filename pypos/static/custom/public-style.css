@@ -4,4 +4,44 @@
 
 body {
     min-height: 100vh;
+    background-color: #456BF0;
+}
+
+#main-navbar {
+    background-color: #203686;
+}
+
+#main-navbar a {
+    color: blanchedalmond;
+}
+
+#main-navbar a:hover {
+    color: rgba(255, 235, 205, 0.7)
+}
+
+main, footer {
+    text-align: left;
+    padding-top: 2rem;
+    color: rgb(207, 210, 230);
+}
+h1 {
+    color: #fff
+}
+
+footer {
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    text-align: center;
+    padding-top: 2rem;
+    color: rgb(207, 210, 230);
+}
+.img-container {
+    height: 80px;
+    width: 200px;
+    text-align: center;
+}
+
+.img-container img {
+    height: 100%;
 }

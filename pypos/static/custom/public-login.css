@@ -7,9 +7,14 @@
   
   .form-signin {
     max-width: 330px;
+    background-color: #fff;
+    color: #000;
     padding: 15px;
   }
   
+  .form-signin p, h1, h2 {
+    color: #203686;
+  }
   .form-signin .form-floating:focus-within {
     z-index: 2;
   }
