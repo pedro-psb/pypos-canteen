@@ -185,7 +185,24 @@ class RegularPurchase(BaseModel):
     payment_method: str
     discount: float = 0
     total: float = 0
-
+    
+    # calculated
+    canteen_account_id: Optional[int]
+    user_account_id: Optional[int]
+    
+    @root_validator()
+    def canteen_id_or_canteen_account_id_required(cls, values):
+        if not values.get('canteen_id') and not values.get('canteen_account_id'):
+            raise ValueError("Must provide canteen_id or canteen_account_id")
+        if not values.get('canteen_account_id'):
+            conn = get_db()
+            db = conn.cursor()
+            canteen_account_id = db.execute(
+                "SELECT id FROM canteen_account WHERE canteen_id=?",
+                [values['canteen_id']]).fetchone()[0]
+            values['canteen_account_id'] = canteen_account_id
+        return values
+    
     @root_validator(pre=True)
     def parse_products(cls, values):
         products = values.get('products')
@@ -238,17 +255,8 @@ class RegularPurchase(BaseModel):
         conn = get_db()
         db = conn.cursor()
 
-        # get canteen account id
-
-        user_id = session.get('user_id')  # employee id
-        canteen_id = session.get('canteen_id')
-        if not user_id or not canteen_id:
-            raise ValueError('User must be logged in')
-        canteen_account_id = db.execute(
-            "SELECT id FROM canteen_account WHERE canteen_id=?",
-            (self.canteen_id,)).fetchone()[0]
-
         # add to cash/bank balance in canteen account
+        canteen_account_id = self.canteen_account_id
 
         canteen_account_type = payment_options[self.payment_method]
         query = f'UPDATE canteen_account SET {canteen_account_type}={canteen_account_type}+? WHERE id=?;'

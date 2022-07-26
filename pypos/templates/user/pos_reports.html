@@ -74,22 +74,22 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <span class="badge bg-success">most sales</span>
-                    <strong>Foo Good</strong> with 50% of sales
+                    <strong>{{ data.summary.most_sales.product }}</strong> with {{ data.summary.most_sales.share }}% of sales
                 </li>
                 <li class="list-group-item">
                     <span class="badge bg-danger">less sales</span>
-                    <strong>Foo Bad</strong> with 2% of sales
+                    <strong>{{ data.summary.less_sales.product }}</strong> with {{ data.summary.less_sales.share }}% of sales
                 </li>
             </ul>
             <h3>Invoice</h3>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <span class="badge bg-success">higher invoice</span>
-                    <strong>Bar Good</strong> with 87% of the invoice
+                    <strong>{{ data.summary.higher_invoice.product }}</strong> with {{ data.summary.higher_invoice.share }}% of the invoice
                 </li>
                 <li class="list-group-item">
                     <span class="badge bg-danger">lower invoice</span>
-                    <strong>Bar Bad</strong> with 4% of the invoice
+                    <strong>{{ data.summary.lower_invoice.product }}</strong> with {{ data.summary.lower_invoice.share }}% of the invoice
                 </li>
             </ul>
         </div>

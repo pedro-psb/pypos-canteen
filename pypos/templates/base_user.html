@@ -132,17 +132,7 @@
             <div class="position-sticky">
                 <div class="list-group list-group-flush mx-3 mt-4">
                     <ul class="nav nav-pills flex-column mb-auto">
-                        {% if 'acess_canteen_index' in session['permissions'] %}
-                        <li class="nav-item ">
-                            <a href="{{ url_for('page.canteen_index') }}"
-                            class="nav-link {{ 'active' if request.path == url_for('page.canteen_index') else 'text-white' }}" aria-current="page">
-                                <svg class="bi pe-none me-2" width="16" height="16">
-                                    <use xlink:href="#home"></use>
-                                </svg>
-                                Home
-                            </a>
-                        </li>
-                        {% endif %}
+                        
                         {% if 'acess_employee_management' in session['permissions'] %}
                         <li>
                             <h6 class="dropdown-header">Manager</h6>

@@ -5,6 +5,7 @@ from flask import render_template, session
 from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
 from pypos.models import dao
 from pypos.models.client_transaction_model import ClientTransaction
+from pypos.models.dao_reports import ReportSummary
 from pypos.models.transactions_dao import Product, RegularPurchase, UserAccountPurchase, UserRecharge
 from . import bp
 
@@ -24,6 +25,7 @@ PAYMENT_METHODS_NO_USER = [
 @bp.route('/')
 def index():
     return render_template("public/index.html")
+
 
 @bp.route('/getting-started')
 def getting_started():
@@ -222,9 +224,29 @@ def pos_reports():
     all_transactions = dao.get_all_transactions_by_canteen_id(canteen_id)
     pending_transactions = [t for t in all_transactions if t['pending']]
     regular_transactions = [t for t in all_transactions if not t['pending']]
+    summary_data = {
+        'most_sales': {
+            'product': "Best product",
+            'share': 89
+        },
+        'less_sales': {
+            'product': "Not to good product",
+            'share': 3
+        },
+        'higher_invoice': {
+            'product': "Lucrative product",
+            'share': 89
+        },
+        'lower_invoice': {
+            'product': "Not so lucrative product",
+            'share': 6
+        },
+    }
+    summary_data = ReportSummary.get_full_summary()
     data = {
         'transactions': regular_transactions,
-        'pending_transactions': pending_transactions
+        'pending_transactions': pending_transactions,
+        'summary': summary_data
     }
     return render_template("user/pos_reports.html", data=data)
 

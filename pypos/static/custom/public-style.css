@@ -36,12 +36,18 @@ footer {
     padding-top: 2rem;
     color: rgb(207, 210, 230);
 }
+
+footer .gb-logo-container {
+    height: 80px;
+    text-align: center;
+}
+
 .img-container {
     height: 80px;
     width: 200px;
     text-align: center;
 }
 
-.img-container img {
+.img-container img, .gb-logo-container img {
     height: 100%;
 }

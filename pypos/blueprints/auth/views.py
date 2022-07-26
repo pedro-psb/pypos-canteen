@@ -118,7 +118,7 @@ def login():
             # redirect to the right place
             if 'acess_client_dashboard' in session['permissions']:
                 return redirect(url_for('page.client_index'))
-            return redirect(url_for('page.canteen_index'))
+            return redirect(url_for('page.pos_main'))
         except:
             print(error)
             flash(error)

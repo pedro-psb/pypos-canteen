@@ -12,7 +12,7 @@
             <a class="p-2 text-decoration-none nav-link" href="{{ url_for ('page.register_client') }}">Join Canteen</a>
             <a class="btn btn-primary" href="{{ url_for('page.login') }}">Login</a>
             {% elif 'acess_canteen_index' in session['permissions'] %}
-            <a class="p-2 text-decoration-none nav-link" href="{{ url_for('page.canteen_index') }}">User Area</a>
+            <a class="p-2 text-decoration-none nav-link" href="{{ url_for('page.pos_main') }}">User Area</a>
             <a class="btn btn-primary" href="{{ url_for('auth.logout') }}">Log Out</a>
             {% else %}
             <a class="p-2 text-decoration-none nav-link" href="{{ url_for('page.client_index') }}">User Area</a>
