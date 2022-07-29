@@ -6,10 +6,9 @@ from flask.cli import with_appcontext
 
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
+            current_app.config["DATABASE"], detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
 
@@ -17,44 +16,44 @@ def get_db():
 
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
 
     if db is not None:
         db.close()
+
 
 # The Python functions that will run the schema.sql
 
 
 def init_db():
     db = get_db()
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
-    with current_app.open_resource('initial_data.sql') as f:
-        db.executescript(f.read().decode('utf8'))
-    print('initializing db')
+    with current_app.open_resource("schema.sql") as f:
+        db.executescript(f.read().decode("utf8"))
+    with current_app.open_resource("initial_data.sql") as f:
+        db.executescript(f.read().decode("utf8"))
 
 
 def populate_db():
-    db = get_db()
-    from pypos.demo_setup.setup import setup_user_data
+    from pypos.demo_setup.setup import setup_product_data, setup_user_data
+
     setup_user_data()
-    print('populating db')
+    setup_product_data()
 
 
-@click.command('init-db')
+@click.command("init-db")
 @with_appcontext
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.')
+    click.echo("Initialized the database.")
 
 
-@click.command('populate-db')
+@click.command("populate-db")
 @with_appcontext
 def populate_db_command():
     """Populate the database."""
     populate_db()
-    click.echo('Populated the database.')
+    click.echo("Populated the database.")
 
 
 def init_app(app):

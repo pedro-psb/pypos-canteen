@@ -10,13 +10,13 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='ieouwer09832njflçasdf983',
-        DATABASE=os.path.join(app.instance_path, 'pypos.sqlite'),
+        SECRET_KEY="ieouwer09832njflçasdf983",
+        DATABASE=os.path.join(app.instance_path, "pypos.sqlite"),
     )
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile("config.py", silent=True)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -32,8 +32,9 @@ def create_app(test_config=None):
 
     # Database config
     from . import db
+
     db.init_app(app)
-    flask_env = app.config.get('FLASK_ENV', 'PRODUCTION')
+    flask_env = app.config.get("FLASK_ENV", "PRODUCTION")
     if not app.testing and flask_env != "DEVELOPMENT":
         with app.app_context():
             db.init_db()
@@ -53,9 +54,9 @@ def register_blueprints(app):
 
 def register_views(app):
     # a simple page that says hello
-    @app.route('/hello')
+    @app.route("/hello")
     def hello():
-        return 'Hello, World!'
+        return "Hello, World!"
 
 
 # Sitemap helper

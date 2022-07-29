@@ -1,5 +1,6 @@
 from datetime import date
 from unicodedata import name
+
 from .errors import *
 
 
@@ -8,13 +9,13 @@ class ProductCategory:
         self.id = id
         self.name = name.strip()
         self.description = description
+
     def validate(self):
         if not self.name:
             return ADD_PRODUCT_GENERIC_ERROR
         if isinstance(self.description, str):
             self.description = self.description.strip()
-            
-        
+
     def __str__(self) -> str:
         return self.name
 
@@ -44,7 +45,7 @@ class Product:
 
         # Category
         try:
-            if self.category != 'None':
+            if self.category != "None":
                 self.category = int(self.category)
                 if self.category <= 0:
                     return ADD_PRODUCT_INVALID_CATEGORY_ERROR

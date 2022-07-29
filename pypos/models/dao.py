@@ -27,18 +27,6 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     return user_list
 
 
-def get_product_list_by_canteen_id(canteen_id: int) -> int:
-    """Gets a client or client_dependent from a canteen"""
-    con = get_db()
-    db = con.cursor()
-    query = """SELECT p.name, p.id, p.price, pc.name as category
-    FROM product p LEFT JOIN product_category pc ON p.category = pc.id
-    WHERE p.active=1 AND p.canteen_id=?;"""
-    product_list = db.execute(query, [canteen_id]).fetchall()
-    product_list = [dict(product) for product in product_list]
-    return product_list
-
-
 def get_user_account_by_user_id(user_id) -> int:
     con = get_db()
     db = con.cursor()
@@ -63,7 +51,7 @@ def get_user_balance_by_id(id):
     return user_balance
 
 
-def get_canteen_balance_by_id(id, cash_or_bank='cash_balance'):
+def get_canteen_balance_by_id(id, cash_or_bank="cash_balance"):
     conn = get_db()
     db = conn.cursor()
     query = f"SELECT {cash_or_bank} FROM canteen_account WHERE canteen_id=?;"
@@ -71,12 +59,13 @@ def get_canteen_balance_by_id(id, cash_or_bank='cash_balance'):
     return canteen_balance
 
 
-def get_generic_transaction_by_id(transaction_id):
+def get_generic_transaction_by_id(transaction_id: int) -> dict | None:
     con = get_db()
     db = con.cursor()
     query = f"SELECT * FROM generic_transaction WHERE id=?;"
     generic_transaction = db.execute(query, [transaction_id]).fetchone()
-    return dict(generic_transaction)
+    generic_transaction = dict(generic_transaction) if generic_transaction else None
+    return generic_transaction
 
 
 def get_user_recharge_transaction_by_id(transaction_id):
@@ -120,12 +109,13 @@ def get_all_transactions_by_canteen_id(canteen_id):
 
             # get transaction_type_data based on user account and canteen acount operations
             transaction_type_map = get_transaction_type(
-                uat_add=transaction['uat_add'], cat_add=transaction['cat_add'])
-            row_total_calculator = transaction_type_map['row_total_calculator']
+                uat_add=transaction["uat_add"], cat_add=transaction["cat_add"]
+            )
+            row_total_calculator = transaction_type_map["row_total_calculator"]
 
-            row_total = row_total_calculator(row_total, transaction['total'])
-            all_transactions[i]['transaction_type'] = transaction_type_map['print_name']
-            all_transactions[i]['row_total'] = row_total
+            row_total = row_total_calculator(row_total, transaction["total"])
+            all_transactions[i]["transaction_type"] = transaction_type_map["print_name"]
+            all_transactions[i]["row_total"] = row_total
 
     return all_transactions
 
@@ -156,15 +146,18 @@ def get_all_transactions_by_user_id(user_id):
 
             # get transaction_type_data based on user account and canteen acount operations
             transaction_type_map = get_transaction_type(
-                uat_add=transaction['uat_add'],
-                cat_add=transaction['cat_add'],
-                pending=transaction['pending'])
-            row_total_calculator = transaction_type_map['row_total_calculator_user']
+                uat_add=transaction["uat_add"],
+                cat_add=transaction["cat_add"],
+                pending=transaction["pending"],
+            )
+            row_total_calculator = transaction_type_map["row_total_calculator_user"]
 
-            row_total = row_total_calculator(row_total, transaction['total'])
-            all_transactions[i]['presentation'] = transaction_type_map['presentation_user']
-            all_transactions[i]['transaction_type'] = transaction_type_map['print_name']
-            all_transactions[i]['row_total'] = row_total
+            row_total = row_total_calculator(row_total, transaction["total"])
+            all_transactions[i]["presentation"] = transaction_type_map[
+                "presentation_user"
+            ]
+            all_transactions[i]["transaction_type"] = transaction_type_map["print_name"]
+            all_transactions[i]["row_total"] = row_total
     return all_transactions
 
 
@@ -243,6 +236,7 @@ def get_user_by_name(user_name: str):
     user_data = dict(user_data) if user_data else None
     return user_data
 
+
 # Util
 
 
@@ -253,8 +247,7 @@ def insert_into_table(db: Cursor, table: str, **values):
     keys = ",".join(keys)
     values_placeholder = ",".join(values_placeholder)
 
-    query = "INSERT INTO {}({}) VALUES({});".format(
-        table, keys, values_placeholder)
+    query = "INSERT INTO {}({}) VALUES({});".format(table, keys, values_placeholder)
     values = [n for n in values.values()]
     values = tuple(values)
     db.execute(query, (values))
@@ -270,8 +263,7 @@ def update_table(db: Cursor, table: str, **values):
     keys = ",".join(keys)
     values_placeholder = ",".join(values_placeholder)
 
-    query = "UPDATE {} SET ({}) VALUES({});".format(
-        table, keys, values_placeholder)
+    query = "UPDATE {} SET ({}) VALUES({});".format(table, keys, values_placeholder)
     values = [n for n in values.values()]
     values = tuple(values)
     db.execute(query, (values))
@@ -297,16 +289,13 @@ def update_table(db: Cursor, table: str, **values):
 # Transactions
 
 
-def add_to_account(table_name: str,
-                   account_id: int,
-                   account_type: str,
-                   total: float,
-                   con: Connection):
+def add_to_account(
+    table_name: str, account_id: int, account_type: str, total: float, con: Connection
+):
     query = f"UPDATE {table_name} SET {account_type}={account_type}+? WHERE id=?;"
     cur = con.execute(query, (total, account_id))
     if cur.rowcount < 1:
-        raise ValueError(
-            "Some error occurred while adding to the canteen account")
+        raise ValueError("Some error occurred while adding to the canteen account")
 
 
 def is_transaction_pending(transaction_id):
@@ -322,11 +311,11 @@ def is_transaction_pending(transaction_id):
 
 # TODO implement this map over the ifs. Or don't
 canteen_transaction_presentation = {
-    'regular_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
-    'user_account_purchase': {'name': 'purchase', 'badge': 'bg-danger'},
-    'user_recharge': {'name': 'recharge', 'badge': 'bg-danger'},
-    'user_recharge_pending': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
-    'canteen_withdraw': {'name': 'purchase', 'badge': 'bg-danger'},
+    "regular_purchase": {"name": "purchase", "badge": "bg-danger"},
+    "user_account_purchase": {"name": "purchase", "badge": "bg-danger"},
+    "user_recharge": {"name": "recharge", "badge": "bg-danger"},
+    "user_recharge_pending": {"name": "recharge (pending)", "badge": "bg-warning"},
+    "canteen_withdraw": {"name": "purchase", "badge": "bg-danger"},
 }
 
 
@@ -339,65 +328,65 @@ canteen_transaction_presentation = {
 # }
 
 transaction_type_map = {
-    'user_recharge': {
-        'print_name': 'User Recharge',
-        'uat_add': 1,
-        'cat_add': None,
-        'row_total_calculator': lambda x, y: x + y,
-        'row_total_calculator_user': lambda x, y: x + y,
-        'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
-        'presentation_user': {'name': 'recharge', 'badge': 'bg-success'}
+    "user_recharge": {
+        "print_name": "User Recharge",
+        "uat_add": 1,
+        "cat_add": None,
+        "row_total_calculator": lambda x, y: x + y,
+        "row_total_calculator_user": lambda x, y: x + y,
+        "presentation": {"name": "recharge", "badge": "bg-danger"},
+        "presentation_user": {"name": "recharge", "badge": "bg-success"},
     },
-    'user_recharge_pending': {
-        'print_name': 'User Recharge Pending',
-        'uat_add': 1,
-        'cat_add': None,
-        'row_total_calculator': lambda x, y: x,
-        'row_total_calculator_user': lambda x, y: x,
-        'presentation': {'name': 'recharge (pending)', 'badge': 'bg-warning'},
-        'presentation_user': {'name': 'recharge (pending)', 'badge': 'bg-secondary'}
+    "user_recharge_pending": {
+        "print_name": "User Recharge Pending",
+        "uat_add": 1,
+        "cat_add": None,
+        "row_total_calculator": lambda x, y: x,
+        "row_total_calculator_user": lambda x, y: x,
+        "presentation": {"name": "recharge (pending)", "badge": "bg-warning"},
+        "presentation_user": {"name": "recharge (pending)", "badge": "bg-secondary"},
     },
-    'user_account_purchase': {
-        'print_name': 'User Account Purchase',
-        'uat_add': -1,
-        'cat_add': None,
-        'row_total_calculator': lambda x, y: x,
-        'row_total_calculator_user': lambda x, y: x - y,
-        'presentation': {'name': 'purchase', 'badge': 'bg-secondary'},
-        'presentation_user': {'name': 'purchase', 'badge': 'bg-danger'}
+    "user_account_purchase": {
+        "print_name": "User Account Purchase",
+        "uat_add": -1,
+        "cat_add": None,
+        "row_total_calculator": lambda x, y: x,
+        "row_total_calculator_user": lambda x, y: x - y,
+        "presentation": {"name": "purchase", "badge": "bg-secondary"},
+        "presentation_user": {"name": "purchase", "badge": "bg-danger"},
     },
-    'regular_purchase': {
-        'print_name': 'Regular Purchase',
-        'uat_add': None,
-        'cat_add': 1,
-        'row_total_calculator': lambda x, y: x + y,
-        'row_total_calculator_user': lambda x, y: x,
-        'presentation': {'name': 'recharge', 'badge': 'bg-danger'},
-        'presentation_user': {'name': 'recharge', 'badge': 'bg-secondary'}
+    "regular_purchase": {
+        "print_name": "Regular Purchase",
+        "uat_add": None,
+        "cat_add": 1,
+        "row_total_calculator": lambda x, y: x + y,
+        "row_total_calculator_user": lambda x, y: x,
+        "presentation": {"name": "recharge", "badge": "bg-danger"},
+        "presentation_user": {"name": "recharge", "badge": "bg-secondary"},
     },
-    'canteen_withdraw': {
-        'print_name': 'Canteen Withdraw',
-        'uat_add': None,
-        'cat_add': -1,
-        'row_total_calculator': lambda x, y: x - y,
-        'row_total_calculator_user': lambda x, y: x,
-        'presentation': {'name': 'purchase', 'badge': 'bg-danger'},
-        'presentation_user': {'name': 'purchase', 'badge': 'bg-secondary'}
+    "canteen_withdraw": {
+        "print_name": "Canteen Withdraw",
+        "uat_add": None,
+        "cat_add": -1,
+        "row_total_calculator": lambda x, y: x - y,
+        "row_total_calculator_user": lambda x, y: x,
+        "presentation": {"name": "purchase", "badge": "bg-danger"},
+        "presentation_user": {"name": "purchase", "badge": "bg-secondary"},
     },
 }
 
 
 def get_transaction_type(uat_add, cat_add, pending=False):
     if uat_add == 1 and cat_add == 1 and not pending:
-        transaction_type = 'user_recharge'
+        transaction_type = "user_recharge"
     elif uat_add == 1 and cat_add == 1 and pending:
-        transaction_type = 'user_recharge_pending'
+        transaction_type = "user_recharge_pending"
     elif uat_add == -1 and not cat_add:
-        transaction_type = 'user_account_purchase'
+        transaction_type = "user_account_purchase"
     elif not uat_add and cat_add == 1:
-        transaction_type = 'regular_purchase'
+        transaction_type = "regular_purchase"
     elif not uat_add and cat_add == -1:
-        transaction_type = 'canteen_withdraw'
+        transaction_type = "canteen_withdraw"
     else:
-        raise ValueError('Unknow combination')
+        raise ValueError("Unknow combination")
     return transaction_type_map[transaction_type]
