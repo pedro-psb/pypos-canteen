@@ -2,14 +2,16 @@ import os
 import tempfile
 
 import pytest
+from flask import url_for
 from pypos import create_app
 from pypos.db import get_db, init_db
-from flask import url_for
+
 # APP Setup Fixtures
 
 
 with open(os.path.join(os.path.dirname(__file__), 'test_data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
+
 
 @pytest.fixture
 def app():

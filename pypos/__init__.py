@@ -1,8 +1,10 @@
 import os
 
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask
 
 from pypos.blueprints import user_space
+from pypos.demo_setup.setup import setup_sample_data
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -24,19 +26,25 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
+
     register_views(app)
     register_blueprints(app)
+
     # Database config
     from . import db
     db.init_app(app)
+    flask_env = app.config.get('FLASK_ENV', 'PRODUCTION')
+    if not app.testing and flask_env != "DEVELOPMENT":
+        with app.app_context():
+            db.init_db()
+            db.populate_db()
 
     return app
 
 
 def register_blueprints(app):
     from .blueprints import auth, canteen_space, frontend
-    
+
     app.register_blueprint(auth.bp)
     app.register_blueprint(canteen_space.bp)
     app.register_blueprint(frontend.bp)

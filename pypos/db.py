@@ -31,12 +31,14 @@ def init_db():
         db.executescript(f.read().decode('utf8'))
     with current_app.open_resource('initial_data.sql') as f:
         db.executescript(f.read().decode('utf8'))
+    print('initializing db')
 
 
 def populate_db():
     db = get_db()
-    with current_app.open_resource('sample_data.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    from pypos.demo_setup.setup import setup_user_data
+    setup_user_data()
+    print('populating db')
 
 
 @click.command('init-db')
@@ -59,6 +61,3 @@ def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
     app.cli.add_command(populate_db_command)
-    with app.app_context():
-        init_db()
-        populate_db()

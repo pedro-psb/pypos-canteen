@@ -35,7 +35,7 @@ CREATE TABLE user (
   phone_number TEXT,
   role_name TEXT NOT NULL,
   active INTEGER DEFAULT 1 NOT NULL,
-  canteen_id INTEGER NOT NULL,
+  canteen_id INTEGER DEFAULT 1,
   FOREIGN KEY(canteen_id) REFERENCES canteen(id)
 );
 
