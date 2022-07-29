@@ -1,9 +1,9 @@
 import re
 from typing import Optional
-from pydantic import BaseModel, ConstrainedStr, root_validator, validator
-from werkzeug.security import generate_password_hash
 
+from pydantic import BaseModel, ConstrainedStr, root_validator, validator
 from pypos.db import get_db
+from werkzeug.security import generate_password_hash
 
 
 class NotEmptyString(ConstrainedStr):
@@ -19,7 +19,7 @@ class User(BaseModel):
     role_name: Optional[str]
     role_id: Optional[NotEmptyString]
     canteen_name: Optional[str]
-    canteen_id: int
+    canteen_id: Optional[int] = 1
     username: NotEmptyString
 
     @validator('email')
@@ -94,7 +94,7 @@ class UserUpdate(User):
     role_name: Optional[str]
     role_id: Optional[NotEmptyString]
     canteen_id: Optional[int]
-    
+
     @validator('username')
     def username_doesnt_exist(cls, username, values):
         """TODO needs some special validation:
@@ -109,13 +109,14 @@ class UserUpdate(User):
     @validator('email')
     def email_must_match_pattern(cls, email):
         return email
-    
+
     @validator('email')
     def email_isnt_taken(cls, email):
         """TODO needs some validation:
         - if email is the same as from same user, should pass
         - if email is the same as from different user, shouldn't pass"""
         return email
+
 
 class UserClient(User):
     password_confirm: NotEmptyString
@@ -157,7 +158,6 @@ class UserChildCreateForm(User):
 class UserChildUpdateForm(UserUpdate):
     age: Optional[int]
     grade: Optional[str]
-    
 
 
 # TODO implement this later

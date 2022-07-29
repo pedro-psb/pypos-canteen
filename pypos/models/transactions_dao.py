@@ -1,14 +1,14 @@
-from datetime import datetime
 import json
+from datetime import datetime
 from pprint import pprint
 from sqlite3 import Connection, Cursor
 from typing import List, Optional
 from wsgiref.validate import validator
 
 from flask import session
+from pydantic import (BaseModel, PositiveFloat, ValidationError, parse_obj_as,
+                      root_validator)
 from pypos.db import get_db
-from pydantic import BaseModel, PositiveFloat, ValidationError, parse_obj_as, root_validator
-
 from pypos.models import dao
 
 payment_options = {
@@ -185,11 +185,11 @@ class RegularPurchase(BaseModel):
     payment_method: str
     discount: float = 0
     total: float = 0
-    
+
     # calculated
     canteen_account_id: Optional[int]
     user_account_id: Optional[int]
-    
+
     @root_validator()
     def canteen_id_or_canteen_account_id_required(cls, values):
         if not values.get('canteen_id') and not values.get('canteen_account_id'):
@@ -202,7 +202,7 @@ class RegularPurchase(BaseModel):
                 [values['canteen_id']]).fetchone()[0]
             values['canteen_account_id'] = canteen_account_id
         return values
-    
+
     @root_validator(pre=True)
     def parse_products(cls, values):
         products = values.get('products')

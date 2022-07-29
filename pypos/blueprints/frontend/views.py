@@ -1,12 +1,15 @@
 import json
 from pprint import pprint
-from flask import render_template, session
 
-from pypos.blueprints.auth.util import login_required, get_db, public_acess_only
+from flask import render_template, session
+from pypos.blueprints.auth.util import (get_db, login_required,
+                                        public_acess_only)
 from pypos.models import dao
 from pypos.models.client_transaction_model import ClientTransaction
 from pypos.models.dao_reports import ReportSummary
-from pypos.models.transactions_dao import Product, RegularPurchase, UserAccountPurchase, UserRecharge
+from pypos.models.transactions_dao import (Product, RegularPurchase,
+                                           UserAccountPurchase, UserRecharge)
+
 from . import bp
 
 # Public
@@ -295,8 +298,8 @@ def client_index():
 @bp.route('/client/manage')
 @login_required(permissions=['acess_client_dashboard'])
 def client_manage():
-    canteen_id = session['canteen_id']
-    user_child_list = dao.get_user_child_list(canteen_id)
+    user_id = session['user_id']
+    user_child_list = dao.get_user_children_form_provider(user_id)
     data = {
         'user_child_list': user_child_list,
     }

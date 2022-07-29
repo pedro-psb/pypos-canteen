@@ -1,11 +1,9 @@
+"""Data Acess Object utilities"""
 
-from sqlite3 import Connection, Cursor, DatabaseError, OperationalError
-from typing import List, Optional
-from wsgiref.validate import validator
+from sqlite3 import Connection, Cursor
+from typing import List
 
-from pydantic import BaseModel
 from pypos.db import get_db
-from pypos.models.user_model import User, UserChildCreateForm, UserChildUpdateForm
 
 
 def get_client_list_by_canteen_id(canteen_id: int) -> int:
@@ -208,7 +206,17 @@ def get_user_child_list(canteen_id):
     return user_child_list
 
 
-def get_user_count(canteen_id):
+def get_user_children_form_provider(user_id: int):
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT u.username, u.email, u.phone_number, u.id, uc.age, uc.grade FROM user u
+    INNER JOIN user_child uc ON u.id = uc.user_id WHERE uc.user_provider_id=? AND u.active=1;"""
+    user_child_list = db.execute(query, [user_id]).fetchall()
+    user_child_list = [dict(u) for u in user_child_list]
+    return user_child_list
+
+
+def get_user_count(canteen_id=1):
     con = get_db()
     db = con.cursor()
     query = """SELECT count(*) FROM user WHERE canteen_id=?;"""
@@ -224,61 +232,16 @@ def get_user_by_id(user_id):
     user_data = db.execute(query, [user_id]).fetchone()
     user_data = dict(user_data)
     return user_data
-# Create
 
 
-def create_user_child(form_data: UserChildCreateForm):
+def get_user_by_name(user_name: str):
     con = get_db()
     db = con.cursor()
-
-    # Insert regular user
-    query = """INSERT INTO user (username, password, email, phone_number,
-    role_name, canteen_id) VALUES (?,?,?,?,?,?);"""
-    db.execute(query, [
-        form_data.username, form_data.password, form_data.email,
-        form_data.phone_number, form_data.role_name, form_data.canteen_id
-    ])
-    user_id = db.lastrowid
-
-    # Insert user_child extension
-    query = """INSERT INTO user_child (age, grade, user_provider_id, user_id)
-    VALUES (?,?,?,?);"""
-    db.execute(query, [
-        form_data.age, form_data.grade,
-        form_data.user_provider_id, user_id
-    ])
-    if db.rowcount < 1:
-        raise ValueError('Some error ocurred with the database insert funcion')
-    # Suceed
-    con.commit()
-    return user_id
-
-
-def update_user_child(form_data: UserChildUpdateForm):
-    con = get_db()
-    db = con.cursor()
-
-    # update regular user
-    query = """UPDATE user SET username=:username, password=:password, email=:email,
-    phone_number=:phone_number, role_name=:role_name
-    WHERE id=:id;"""
-    db.execute(query, form_data.dict())
-
-    # update user_child extension
-    query = """UPDATE user_child SET age=:age, grade=:grade WHERE user_id=:id;"""
-    db.execute(query, form_data.dict())
-    # Suceed
-    con.commit()
-
-
-def delete_user(user_id):
-    con = get_db()
-    db = con.cursor()
-
-    # update regular user
-    query = """UPDATE user SET active=0 WHERE id=?"""
-    db.execute(query, [user_id])
-    con.commit()
+    query = """SELECT * FROM user u LEFT JOIN user_child uc ON u.id=uc.user_id
+    WHERE u.username=?;"""
+    user_data = db.execute(query, [user_name]).fetchone()
+    user_data = dict(user_data) if user_data else None
+    return user_data
 
 # Util
 
@@ -315,20 +278,20 @@ def update_table(db: Cursor, table: str, **values):
     return db.lastrowid
 
 
-def insert_many_into_table(db: Cursor, table: str, list_of_values: List):
-    """Return a tuple of a insert query with it's values."""
-    keys = [n for n in values]
-    values_placeholder = ["?"] * len(keys)
-    keys = ",".join(keys)
-    values_placeholder = ",".join(values_placeholder)
+# def insert_many_into_table(db: Cursor, table: str, list_of_values: List):
+#     """Return a tuple of a insert query with it's values."""
+#     keys = [n for n in values]
+#     values_placeholder = ["?"] * len(keys)
+#     keys = ",".join(keys)
+#     values_placeholder = ",".join(values_placeholder)
 
-    query = "INSERT INTO {}({}) VALUES({});".format(
-        table, keys, values_placeholder)
-    values = [n for n in values.values()]
-    values = tuple(values)
+#     query = "INSERT INTO {}({}) VALUES({});".format(
+#         table, keys, values_placeholder)
+#     values = [n for n in values.values()]
+#     values = tuple(values)
 
-    db.execute(query, (values))
-    return db.lastrowid
+#     db.execute(query, (values))
+#     return db.lastrowid
 
 
 # Transactions

@@ -1,10 +1,11 @@
 from multiprocessing.sharedctypes import Value
-from sqlite3 import OperationalError
-from pypos.models import dao
-from pypos.models.user_model import UserChildCreateForm, UserChildUpdateForm
-from . import bp
+
 from flask import redirect, request, session, url_for
+from pypos.models import dao, dao_users
 from pypos.models.transactions_dao import UserRecharge
+from pypos.models.user_model import UserChildCreateForm, UserChildUpdateForm
+
+from . import bp
 
 
 @bp.route('/add_user_recharge', methods=['POST'])
@@ -31,7 +32,7 @@ def user_child_insert():
         form_data['user_provider_id'] = session['user_id']
 
         user_data = UserChildCreateForm(**form_data)
-        dao.create_user_child(user_data)
+        dao_users.create_user_child(user_data)
     except ValueError as e:
         print(e)
         return redirect(url_for('page.client_manage_add'))
@@ -55,7 +56,7 @@ def user_child_update():
     form_data = remove_empty_fields(form_data)
     user_data.update(form_data)
     user_data = UserChildUpdateForm(**user_data)
-    dao.update_user_child(user_data)
+    dao_users.update_user_child(user_data)
     return redirect(url_for('page.client_manage'))
 
 
@@ -63,7 +64,7 @@ def user_child_update():
 def user_child_remove():
     try:
         form_data = request.form
-        dao.delete_user(form_data['id'])
+        dao_users.delete_user(form_data['id'])
     except Exception as e:
         print(e)
     return redirect(url_for('page.client_manage'))

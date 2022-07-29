@@ -1,12 +1,12 @@
 from logging import raiseExceptions
 
-from flask import (
-    flash, redirect, request, session, url_for
-)
+from flask import flash, redirect, request, session, url_for
 from pydantic import ValidationError
-from werkzeug.security import check_password_hash
 from pypos.db import get_db
+from pypos.models.dao_users import insert_user
 from pypos.models.user_model import UserClient, UserOwner
+from werkzeug.security import check_password_hash
+
 from . import bp
 
 
@@ -23,13 +23,7 @@ def register_client():
 
         try:
             user = UserClient(**form_data)
-            db = get_db()
-            db.execute(
-                "INSERT INTO user (username, email, password,\
-                    role_name, canteen_id) VALUES (?,?,?,?,?)",
-                (user.username, user.email, user.password,
-                 user.role_name, user.canteen_id))
-            db.commit()
+            insert_user(user)
             session.clear()
             return redirect(url_for("page.login"))
         except ValidationError as e:
@@ -95,10 +89,10 @@ def login():
             # Check password
             if user is None:
                 error = 'Incorrect username.'
-                raiseExceptions()
+                raise Exception()
             elif not check_password_hash(user['password'], password):
                 error = 'Incorrect password.'
-                raiseExceptions()
+                raise Exception()
 
             # Check role and save permission to session
             role_name = user.get('role_name')
@@ -120,8 +114,6 @@ def login():
                 return redirect(url_for('page.client_index'))
             return redirect(url_for('page.pos_main'))
         except:
-            print(error)
-            flash(error)
             return redirect(url_for('page.login'))
 
 
