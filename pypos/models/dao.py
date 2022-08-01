@@ -27,22 +27,31 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     return user_list
 
 
-def get_user_account_by_user_id(user_id) -> int | None:
-    """Get user account id for regular client or child client"""
+def get_user_account_by_user_id(user_id: int) -> Dict:
+    """Get user account data for regular client or child client"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT ua.id FROM user u INNER JOIN user_account ua
-    ON u.id=ua.user_id WHERE u.id=?
+    query = """SELECT ua.id, ua.balance,
+    ua.negative_limit, ua.user_id FROM user u
+    INNER JOIN user_account ua ON u.id=ua.user_id WHERE u.id=?
     UNION
-    SELECT ua.id FROM user_account ua WHERE ua.user_id=(
+    SELECT ua.id, ua.balance, ua.negative_limit, ua.user_id
+    FROM user_account ua WHERE ua.user_id=(
         SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
         ON u.id=uc.user_id WHERE u.id=?
         );
     """
-    user_account_id = db.execute(query, [user_id, user_id]).fetchone()
-    user_account_id = user_account_id[0] if user_account_id else None
+    user_account = db.execute(query, [user_id, user_id]).fetchone()
+    user_account = dict(user_account) if user_account else {}
 
-    return user_account_id
+    return user_account
+
+
+def get_user_balance_by_id(user_id: int) -> float | None:
+    """DEPRECATED. Use get_user_account_by_user_id() instead"""
+    user_account = get_user_account_by_user_id(user_id)
+    user_balance = user_account.get("balance")
+    return user_balance
 
 
 def get_canteen_account_id_by_canteen_id(canteen_id) -> int:
@@ -53,19 +62,13 @@ def get_canteen_account_id_by_canteen_id(canteen_id) -> int:
     return canteen_account_id
 
 
-def get_user_balance_by_id(id):
+def get_canteen_balance() -> Dict:
+    """get cash_balance and bank_balance from canteen_account"""
     conn = get_db()
     db = conn.cursor()
-    query = "SELECT balance FROM user_account WHERE user_id=?;"
-    user_balance = db.execute(query, (id,)).fetchone()[0]
-    return user_balance
-
-
-def get_canteen_balance_by_id(id, cash_or_bank="cash_balance"):
-    conn = get_db()
-    db = conn.cursor()
-    query = f"SELECT {cash_or_bank} FROM canteen_account WHERE canteen_id=?;"
-    canteen_balance = db.execute(query, (id,)).fetchone()[0]
+    query = "SELECT * FROM canteen_account WHERE canteen_id=1;"
+    canteen_balance = db.execute(query).fetchone()
+    canteen_balance = dict(canteen_balance) if canteen_balance else {}
     return canteen_balance
 
 
@@ -78,19 +81,33 @@ def get_generic_transaction_by_id(transaction_id: int) -> dict | None:
     return generic_transaction
 
 
+def get_user_account_purchase_transaction_by_id(transaction_id) -> Dict:
+    con = get_db()
+    db = con.cursor()
+    query = """SELECT * FROM generic_transaction gt
+    INNER JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
+    INNER JOIN payment_info pay ON pay.generic_transaction_id=gt.id
+    WHERE gt.id=?;"""
+    transaction = db.execute(query, [transaction_id]).fetchone()
+    transaction = dict(transaction) if transaction else {}
+    return transaction
+
+
 def get_user_recharge_transaction_by_id(transaction_id):
     con = get_db()
     db = con.cursor()
     query = """SELECT gt.id, gt.total, gt.date_time,
     pay.payment_method, pay.pending, pay.discount,
-    uat.user_account_id, cat.canteen_account_id
+    uat.user_account_id, cat.canteen_account_id,
+    uat.operation_add AS user_operation_add
     FROM generic_transaction gt
     INNER JOIN payment_info pay ON pay.generic_transaction_id = gt.id
     INNER JOIN user_account_transaction uat ON uat.generic_transaction_id = gt.id
     INNER JOIN canteen_account_transaction cat ON cat.generic_transaction_id = gt.id
     WHERE gt.id=?;"""
-    generic_transaction = db.execute(query, [transaction_id]).fetchone()
-    return dict(generic_transaction)
+    transaction = db.execute(query, [transaction_id]).fetchone()
+    transaction = dict(transaction) if transaction else {}
+    return transaction
 
 
 def get_all_transactions_by_canteen_id(canteen_id):

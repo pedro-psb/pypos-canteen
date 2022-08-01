@@ -71,6 +71,11 @@ def setup_product_data():
 
 def setup_transaction_data():
     """Setup random transaction data"""
+    # Insert Random User Account Transactions
+    for data in sample_user_recharge():
+        transaction = UserRecharge(**data)
+        transaction.save()
+
     # Insert Random Regular Transactions
     for data in sample_regular_purchase():
         transaction = RegularPurchase(**data)
@@ -78,11 +83,5 @@ def setup_transaction_data():
 
     # Insert Random Recharges Transactions
     for data in sample_user_account_purchase():
-        breakpoint()
         transaction = UserAccountPurchase(**data)
-        transaction.save()
-
-    # Insert Random User Account Transactions
-    for data in sample_user_recharge():
-        transaction = UserRecharge(**data)
         transaction.save()

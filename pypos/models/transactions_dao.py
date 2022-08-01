@@ -56,7 +56,7 @@ class UserRecharge(BaseModel):
     id: Optional[int]
 
     # required
-    canteen_id: Optional[int]
+    canteen_id: Optional[int] = 1
     user_id: Optional[int]
     payment_method: str
     pending: bool
@@ -64,7 +64,7 @@ class UserRecharge(BaseModel):
     timestamp_code: Optional[str]
 
     # calculated
-    canteen_account_id: Optional[int]
+    canteen_account_id: Optional[int] = 1
     user_account_id: Optional[int]
     presentation: Optional[dict]
 
@@ -100,11 +100,8 @@ class UserRecharge(BaseModel):
         if not values.get("user_id") and not values.get("user_account_id"):
             raise ValueError("Must provide user_id or user_account_id")
         if not values.get("user_account_id"):
-            conn = get_db()
-            db = conn.cursor()
-            user_account_id = db.execute(
-                "SELECT id FROM user_account WHERE user_id=?", (values["user_id"],)
-            ).fetchone()[0]
+            user_account = dao.get_user_account_by_user_id(values["user_id"])
+            user_account_id = user_account.get("id")
             values["user_account_id"] = user_account_id
         return values
 
@@ -366,7 +363,9 @@ class UserAccountPurchase(BaseModel):
         if not client_account_id:
             if not client_id:
                 raise ValueError("Must provide client_id or client_account_id")
-            values["client_account_id"] = dao.get_user_account_by_user_id(client_id)
+            values["client_account_id"] = dao.get_user_account_by_user_id(
+                client_id
+            ).get("id")
         return values
 
     @root_validator
@@ -479,7 +478,7 @@ class CanteenWithdraw:
 # Utils (can't go to dao module because of circular imports)
 
 
-def get_generic_transaction_by_id(transaction_id):
+def get_generic_transaction_by_id(transaction_id) -> RegularPurchase:
     db = get_db()
     transaction_query = """SELECT gt.date_time, gt.total, gt.canteen_id,
         pay.discount, pay.payment_method FROM generic_transaction gt

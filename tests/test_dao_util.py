@@ -40,13 +40,13 @@ def test_get_generic_transaction_by_id(app, auth, client):
 def test_get_user_account_id_by_id(app):
     """Get user account id by a user id"""
     with app.app_context(), app.test_request_context():
-        user_account_id = dao.get_user_account_by_user_id(1)
-        assert user_account_id == 1
+        user_account = dao.get_user_account_by_user_id(1)
+        assert user_account["id"] == 1
 
 
 def test_get_user_account_by_user_id(app):
     """Should return the same account_id for both provider and child"""
     with app.app_context():
-        provider_account_id = dao.get_user_account_by_user_id(1)
-        child_account_id = dao.get_user_account_by_user_id(7)
+        provider_account_id = dao.get_user_account_by_user_id(1).get("id")
+        child_account_id = dao.get_user_account_by_user_id(7).get("id")
         assert provider_account_id == child_account_id

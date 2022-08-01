@@ -42,7 +42,7 @@ def populate_db():
 
     setup_user_data()
     setup_product_data()
-    # setup_transaction_data()
+    setup_transaction_data()
 
 
 @click.command("init-db")

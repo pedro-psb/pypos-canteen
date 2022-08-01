@@ -235,9 +235,7 @@ def pos_main():
 @login_required(permissions=["acess_reports"])
 def pos_reports():
     # TODO make a link to the transaction details with a popover
-    canteen_id = session.get("canteen_id")
-
-    all_transactions = dao.get_all_transactions_by_canteen_id(canteen_id)
+    all_transactions = dao.get_all_transactions_by_canteen_id(1)
     pending_transactions = [t for t in all_transactions if t["pending"]]
     regular_transactions = [t for t in all_transactions if not t["pending"]]
     summary_data = {
@@ -247,7 +245,10 @@ def pos_reports():
         "lower_invoice": {"product": "Not so lucrative product", "share": 6},
     }
     summary_data = ReportSummary.get_full_summary()
+    canteen_balance = dao.get_canteen_balance()
     data = {
+        "cash_balance": canteen_balance.get("cash_balance"),
+        "bank_balance": canteen_balance.get("bank_balance"),
         "transactions": regular_transactions,
         "pending_transactions": pending_transactions,
         "summary": summary_data,
@@ -284,9 +285,12 @@ def manage_clients_recharge(account_id):
 @login_required(permissions=["acess_client_dashboard"])
 def client_index():
     user_id = session["user_id"]
+    user_account = dao.get_user_account_by_user_id(user_id)
+    provider_id = user_account.get("user_id")
+    balance = user_account.get("balance")
     data = {
-        "transactions": dao.get_all_transactions_by_user_id(user_id),
-        "balance": dao.get_user_balance_by_id(user_id),
+        "transactions": dao.get_all_transactions_by_user_id(provider_id),
+        "balance": balance,
     }
     return render_template("user/client_index.html", data=data)
 
