@@ -1,9 +1,9 @@
 import json
 from multiprocessing.sharedctypes import Value
 from pprint import pprint
-from flask import g, session
-import pytest
 
+import pytest
+from flask import g, session
 from pypos.db import get_db
 from pypos.models import dao
 from pypos.models.transactions_dao import (
@@ -12,7 +12,7 @@ from pypos.models.transactions_dao import (
     UserAccountPurchase,
     UserRecharge,
     accept_pending_transaction,
-    reject_pending_transaction
+    reject_pending_transaction,
 )
 
 #   ("torta", 15.5, 1),
@@ -20,50 +20,48 @@ from pypos.models.transactions_dao import (
 #   ("Prato Feito", 10, 2)
 
 
-def valid_transaction(Transaction=RegularPurchase,
-                      payment_method='cash',
-                      client_account_id=None
-                      ):
+def valid_transaction(
+    Transaction=RegularPurchase, payment_method="cash", client_account_id=None
+):
     transaction = Transaction(
         canteen_id=1,
         client_account_id=client_account_id,
         products=[
             Product(id=1, quantity=2, canteen_id=1),
-            Product(id=2, quantity=3, canteen_id=1)
+            Product(id=2, quantity=3, canteen_id=1),
         ],
-        payment_method=payment_method
+        payment_method=payment_method,
     )
     return transaction
 
 
-def valid_transaction_json_data(Transaction=RegularPurchase,
-                                payment_method='cash',
-                                client_account_id=None
-                                ):
+def valid_transaction_json_data(
+    Transaction=RegularPurchase, payment_method="cash", client_account_id=None
+):
     transaction = Transaction(
         canteen_id=1,
         client_account_id=client_account_id,
-        products=json.dumps([
-            {'id': '1', 'quantity': '1'},
-            {'id': '2', 'quantity': '3'},
-        ]),
-        payment_method=payment_method
+        products=json.dumps(
+            [
+                {"id": "1", "quantity": "1"},
+                {"id": "2", "quantity": "3"},
+            ]
+        ),
+        payment_method=payment_method,
     )
     return transaction
 
 
-def valid_recharge_transaction(payment_method='pix',
-                               user_id=1,
-                               total=20,
-                               pending=False,
-                               timestamp_code='foo'):
+def valid_recharge_transaction(
+    payment_method="pix", user_id=1, total=20, pending=False, timestamp_code="foo"
+):
     if not pending:
         transaction = UserRecharge(
             canteen_id=1,
             user_id=user_id,
             total=total,
             payment_method=payment_method,
-            pending=pending
+            pending=pending,
         )
     else:
         transaction = UserRecharge(
@@ -72,22 +70,18 @@ def valid_recharge_transaction(payment_method='pix',
             total=total,
             payment_method=payment_method,
             pending=pending,
-            timestamp_code=timestamp_code
+            timestamp_code=timestamp_code,
         )
     return transaction
 
 
 def test_product_model(app):
     with app.app_context():
-        product = Product(
-            id=2,
-            quantity=3,
-            canteen_id=1
-        )
+        product = Product(id=2, quantity=3, canteen_id=1)
         assert product
         assert product.price == 10
         assert product.sub_total == 30
-        assert product.name == 'Pão de Queijo'
+        assert product.name == "Pão de Queijo"
 
 
 def test_regular_purchase_model(app):
@@ -117,23 +111,21 @@ def test_user_recharge_model(app):
         # test pending-timestamp_code dependency
         with pytest.raises(ValueError):
             transaction_pending = valid_recharge_transaction(
-                pending=True,
-                timestamp_code=None)
+                pending=True, timestamp_code=None
+            )
 
 
 def test_regular_purchase_get_all(app, auth, client):
     """Should get all purchase records including products"""
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
 
         canteen_transaction = valid_transaction()
         canteen_transaction2 = RegularPurchase(
             canteen_id=1,
-            products=[
-                Product(id=2, quantity=4, canteen_id=1)
-            ],
-            payment_method='cash'
+            products=[Product(id=2, quantity=4, canteen_id=1)],
+            payment_method="cash",
         )
         canteen_transaction.save()
         canteen_transaction2.save()
@@ -146,13 +138,12 @@ def test_regular_purchase_get_all(app, auth, client):
 def test_regular_purchase_insert(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
 
         transaction = valid_transaction()
         transaction.save()
 
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='cash_balance')
+        canteen_balance = dao.get_canteen_balance_by_id(1, cash_or_bank="cash_balance")
         assert transaction
         assert canteen_balance == transaction.total
 
@@ -160,19 +151,18 @@ def test_regular_purchase_insert(app, auth, client):
 def test_user_account_purchase_insert(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
 
         transaction = valid_transaction(
             Transaction=UserAccountPurchase,
-            payment_method='user_account',
-            client_account_id=1
+            payment_method="user_account",
+            client_account_id=1,
         )
         transaction.save()
 
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='cash_balance')
+        canteen_balance = dao.get_canteen_balance_by_id(1, cash_or_bank="cash_balance")
         assert transaction
         assert user_balance == initial_user_balance - transaction.total
         assert canteen_balance == 0
@@ -182,20 +172,18 @@ def test_user_account_purchase_get_all(app, auth, client):
     """Should get all purchase records including products"""
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
 
         user_acc_transaction = valid_transaction(
             Transaction=UserAccountPurchase,
-            payment_method='user_account',
-            client_account_id=1
+            payment_method="user_account",
+            client_account_id=1,
         )
         user_acc_transaction2 = UserAccountPurchase(
             canteen_id=1,
             client_account_id=1,
-            products=[
-                Product(id=2, quantity=4, canteen_id=1)
-            ],
-            payment_method='user_account'
+            products=[Product(id=2, quantity=4, canteen_id=1)],
+            payment_method="user_account",
         )
         user_acc_transaction.save()
         user_acc_transaction2.save()
@@ -208,18 +196,19 @@ def test_user_account_purchase_get_all(app, auth, client):
 def test_user_recharge_save(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
         initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
 
-        transaction = valid_recharge_transaction(
-            total=10, pending=False)
+        transaction = valid_recharge_transaction(total=10, pending=False)
         transaction.save()
 
         user_balance = dao.get_user_balance_by_id(1)
         canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
         assert transaction
         assert user_balance == initial_user_balance + transaction.total
         assert canteen_balance == initial_canteen_balance + transaction.total
@@ -228,22 +217,23 @@ def test_user_recharge_save(app, auth, client):
 def test_user_recharge_pending_save(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
         initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
 
-        transaction = valid_recharge_transaction(
-            total=10, pending=True)
+        transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
-        transaction_pending_state = dao.get_transaction_pending_state(
-            transaction_id)
+        transaction_pending_state = dao.get_transaction_pending_state(transaction_id)
         payment_voucher_code = dao.get_payment_voucher_code_by_transaction_id(
-            transaction_id)
-        
+            transaction_id
+        )
+
         user_balance = dao.get_user_balance_by_id(1)
         canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
         assert transaction
         assert user_balance == initial_user_balance
         assert canteen_balance == initial_canteen_balance
@@ -254,13 +244,13 @@ def test_user_recharge_pending_save(app, auth, client):
 def test_user_recharge_pending_accept(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
         initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
 
-        transaction = valid_recharge_transaction(
-            total=10, pending=True)
+        transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
         # accept call
         accept_pending_transaction(transaction_id)
@@ -269,7 +259,8 @@ def test_user_recharge_pending_accept(app, auth, client):
         # after accept balance
         user_balance = dao.get_user_balance_by_id(1)
         canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
         assert transaction
         assert user_balance == initial_user_balance + transaction.total
         assert canteen_balance == initial_canteen_balance + transaction.total
@@ -279,13 +270,13 @@ def test_user_recharge_pending_accept(app, auth, client):
 def test_user_recharge_pending_reject(app, auth, client):
     auth.login()
     with app.app_context(), app.test_request_context(), client:
-        client.get('/')
+        client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
         initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
 
-        transaction = valid_recharge_transaction(
-            total=10, pending=True)
+        transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
 
         # accept call
@@ -295,7 +286,8 @@ def test_user_recharge_pending_reject(app, auth, client):
         # after reject balance
         user_balance = dao.get_user_balance_by_id(1)
         canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank='bank_account_balance')
+            1, cash_or_bank="bank_account_balance"
+        )
         assert transaction
         assert user_balance == initial_user_balance
         assert canteen_balance == initial_canteen_balance

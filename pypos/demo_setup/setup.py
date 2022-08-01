@@ -6,9 +6,19 @@ from pypos.models.dao_users import (
     insert_user_account_no_commit,
     insert_user_no_commit,
 )
+from pypos.models.transactions_dao import (
+    RegularPurchase,
+    UserAccountPurchase,
+    UserRecharge,
+)
 from pypos.models.user_model import User, UserChildCreateForm
 
 from .sample_product_data import sample_categories, sample_products
+from .sample_transaction_data import (
+    sample_regular_purchase,
+    sample_user_account_purchase,
+    sample_user_recharge,
+)
 from .sample_user_data import sample_client_dependents, sample_clients, sample_employees
 
 
@@ -62,5 +72,17 @@ def setup_product_data():
 def setup_transaction_data():
     """Setup random transaction data"""
     # Insert Random Regular Transactions
+    for data in sample_regular_purchase():
+        transaction = RegularPurchase(**data)
+        transaction.save()
+
     # Insert Random Recharges Transactions
+    for data in sample_user_account_purchase():
+        breakpoint()
+        transaction = UserAccountPurchase(**data)
+        transaction.save()
+
     # Insert Random User Account Transactions
+    for data in sample_user_recharge():
+        transaction = UserRecharge(**data)
+        transaction.save()

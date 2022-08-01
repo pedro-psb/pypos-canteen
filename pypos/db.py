@@ -34,10 +34,15 @@ def init_db():
 
 
 def populate_db():
-    from pypos.demo_setup.setup import setup_product_data, setup_user_data
+    from pypos.demo_setup.setup import (
+        setup_product_data,
+        setup_transaction_data,
+        setup_user_data,
+    )
 
     setup_user_data()
     setup_product_data()
+    # setup_transaction_data()
 
 
 @click.command("init-db")

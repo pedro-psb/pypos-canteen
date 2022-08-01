@@ -3,16 +3,28 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT u.id, u.username, "" AS user_provider_name, ua.id AS account_id
-FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
-WHERE u.canteen_id=1 AND u.active=1 AND
-u.role_name IN ('client')
-UNION
-SELECT u.id, u.username, (SELECT username FROM user WHERE id=uc.user_provider_id) AS user_provider_name,
-ua.id AS account_id
-FROM user u INNER JOIN user_child uc ON u.id=uc.user_id
-INNER JOIN user_account ua ON ua.id=uc.user_provider_id
-WHERE canteen_id=1;
+SELECT ua.id FROM user u INNER JOIN user_account ua
+    ON u.id=ua.user_id WHERE u.id=4
+    UNION
+    SELECT ua.id FROM user_account ua WHERE ua.user_id=(
+        SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
+        ON u.id=uc.user_id WHERE u.id=4
+        );
+
+-- SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
+-- ON u.id=uc.user_id WHERE u.id=12;
+
+
+-- SELECT u.id, u.username, "" AS user_provider_name, ua.id AS account_id
+-- FROM user u INNER JOIN user_account ua ON u.id=ua.user_id
+-- WHERE u.canteen_id=1 AND u.active=1 AND
+-- u.role_name IN ('client')
+-- UNION
+-- SELECT u.id, u.username, (SELECT username FROM user WHERE id=uc.user_provider_id) AS user_provider_name,
+-- ua.id AS account_id
+-- FROM user u INNER JOIN user_child uc ON u.id=uc.user_id
+-- INNER JOIN user_account ua ON ua.id=uc.user_provider_id
+-- WHERE canteen_id=1;
 
 
 /* PRODUCT CATEGORY IS WORKING

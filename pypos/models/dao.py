@@ -1,7 +1,7 @@
 """Data Acess Object utilities"""
 
 from sqlite3 import Connection, Cursor
-from typing import List
+from typing import Dict, List
 
 from pypos.db import get_db
 
@@ -27,11 +27,21 @@ def get_client_list_by_canteen_id(canteen_id: int) -> int:
     return user_list
 
 
-def get_user_account_by_user_id(user_id) -> int:
+def get_user_account_by_user_id(user_id) -> int | None:
+    """Get user account id for regular client or child client"""
     con = get_db()
     db = con.cursor()
-    query = "SELECT id FROM user_account WHERE user_id=?;"
-    user_account_id = db.execute(query, [user_id]).fetchone()[0]
+    query = """SELECT ua.id FROM user u INNER JOIN user_account ua
+    ON u.id=ua.user_id WHERE u.id=?
+    UNION
+    SELECT ua.id FROM user_account ua WHERE ua.user_id=(
+        SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
+        ON u.id=uc.user_id WHERE u.id=?
+        );
+    """
+    user_account_id = db.execute(query, [user_id, user_id]).fetchone()
+    user_account_id = user_account_id[0] if user_account_id else None
+
     return user_account_id
 
 
@@ -227,13 +237,13 @@ def get_user_by_id(user_id):
     return user_data
 
 
-def get_user_by_name(user_name: str):
+def get_user_by_name(user_name: str) -> Dict:
     con = get_db()
     db = con.cursor()
     query = """SELECT * FROM user u LEFT JOIN user_child uc ON u.id=uc.user_id
     WHERE u.username=?;"""
     user_data = db.execute(query, [user_name]).fetchone()
-    user_data = dict(user_data) if user_data else None
+    user_data: Dict = dict(user_data) if user_data else {}
     return user_data
 
 

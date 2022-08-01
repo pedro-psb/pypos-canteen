@@ -34,11 +34,18 @@ def test_products_setup_works(app):
 def test_transactions_setup_works(app):
     with app.app_context():
         # TODO make this test more efficient
+        setup.setup_user_data()
+        setup.setup_product_data()
         setup.setup_transaction_data()
         regular_purchase = dao.get_generic_transaction_by_id(1)
-        user_account_purchase = dao.get_generic_transaction_by_id(1)
-        user_recharge = dao.get_generic_transaction_by_id(1)
+        user_account_purchase = dao.get_generic_transaction_by_id(3)
+        user_recharge = dao.get_generic_transaction_by_id(5)
 
         assert regular_purchase
+        assert not regular_purchase.get("user_account_id")
         assert user_account_purchase
+        assert user_account_purchase.get("user_account_id")
+        assert user_account_purchase["operation_add"]
         assert user_recharge
+        assert user_recharge.get("user_account_id")
+        assert not user_recharge["operation_add"]
