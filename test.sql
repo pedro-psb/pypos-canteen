@@ -3,13 +3,17 @@ Run this to test:
 cat test.sql | sqlite3 instance/pypos.sqlite
 */
 
-SELECT ua.id FROM user u INNER JOIN user_account ua
-    ON u.id=ua.user_id WHERE u.id=4
-    UNION
-    SELECT ua.id FROM user_account ua WHERE ua.user_id=(
-        SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
-        ON u.id=uc.user_id WHERE u.id=4
-        );
+SELECT gt.id, gt.total, gt.date_time, pay.payment_method,
+pay.discount, pay.pending, uat.operation_add AS uat_add,
+ua.id AS uat_id, u.id AS user_id, u.username AS username
+FROM generic_transaction gt
+INNER JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
+INNER JOIN payment_info pay ON pay.generic_transaction_id=gt.id
+INNER JOIN user_account ua ON ua.user_id=uat.user_account_id
+INNER JOIN user u ON u.id=ua.user_id
+WHERE uat.operation_add=-1;
+
+SELECT * FROM generic_transaction gt;
 
 -- SELECT uc.user_provider_id FROM user u INNER JOIN user_child uc
 -- ON u.id=uc.user_id WHERE u.id=12;

@@ -6,7 +6,7 @@ from typing import Dict, List
 from pypos.db import get_db
 
 
-def get_client_list_by_canteen_id(canteen_id: int) -> int:
+def get_client_list_by_canteen_id(canteen_id: int) -> List[Dict]:
     """Gets all clients or client_dependents data from a canteen"""
     con = get_db()
     db = con.cursor()
@@ -63,7 +63,7 @@ def get_canteen_account_id_by_canteen_id(canteen_id) -> int:
 
 
 def get_canteen_balance() -> Dict:
-    """get cash_balance and bank_balance from canteen_account"""
+    """get cash_balance and bank_account_balance from canteen_account"""
     conn = get_db()
     db = conn.cursor()
     query = "SELECT * FROM canteen_account WHERE canteen_id=1;"
@@ -75,10 +75,29 @@ def get_canteen_balance() -> Dict:
 def get_generic_transaction_by_id(transaction_id: int) -> dict | None:
     con = get_db()
     db = con.cursor()
-    query = f"SELECT * FROM generic_transaction WHERE id=?;"
+    query = "SELECT * FROM generic_transaction WHERE id=?;"
     generic_transaction = db.execute(query, [transaction_id]).fetchone()
     generic_transaction = dict(generic_transaction) if generic_transaction else None
     return generic_transaction
+
+
+def get_all_user_account_purchases() -> List[Dict]:
+    con = get_db()
+    db = con.cursor()
+    query = """
+    SELECT gt.id, gt.total, gt.date_time, pay.payment_method,
+    pay.discount, pay.pending, uat.operation_add AS uat_add,
+    ua.id AS uat_id, u.id AS user_id, u.username AS username
+    FROM generic_transaction gt
+    INNER JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
+    INNER JOIN payment_info pay ON pay.generic_transaction_id=gt.id
+    INNER JOIN user_account ua ON ua.user_id=uat.user_account_id
+    INNER JOIN user u ON u.id=ua.user_id
+    WHERE uat.operation_add=-1;
+    """
+    transactions = db.execute(query).fetchall()
+    transactions = [dict(t) for t in transactions] if transactions else [{}]
+    return transactions
 
 
 def get_user_account_purchase_transaction_by_id(transaction_id) -> Dict:
@@ -110,10 +129,10 @@ def get_user_recharge_transaction_by_id(transaction_id):
     return transaction
 
 
-def get_all_transactions_by_canteen_id(canteen_id):
+def get_all_transactions(canteen_id):
+    """Get all transactions and related 1 to 1 entities (except product_item and products)"""
     con = get_db()
     db = con.cursor()
-    """Get all transactions and related 1 to 1 entities (except product_item and products)"""
     query = """
         SELECT gt.id, gt.total, gt.date_time, pay.payment_method, pay.discount, pay.pending,
         uat.operation_add AS uat_add, cat.operation_add AS cat_add,

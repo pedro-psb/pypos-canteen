@@ -235,7 +235,7 @@ def pos_main():
 @login_required(permissions=["acess_reports"])
 def pos_reports():
     # TODO make a link to the transaction details with a popover
-    all_transactions = dao.get_all_transactions_by_canteen_id(1)
+    all_transactions = dao.get_all_transactions()
     pending_transactions = [t for t in all_transactions if t["pending"]]
     regular_transactions = [t for t in all_transactions if not t["pending"]]
     summary_data = {

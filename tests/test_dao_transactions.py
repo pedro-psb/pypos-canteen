@@ -143,7 +143,7 @@ def test_regular_purchase_insert(app, auth, client):
         transaction = valid_transaction()
         transaction.save()
 
-        canteen_balance = dao.get_canteen_balance_by_id(1, cash_or_bank="cash_balance")
+        canteen_balance = dao.get_canteen_balance()["cash_balance"]
         assert transaction
         assert canteen_balance == transaction.total
 
@@ -162,7 +162,7 @@ def test_user_account_purchase_insert(app, auth, client):
         transaction.save()
 
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(1, cash_or_bank="cash_balance")
+        canteen_balance = dao.get_canteen_balance()["cash_balance"]
         assert transaction
         assert user_balance == initial_user_balance - transaction.total
         assert canteen_balance == 0
@@ -198,17 +198,14 @@ def test_user_recharge_save(app, auth, client):
     with app.app_context(), app.test_request_context(), client:
         client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
-        initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        initial_canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
 
         transaction = valid_recharge_transaction(total=10, pending=False)
         transaction.save()
 
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
+
         assert transaction
         assert user_balance == initial_user_balance + transaction.total
         assert canteen_balance == initial_canteen_balance + transaction.total
@@ -219,9 +216,7 @@ def test_user_recharge_pending_save(app, auth, client):
     with app.app_context(), app.test_request_context(), client:
         client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
-        initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        initial_canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
 
         transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
@@ -231,9 +226,8 @@ def test_user_recharge_pending_save(app, auth, client):
         )
 
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
+
         assert transaction
         assert user_balance == initial_user_balance
         assert canteen_balance == initial_canteen_balance
@@ -246,9 +240,7 @@ def test_user_recharge_pending_accept(app, auth, client):
     with app.app_context(), app.test_request_context(), client:
         client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
-        initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        initial_canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
 
         transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
@@ -258,9 +250,8 @@ def test_user_recharge_pending_accept(app, auth, client):
 
         # after accept balance
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
+
         assert transaction
         assert user_balance == initial_user_balance + transaction.total
         assert canteen_balance == initial_canteen_balance + transaction.total
@@ -272,9 +263,7 @@ def test_user_recharge_pending_reject(app, auth, client):
     with app.app_context(), app.test_request_context(), client:
         client.get("/")
         initial_user_balance = dao.get_user_balance_by_id(1)
-        initial_canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        initial_canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
 
         transaction = valid_recharge_transaction(total=10, pending=True)
         transaction_id = transaction.save()
@@ -285,9 +274,8 @@ def test_user_recharge_pending_reject(app, auth, client):
 
         # after reject balance
         user_balance = dao.get_user_balance_by_id(1)
-        canteen_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        canteen_balance = dao.get_canteen_balance()["bank_account_balance"]
+
         assert transaction
         assert user_balance == initial_user_balance
         assert canteen_balance == initial_canteen_balance

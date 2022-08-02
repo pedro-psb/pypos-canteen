@@ -1,18 +1,9 @@
 import json
 from datetime import datetime
-from pprint import pprint
-from sqlite3 import Connection, Cursor
 from typing import List, Optional
-from wsgiref.validate import validator
 
 from flask import session
-from pydantic import (
-    BaseModel,
-    PositiveFloat,
-    ValidationError,
-    parse_obj_as,
-    root_validator,
-)
+from pydantic import BaseModel, PositiveFloat, root_validator
 from pypos.db import get_db
 from pypos.models import dao
 
@@ -342,7 +333,7 @@ class UserAccountPurchase(BaseModel):
     pending: bool = False
 
     @root_validator(pre=True)
-    def parse_products(cls, values):
+    def parse_products(self, values):
         products = values.get("products")
         if not products:
             raise ValueError("Products not informed")
@@ -355,11 +346,9 @@ class UserAccountPurchase(BaseModel):
         return values
 
     @root_validator
-    def get_client_and_canteen_account_id(cls, values):
+    def get_client_and_canteen_account_id(self, values):
         client_id = values.get("client_id")
         client_account_id = values.get("client_account_id")
-        canteen_id = values.get("canteen_id")
-        canteen_account_id = values.get("canteen_account_id")
         if not client_account_id:
             if not client_id:
                 raise ValueError("Must provide client_id or client_account_id")
@@ -369,7 +358,7 @@ class UserAccountPurchase(BaseModel):
         return values
 
     @root_validator
-    def calculate_total(cls, values):
+    def calculate_total(self, values):
         total = sum(product.sub_total for product in values["products"])
         values["total"] = total
         return values

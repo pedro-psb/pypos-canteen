@@ -11,11 +11,21 @@
                 <h1 class="mb-3 p-3 fw-normal">Login</h1>
 
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="floatingInput" name="username" placeholder="name@example.com or user123">
                     <label for="floatingInput">Username</label>
+                    <input type="text" class="form-control" id="floatingInput" name="username"
+                        placeholder="name@example.com or user123">
+                    {% if data and data.username and data.username.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in data.username.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% endif %}
                 </div>
                 <div class="form-floating">
-                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
+                    <input type="password" class="form-control" id="floatingPassword" name="password"
+                        placeholder="Password">
                     <label for="floatingPassword">Password</label>
                 </div>
 

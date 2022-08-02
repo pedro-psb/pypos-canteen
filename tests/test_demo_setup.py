@@ -2,6 +2,9 @@
 Test of the sample data that should be run on the webapp build on production server
 Shouldn't be run every time
 """
+from pprint import pprint
+
+from pypos.db import get_db
 from pypos.demo_setup import setup
 from pypos.models import dao, dao_products
 
@@ -41,14 +44,17 @@ def test_transactions_setup_works(app):
         setup.setup_product_data()
         setup.setup_transaction_data()
         regular_purchase = dao.get_generic_transaction_by_id(1)
-        user_account_purchase = dao.get_user_account_purchase_transaction_by_id(3)
+        all_user_account_purchase = dao.get_all_user_account_purchases()
         user_recharge = dao.get_user_recharge_transaction_by_id(5)
+        print(all_user_account_purchase)
 
         assert regular_purchase
         assert not regular_purchase.get("user_account_id")
-        assert user_account_purchase
-        assert user_account_purchase.get("user_account_id")
-        assert user_account_purchase["operation_add"]
+        assert all_user_account_purchase
+        assert len(all_user_account_purchase) == 2
+        assert next(
+            t for t in all_user_account_purchase if t["username"] == "mauricio_galvan"
+        )
         assert user_recharge
         assert user_recharge.get("user_account_id")
         assert user_recharge["user_operation_add"]

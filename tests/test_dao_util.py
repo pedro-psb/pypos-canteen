@@ -1,6 +1,5 @@
 # general_dao
 
-import pytest
 from pypos.models import dao
 
 from tests.test_dao_transactions import valid_transaction
@@ -12,12 +11,10 @@ def test_get_user_balance_by_id(app):
         assert user_balance == 100
 
 
-def test_get_canteen_balance_by_id(app):
+def test_get_canteen_balance(app):
     with app.app_context(), app.test_request_context():
-        canteen_cash_balance = dao.get_canteen_balance_by_id(1)
-        canteen_bank_account_balance = dao.get_canteen_balance_by_id(
-            1, cash_or_bank="bank_account_balance"
-        )
+        canteen_cash_balance = dao.get_canteen_balance()["cash_balance"]
+        canteen_bank_account_balance = dao.get_canteen_balance()["bank_account_balance"]
         assert canteen_cash_balance == 0
         assert canteen_bank_account_balance == 0
 
