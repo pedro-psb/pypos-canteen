@@ -43,18 +43,19 @@ def test_transactions_setup_works(app):
         setup.setup_user_data()
         setup.setup_product_data()
         setup.setup_transaction_data()
+
         regular_purchase = dao.get_generic_transaction_by_id(1)
-        all_user_account_purchase = dao.get_all_user_account_purchases()
+        all_uat = dao.get_all_user_account_purchases()
         user_recharge = dao.get_user_recharge_transaction_by_id(5)
-        print(all_user_account_purchase)
+
+        pprint(dao.get_all_transactions())
 
         assert regular_purchase
         assert not regular_purchase.get("user_account_id")
-        assert all_user_account_purchase
-        assert len(all_user_account_purchase) == 2
-        assert next(
-            t for t in all_user_account_purchase if t["username"] == "mauricio_galvan"
-        )
+
+        assert all_uat
+        assert len(all_uat) == 2
+
         assert user_recharge
         assert user_recharge.get("user_account_id")
         assert user_recharge["user_operation_add"]

@@ -30,7 +30,7 @@ def sample_regular_purchase() -> List[Dict]:
 def sample_user_account_purchase() -> List[Dict]:
     return [
         {
-            "payment_method": "cash",
+            "payment_method": "user_purchase",
             "products": json.dumps(
                 [
                     {"id": "1", "quantity": "1"},
@@ -40,7 +40,7 @@ def sample_user_account_purchase() -> List[Dict]:
             "client_id": dao.get_user_by_name("mauricio_galvan")["id"],
         },
         {
-            "payment_method": "cash",
+            "payment_method": "user_purchase",
             "products": json.dumps(
                 [
                     {"id": "2", "quantity": "2"},

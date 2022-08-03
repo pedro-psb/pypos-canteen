@@ -22,7 +22,7 @@ class NullFieldError(Exception):
 
 class Product(BaseModel):
     id: int
-    canteen_id: Optional[int]
+    canteen_id: Optional[int] = 1
     quantity: int
     name: str = ""
     price: float = 0
@@ -256,16 +256,16 @@ class RegularPurchase(BaseModel):
 
         return all_transactions
 
-    def save(self):
+    def save(cls):
         conn = get_db()
         db = conn.cursor()
 
         # add to cash/bank balance in canteen account
-        canteen_account_id = self.canteen_account_id
+        canteen_account_id = cls.canteen_account_id
 
-        canteen_account_type = payment_options[self.payment_method]
+        canteen_account_type = payment_options[cls.payment_method]
         query = f"UPDATE canteen_account SET {canteen_account_type}={canteen_account_type}+? WHERE id=?;"
-        db.execute(query, (self.total, canteen_account_id))
+        db.execute(query, (cls.total, canteen_account_id))
 
         if db.rowcount < 1:
             raise ValueError("Some error occurred while adding to the canteen account")
@@ -275,9 +275,9 @@ class RegularPurchase(BaseModel):
         dao.insert_into_table(
             db,
             "generic_transaction",
-            date_time=self.date_time,
-            canteen_id=self.canteen_id,
-            total=self.total,
+            date_time=cls.date_time,
+            canteen_id=cls.canteen_id,
+            total=cls.total,
         )
 
         # insert payment_info
@@ -286,8 +286,8 @@ class RegularPurchase(BaseModel):
         dao.insert_into_table(
             db,
             "payment_info",
-            discount=self.discount,
-            payment_method=self.payment_method,
+            discount=cls.discount,
+            payment_method=cls.payment_method,
             generic_transaction_id=transaction_id,
         )
 
@@ -304,7 +304,7 @@ class RegularPurchase(BaseModel):
         # insert product_items
 
         product_item_values = [
-            str((p.id, p.quantity, p.sub_total, transaction_id)) for p in self.products
+            str((p.id, p.quantity, p.sub_total, transaction_id)) for p in cls.products
         ]
         product_item_values = ",".join(product_item_values)
         product_item_query = f"""INSERT INTO transaction_product_item\
@@ -333,7 +333,7 @@ class UserAccountPurchase(BaseModel):
     pending: bool = False
 
     @root_validator(pre=True)
-    def parse_products(self, values):
+    def parse_products(cls, values):
         products = values.get("products")
         if not products:
             raise ValueError("Products not informed")
@@ -346,7 +346,7 @@ class UserAccountPurchase(BaseModel):
         return values
 
     @root_validator
-    def get_client_and_canteen_account_id(self, values):
+    def get_client_and_canteen_account_id(cls, values):
         client_id = values.get("client_id")
         client_account_id = values.get("client_account_id")
         if not client_account_id:
@@ -358,7 +358,7 @@ class UserAccountPurchase(BaseModel):
         return values
 
     @root_validator
-    def calculate_total(self, values):
+    def calculate_total(cls, values):
         total = sum(product.sub_total for product in values["products"])
         values["total"] = total
         return values

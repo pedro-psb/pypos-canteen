@@ -26,7 +26,7 @@ def setup_sample_data():
     """Setup sample data for the demo"""
     setup_user_data()
     setup_product_data()
-    # setup_transaction_data()
+    setup_transaction_data()
 
 
 def setup_user_data():
@@ -34,19 +34,19 @@ def setup_user_data():
     con = get_db()
     db = con.cursor()
     # Insert Employees
-    for employee in sample_employees:
+    for employee in sample_employees():
         user = User(**employee)
         insert_user_no_commit(db, user)
 
     # Insert Clients
-    for client in sample_clients:
+    for client in sample_clients():
         user = User(**client)
         db = insert_user_no_commit(db, user)
         user_id: int = db.lastrowid  # type: ignore
         insert_user_account_no_commit(db, user_id)
 
     # Insert Client Dependents
-    for client in sample_client_dependents:
+    for client in sample_client_dependents():
         user = UserChildCreateForm(**client)
         insert_client_child_no_commit(db, user)
     con.commit()

@@ -106,7 +106,7 @@ def get_user_account_purchase_transaction_by_id(transaction_id) -> Dict:
     query = """SELECT * FROM generic_transaction gt
     INNER JOIN user_account_transaction uat ON uat.generic_transaction_id=gt.id
     INNER JOIN payment_info pay ON pay.generic_transaction_id=gt.id
-    WHERE gt.id=?;"""
+    WHERE gt.id=? AND uat.operation_add=-1;"""
     transaction = db.execute(query, [transaction_id]).fetchone()
     transaction = dict(transaction) if transaction else {}
     return transaction
@@ -129,7 +129,7 @@ def get_user_recharge_transaction_by_id(transaction_id):
     return transaction
 
 
-def get_all_transactions(canteen_id):
+def get_all_transactions(canteen_id=1):
     """Get all transactions and related 1 to 1 entities (except product_item and products)"""
     con = get_db()
     db = con.cursor()
