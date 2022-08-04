@@ -1,5 +1,5 @@
 from pydantic import ValidationError
-from pypos.models.forms.login_form import LoginForm
+from pypos.models.forms.client_forms import LoginForm
 
 
 def test_valid_username_valid_password(app):

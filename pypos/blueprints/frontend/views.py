@@ -260,7 +260,7 @@ def pos_reports():
 @login_required(permissions=["acess_client_management"])
 def manage_clients():
     canteen_id = session["canteen_id"]
-    clients = dao.get_clients_list()
+    clients = dao.get_client_list_by_canteen_id(canteen_id)
     data = {"clients": clients}
     return render_template("user/management_clients.html", data=data)
 

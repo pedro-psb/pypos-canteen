@@ -25,5 +25,13 @@ class LoginForm(BaseModel):
             if not check_password_hash(password_check, password):
                 raise ValueError("Password is incorrect")
         else:
-            raise ValueError("")
+            raise ValueError("Must enter valid password")
         return password
+
+
+class RegisterClientForm(BaseModel):
+    # TODO implement this instead of the messy User classes
+    username: str
+    email: str
+    password: str
+    password_confirm: str

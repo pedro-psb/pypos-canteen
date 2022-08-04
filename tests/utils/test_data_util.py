@@ -1,13 +1,13 @@
 import pytest
 from pydantic import ValidationError
-from pypos.models.forms.login_form import LoginForm
+from pypos.models.forms.client_forms import LoginForm
 from pypos.utils.data_util import parse_errors
 
 
 @pytest.mark.parametrize(
     "username,password,username_flag,password_flag",
     [
-        ("invalid", "not_aplicable", True, False),
+        ("invalid", "not_aplicable", True, True),
         ("test", "invalid", False, True),
         ("test", "test", False, False),
         # ("", "", True, True), #TODO add field required validation error

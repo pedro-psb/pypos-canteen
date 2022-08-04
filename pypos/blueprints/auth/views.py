@@ -7,10 +7,9 @@ from pydantic import BaseModel, Field, ValidationError, validator
 from pypos.db import get_db
 from pypos.models import dao
 from pypos.models.dao_users import insert_user, insert_user_account
-from pypos.models.forms.login_form import LoginForm
+from pypos.models.forms.client_forms import LoginForm
 from pypos.models.user_model import UserClient, UserOwner
 from pypos.utils.data_util import parse_errors
-from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import bp
 
@@ -34,7 +33,7 @@ def register_client():
         except ValidationError as e:
             errors = parse_errors(e.errors(), UserClient)
             print(errors)
-            return redirect(current_url)
+            return render_template("public/register_client.html", errors=errors)
 
 
 @bp.route("/register_canteen", methods=["POST"])
