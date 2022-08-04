@@ -25,14 +25,14 @@ def register_client():
         current_url = request.form.get("current_url")
         if not current_url:
             current_url = url_for("page.index")
-
         try:
             user = UserClient(**form_data)
             insert_user(user)
             session.clear()
             return redirect(url_for("page.login"))
         except ValidationError as e:
-            print(e)
+            errors = parse_errors(e.errors(), UserClient)
+            print(errors)
             return redirect(current_url)
 
 

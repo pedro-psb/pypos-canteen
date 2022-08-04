@@ -226,7 +226,7 @@ def pos_main():
     data = {
         "products": dao_products.get_product_list_by_canteen_id(canteen_id),
         "payment_methods": PAYMENT_METHODS,
-        "user_list": dao.get_client_list_by_canteen_id(canteen_id),
+        "user_list": dao.get_clients_list(),
     }
     return render_template("user/pos_main.html", data=data)
 
@@ -260,7 +260,7 @@ def pos_reports():
 @login_required(permissions=["acess_client_management"])
 def manage_clients():
     canteen_id = session["canteen_id"]
-    clients = dao.get_client_list_by_canteen_id(canteen_id)
+    clients = dao.get_clients_list()
     data = {"clients": clients}
     return render_template("user/management_clients.html", data=data)
 

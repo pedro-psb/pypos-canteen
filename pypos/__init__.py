@@ -13,7 +13,6 @@ def create_app(test_config=None):
         SECRET_KEY="ieouwer09832njflçasdf983",
         DATABASE=os.path.join(app.instance_path, "pypos.sqlite"),
     )
-
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile("config.py", silent=True)
@@ -34,11 +33,13 @@ def create_app(test_config=None):
     from . import db
 
     db.init_app(app)
-    flask_env = app.config.get("FLASK_ENV", "PRODUCTION")
-    if not app.testing and flask_env != "DEVELOPMENT":
+    flask_env = app.config.get("ENV", "production")
+    if not app.testing and flask_env != "development":
         with app.app_context():
+            print("initializing and populating db ...")
             db.init_db()
             db.populate_db()
+            print("done")
 
     return app
 

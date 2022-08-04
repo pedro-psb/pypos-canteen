@@ -3,7 +3,7 @@ from typing import Dict, List
 from pydantic import BaseModel
 
 
-def parse_errors(errors: List[Dict], model: BaseModel) -> Dict:
+def parse_errors(errors: List[Dict], model: BaseModel) -> Dict[str, List]:
     """Format errors from errors.loc[fields] to [field.error]"""
     # TODO fix typecheck error in the parameters
     # get fields from pydantic datamodel

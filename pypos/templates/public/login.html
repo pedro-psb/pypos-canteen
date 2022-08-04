@@ -10,10 +10,8 @@
         <div class="form-signin w-100 rounded m-auto">
             <form action="{{ url_for('auth.login') }}" method="post">
                 <h1 class="mb-3 p-3 fw-normal">Login</h1>
-
                 {{ forms.input(name="username", label="Username") }}
                 {{ forms.input(name="password", label="Password", type="password") }}
-
                 <div class="checkbox mb-3">
                     <label>
                         <input type="checkbox" value="remember-me"> Remember me
