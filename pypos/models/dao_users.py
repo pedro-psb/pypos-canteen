@@ -2,25 +2,23 @@ from sqlite3 import Connection, Cursor
 from typing import List
 
 from pypos.db import get_db
-from pypos.models.user_model import (User, UserChildCreateForm,
-                                     UserChildUpdateForm)
+from pypos.models.user_model import User, UserChildCreateForm, UserChildUpdateForm
 
 
-def insert_user(user: User):
-    """Insert provider client or employee to database"""
+def insert_user(user: User) -> int:
+    """Insert provider client or employee to database.
+    return it's id"""
     con = get_db()
     db = con.cursor()
     query = """INSERT INTO user(username, email, password,
             phone_number, role_name) VALUES(?,?,?,?,?);"""
-    db.execute(query, (
-        user.username,
-        user.email,
-        user.password,
-        user.phone_number,
-        user.role_name
-    ))
+    db.execute(
+        query,
+        (user.username, user.email, user.password, user.phone_number, user.role_name),
+    )
     con.commit()
-    return db.lastrowid
+    user_id: int = db.lastrowid
+    return user_id
 
 
 def insert_user_account(user_id):
@@ -38,21 +36,27 @@ def create_user_child(form_data: UserChildCreateForm):
     # Insert regular user
     query = """INSERT INTO user (username, password, email, phone_number,
     role_name, canteen_id) VALUES (?,?,?,?,?,?);"""
-    db.execute(query, [
-        form_data.username, form_data.password, form_data.email,
-        form_data.phone_number, form_data.role_name, form_data.canteen_id
-    ])
+    db.execute(
+        query,
+        [
+            form_data.username,
+            form_data.password,
+            form_data.email,
+            form_data.phone_number,
+            form_data.role_name,
+            form_data.canteen_id,
+        ],
+    )
     user_id = db.lastrowid
 
     # Insert user_child extension
     query = """INSERT INTO user_child (age, grade, user_provider_id, user_id)
     VALUES (?,?,?,?);"""
-    db.execute(query, [
-        form_data.age, form_data.grade,
-        form_data.user_provider_id, user_id
-    ])
+    db.execute(
+        query, [form_data.age, form_data.grade, form_data.user_provider_id, user_id]
+    )
     if db.rowcount < 1:
-        raise ValueError('Some error ocurred with the database insert funcion')
+        raise ValueError("Some error ocurred with the database insert funcion")
     # Suceed
     con.commit()
     return user_id
@@ -84,6 +88,7 @@ def delete_user(user_id):
     db.execute(query, [user_id])
     con.commit()
 
+
 # Insert over same connection
 
 
@@ -91,13 +96,10 @@ def insert_user_no_commit(db: Cursor, user: User):
     """Insert provider client or employee to database"""
     query = """INSERT INTO user(username, email, password,
             phone_number, role_name) VALUES(?,?,?,?,?);"""
-    db.execute(query, (
-        user.username,
-        user.email,
-        user.password,
-        user.phone_number,
-        user.role_name
-    ))
+    db.execute(
+        query,
+        (user.username, user.email, user.password, user.phone_number, user.role_name),
+    )
     return db
 
 
@@ -113,17 +115,21 @@ def insert_client_child_no_commit(db: Cursor, user: UserChildCreateForm):
     # Insert regular user
     query = """INSERT INTO user (username, password, email, phone_number,
     role_name, canteen_id) VALUES (?,?,?,?,?,?);"""
-    db.execute(query, [
-        user.username, user.password, user.email,
-        user.phone_number, user.role_name, user.canteen_id
-    ])
+    db.execute(
+        query,
+        [
+            user.username,
+            user.password,
+            user.email,
+            user.phone_number,
+            user.role_name,
+            user.canteen_id,
+        ],
+    )
     user_id = db.lastrowid
 
     # Insert user_child extension
     query = """INSERT INTO user_child (age, grade, user_provider_id, user_id)
     VALUES (?,?,?,?);"""
-    db.execute(query, [
-        user.age, user.grade,
-        user.user_provider_id, user_id
-    ])
+    db.execute(query, [user.age, user.grade, user.user_provider_id, user_id])
     return db

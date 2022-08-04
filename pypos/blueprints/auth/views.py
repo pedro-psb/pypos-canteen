@@ -6,7 +6,7 @@ from flask import flash, redirect, render_template, request, session, url_for
 from pydantic import BaseModel, Field, ValidationError, validator
 from pypos.db import get_db
 from pypos.models import dao
-from pypos.models.dao_users import insert_user
+from pypos.models.dao_users import insert_user, insert_user_account
 from pypos.models.forms.login_form import LoginForm
 from pypos.models.user_model import UserClient, UserOwner
 from pypos.utils.data_util import parse_errors
@@ -27,7 +27,8 @@ def register_client():
             current_url = url_for("page.index")
         try:
             user = UserClient(**form_data)
-            insert_user(user)
+            user_id = insert_user(user)
+            insert_user_account(user_id)
             session.clear()
             return redirect(url_for("page.login"))
         except ValidationError as e:
