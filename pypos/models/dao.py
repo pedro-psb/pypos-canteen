@@ -274,10 +274,14 @@ def get_user_by_id(user_id):
 
 
 def get_user_by_name(user_name: str) -> Dict:
+    """Get user and user_child data by `username`. Data as is in the schema"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT * FROM user u LEFT JOIN user_child uc ON u.id=uc.user_id
-    WHERE u.username=?;"""
+    query = """SELECT u.username, u.id, u.email, u.phone_number, u.password,
+    u.phone_number, u.role_name, u.active, u.canteen_id, c.name as canteen_name,
+    uc.age, uc.grade, uc.user_provider_id
+    FROM user u LEFT JOIN user_child uc ON u.id=uc.user_id
+    INNER JOIN canteen c ON c.id=u.canteen_id WHERE u.username=?;"""
     user_data = db.execute(query, [user_name]).fetchone()
     user_data: Dict = dict(user_data) if user_data else {}
     return user_data

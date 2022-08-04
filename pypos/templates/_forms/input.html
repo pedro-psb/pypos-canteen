@@ -1,0 +1,22 @@
+{% macro input(name, label, type="text", placeholder="") %}
+<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
+<div class="form-floating">
+    {% if errors %}
+    {% if errors[name] %}
+    <input type={{ type }} class="form-control is-invalid" id="{{ name }}_input" name={{ name }} placeholder={{
+        placeholder }}>
+    <div class="invalid-feedback m-2">
+        {% for error in errors[name] %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% else %}
+    <input type={{ type }} class="form-control is-valid" id="{{ name }}_input" name={{ name }} placeholder={{
+        placeholder }}>
+    {% endif %}
+    {% else %}
+    <input type={{ type }} class="form-control" id="{{ name }}_input" name={{ name }} placeholder={{ placeholder }}>
+    {% endif %}
+    <label for="{{ name }}_input">{{ label }}</label>
+</div>
+{%- endmacro %}

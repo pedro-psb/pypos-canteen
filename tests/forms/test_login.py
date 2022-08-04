@@ -1,31 +1,53 @@
-from pydantic import BaseModel, ValidationError, validator
-from pypos.models import dao
-from werkzeug.security import check_password_hash, generate_password_hash
-
-
-class LoginForm(BaseModel):
-    username: str
-    password: str
-
-    @validator("username")
-    def username_exist(cls, username):
-        user = dao.get_user_by_name(username)
-        if not user:
-            raise ValueError("Username doesn't exist")
-        return username
-
-    @validator("password")
-    def password_matches(cls, password, values):
-        if values.get("username"):
-            user = dao.get_user_by_name(values["username"])
-            password_check = user["password"]
-            password = generate_password_hash(password)
-            if not check_password_hash(password, password_check):
-                raise ValueError("Password is incorrect")
-        return password
+from pydantic import ValidationError
+from pypos.models.forms.login_form import LoginForm
 
 
 def test_valid_username_valid_password(app):
     with app.app_context():
         login = LoginForm(username="test", password="test")
         assert login
+
+
+# TODO parametrize these invalid test with the aid of the error classes
+def test_invalid_username(app):
+    with app.app_context():
+        try:
+            login = LoginForm(username="invalid_username", password="test")
+            assert not login
+        except ValidationError as e:
+            # TODO add an error msg enum class for each form
+            errors = e.errors()
+            assert errors
+
+
+def test_invalid_password(app):
+    with app.app_context():
+        try:
+            login = LoginForm(username="test", password="invalid_password")
+            assert not login
+        except ValidationError as e:
+            # TODO add an error msg enum class for each form
+            errors = e.errors()
+            assert errors
+
+
+def test_empty_username(app):
+    with app.app_context():
+        try:
+            login = LoginForm(username="", password="test")
+            assert not login
+        except ValidationError as e:
+            # TODO add an error msg enum class for each form
+            errors = e.errors()
+            assert errors
+
+
+def test_empty_password(app):
+    with app.app_context():
+        try:
+            login = LoginForm(username="insert", password="")
+            assert not login
+        except ValidationError as e:
+            # TODO add an error msg enum class for each form
+            errors = e.errors()
+            assert errors

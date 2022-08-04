@@ -1,52 +1,55 @@
 import pytest
 from flask import g, session, url_for
-from pypos.db import get_db, close_db
+from pypos.db import close_db, get_db
 
 
 def test_register_client(client, app):
     with app.app_context(), app.test_request_context():
         form_data = {
-            'username': 'a',
-            'email': 'foo@gmail.com',
-            'password': 'a',
-            'password_confirm': 'a',
-            'canteen_id': '1'
+            "username": "a",
+            "email": "foo@gmail.com",
+            "password": "a",
+            "password_confirm": "a",
+            "canteen_id": "1",
         }
-        client.post(url_for('auth.register_client'), data=form_data)
+        client.post(url_for("auth.register_client"), data=form_data)
 
         db = get_db()
         query = "SELECT * FROM user WHERE username=?"
-        user_registered = db.execute(query, ('a')).fetchone()
+        user_registered = db.execute(query, ("a")).fetchone()
 
-        assert user_registered is not None, 'New user should be registered'
+        assert user_registered is not None, "New user should be registered"
 
 
-@pytest.mark.parametrize(('username', 'email', 'password',
-                          'password_confirm', 'canteen_id', 'message'), (
-    ('', 'foo@gmail.com', 'pass', 'pass', '1', 'Username is required.'),
-    ('user', '', 'pass', 'pass', '1', 'Email is required.'),
-    ('user', 'foo@gmail.com', '', 'pass', '1', 'Password is required.'),
-    ('user', 'foo@gmail.com', '', 'pass', '', 'Canteen ID is required.'),
-    ('user', 'foo-gmail.com', 'pass', 'pass', '1', 'Email is invalid'),
-    ('user', 'foo@gmail.com', 'pass', 'pass2', '1', "Password doesn't match"),
-    ('fake_client', 'foo@gmail.com', 'pass', 'pass', '1', 'User already exist'),
-    ('user', 'foo@gmail.com', 'pass', 'pass', '100', 'Canteen ID is Invalid')
-))
-def test_register_client_fail(app, client, username, email, password,
-                              password_confirm, canteen_id, message):
+@pytest.mark.parametrize(
+    ("username", "email", "password", "password_confirm", "canteen_id", "message"),
+    (
+        ("", "foo@gmail.com", "pass", "pass", "1", "Username is required."),
+        ("user", "", "pass", "pass", "1", "Email is required."),
+        ("user", "foo@gmail.com", "", "pass", "1", "Password is required."),
+        ("user", "foo@gmail.com", "", "pass", "", "Canteen ID is required."),
+        ("user", "foo-gmail.com", "pass", "pass", "1", "Email is invalid"),
+        ("user", "foo@gmail.com", "pass", "pass2", "1", "Password doesn't match"),
+        ("fake_client", "foo@gmail.com", "pass", "pass", "1", "User already exist"),
+        ("user", "foo@gmail.com", "pass", "pass", "100", "Canteen ID is Invalid"),
+    ),
+)
+def test_register_client_fail(
+    app, client, username, email, password, password_confirm, canteen_id, message
+):
     with app.app_context():
         form_data = {
-            'username': username,
-            'email': email,
-            'password': password,
-            'password_confirm': password_confirm,
-            'canteen_id': canteen_id
+            "username": username,
+            "email": email,
+            "password": password,
+            "password_confirm": password_confirm,
+            "canteen_id": canteen_id,
         }
         db = get_db()
         query = "SELECT count(*) FROM user;"
         users_registered_before = db.execute(query).fetchone()[0]
 
-        client.post('/auth/register', data=form_data)
+        client.post("/auth/register", data=form_data)
         close_db()
         db = get_db()
         users_registered_after = db.execute(query).fetchone()[0]
@@ -58,60 +61,62 @@ def test_register_client_fail(app, client, username, email, password,
 def test_register_canteen(app, client):
     with app.app_context(), app.test_request_context():
         form_data = {
-            'canteen_name': 'canteen123',
-            'username': 'a123',
-            'email': 'foo@gmail.com',
-            'password': 'a',
-            'password_confirm': 'a'
+            "canteen_name": "canteen123",
+            "username": "a123",
+            "email": "foo@gmail.com",
+            "password": "a",
+            "password_confirm": "a",
         }
-        client.post(
-            url_for('auth.register_canteen'), data=form_data)
+        client.post(url_for("auth.register_canteen"), data=form_data)
 
         db = get_db()
         user_registered = db.execute(
-            "SELECT * FROM user WHERE username=?", ('a123',)).fetchone()
+            "SELECT * FROM user WHERE username=?", ("a123",)
+        ).fetchone()
         canteen_registered = db.execute(
-            "SELECT * FROM canteen WHERE name=?;", ('canteen123',)).fetchone()
+            "SELECT * FROM canteen WHERE name=?;", ("canteen123",)
+        ).fetchone()
 
         assert canteen_registered is not None, "Canteen should be registered"
         assert user_registered is not None, "User should be registered"
 
 
-@pytest.mark.parametrize(('canteen_name', 'username', 'message'), (
-    ('canteen', '', 'User Info is invalid'),
-    ('', 'foo', 'Canteen must have a name')
-))
+@pytest.mark.parametrize(
+    ("canteen_name", "username", "message"),
+    (("canteen", "", "User Info is invalid"), ("", "foo", "Canteen must have a name")),
+)
 def test_register_canteen_fail(app, client, canteen_name, username, message):
     with app.app_context(), app.test_request_context():
         form_data = {
-            'canteen_name': canteen_name,
-            'username': username,
-            'email': 'foo@gmail.com',
-            'password': 'a',
-            'password_confirm': 'a'
+            "canteen_name": canteen_name,
+            "username": username,
+            "email": "foo@gmail.com",
+            "password": "a",
+            "password_confirm": "a",
         }
-        client.post(
-            url_for('auth.register_canteen'), data=form_data)
+        client.post(url_for("auth.register_canteen"), data=form_data)
 
         db = get_db()
         user_registered = db.execute(
-            "SELECT * FROM user WHERE username=?", (username,)).fetchone()
+            "SELECT * FROM user WHERE username=?", (username,)
+        ).fetchone()
         canteen_registered = db.execute(
-            "SELECT * FROM canteen WHERE name=?;", (canteen_name,)).fetchone()
+            "SELECT * FROM canteen WHERE name=?;", (canteen_name,)
+        ).fetchone()
 
         assert canteen_registered is None, "Canteen shouldt be registered"
         assert user_registered is None, "User shouldt be registered"
 
 
-def test_foo(app, client, auth):
+def test_login(app, client, auth):
     auth.login()
 
     with app.app_context(), app.test_request_context(), client:
         # breakpoint()
-        client.get('/')
-        assert session.get('user_id') == 1
-        assert g.user['username'] == 'test'
-        assert g.user['role_name'] == 'owner'
+        client.get("/")
+        assert session.get("user_id") == 1
+        assert g.user["username"] == "test"
+        assert g.user["role_name"] == "owner"
 
 
 # @pytest.mark.parametrize(('username', 'password', 'message'), (
@@ -128,4 +133,4 @@ def test_logout(client, auth):
 
     with client:
         auth.logout()
-        assert 'user_id' not in session
+        assert "user_id" not in session

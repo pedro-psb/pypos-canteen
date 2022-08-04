@@ -1,12 +1,15 @@
 """Authentication and registration endpoints"""
-from typing import Optional
+from sqlite3 import Cursor
+from typing import Dict, List, Optional
 
-from flask import flash, redirect, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from pydantic import BaseModel, Field, ValidationError, validator
 from pypos.db import get_db
 from pypos.models import dao
 from pypos.models.dao_users import insert_user
+from pypos.models.forms.login_form import LoginForm
 from pypos.models.user_model import UserClient, UserOwner
+from pypos.utils.data_util import parse_errors
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import bp
@@ -77,34 +80,9 @@ def login():
         password = request.form.get("password")
 
         try:
-            db = get_db()
-            error = None
-
-            # get user data from db
-            query = """SELECT u.username, u.id, u.email, u.phone_number, u.password,\
-                u.phone_number, u.role_name, u.active, u.canteen_id, c.name as canteen_name\
-                FROM user u INNER JOIN canteen c ON u.canteen_id = c.id\
-                WHERE u.username=? AND u.active=1;"""
-            user = db.execute(query, (username,)).fetchone()
-            user = dict(user)
-            # Check password
-            if user is None:
-                error = "Incorrect username."
-                raise Exception()
-            elif not check_password_hash(user["password"], password):
-                error = "Incorrect password."
-                raise Exception()
-
-            # Check role and save permission to session
-            role_name = user.get("role_name")
-            if role_name:
-                user_permissions = db.execute(
-                    "SELECT p.slug FROM permission p INNER JOIN role_permission rp "
-                    "ON p.slug = rp.permission_slug WHERE rp.role_name=?;",
-                    (role_name,),
-                ).fetchall()
-                user_permissions = [perm[0] for perm in user_permissions]
-
+            user = LoginForm(username=username, password=password)
+            user = dao.get_user_by_name(user.username)
+            user_permissions = get_permissions_for_role(user["role_name"])
             # save session data
             session.clear()
             session["user_id"] = user["id"]
@@ -115,8 +93,24 @@ def login():
             if "acess_client_dashboard" in session["permissions"]:
                 return redirect(url_for("page.client_index"))
             return redirect(url_for("page.pos_main"))
-        except:
-            return redirect(url_for("page.login"))
+        except ValidationError as e:
+            # TODO fix typecheck error with BaseModel subclass parameter in `parse_errors`
+            errors = parse_errors(e.errors(), LoginForm)
+            print(errors)
+            return render_template("public/login.html", errors=errors)
+
+
+def get_permissions_for_role(role_name: str) -> List:
+    """Get a list of `permissions` that belong to a `role_name`"""
+    # TODO move to a better place
+    db = get_db()
+    user_permissions = db.execute(
+        "SELECT p.slug FROM permission p INNER JOIN role_permission rp "
+        "ON p.slug = rp.permission_slug WHERE rp.role_name=?;",
+        [role_name],
+    ).fetchall()
+    user_permissions = [perm[0] for perm in user_permissions]
+    return user_permissions
 
 
 @bp.route("/logout")

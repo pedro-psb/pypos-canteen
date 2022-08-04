@@ -1,4 +1,5 @@
 {% extends "base_public.html" %}
+{% import "_forms/input.html" as forms with context %}
 {% block custom_header %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom/public-login.css') }}">
 {% endblock %}
@@ -10,24 +11,8 @@
             <form action="{{ url_for('auth.login') }}" method="post">
                 <h1 class="mb-3 p-3 fw-normal">Login</h1>
 
-                <div class="form-floating">
-                    <label for="floatingInput">Username</label>
-                    <input type="text" class="form-control" id="floatingInput" name="username"
-                        placeholder="name@example.com or user123">
-                    {% if data and data.username and data.username.errors %}
-                    <div class="invalid-feedback">
-                        {% for error in data.username.errors %}
-                        <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    {% endif %}
-                </div>
-                <div class="form-floating">
-                    <input type="password" class="form-control" id="floatingPassword" name="password"
-                        placeholder="Password">
-                    <label for="floatingPassword">Password</label>
-                </div>
+                {{ forms.input(name="username", label="Username") }}
+                {{ forms.input(name="password", label="Password", type="password") }}
 
                 <div class="checkbox mb-3">
                     <label>
