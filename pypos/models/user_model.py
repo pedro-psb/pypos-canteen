@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConstrainedStr, root_validator, validator
 from pypos.db import get_db
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class NotEmptyString(ConstrainedStr):
@@ -121,11 +121,11 @@ class UserUpdate(User):
 class UserClient(User):
     password_confirm: NotEmptyString
 
-    @root_validator(pre=True)
-    def password_matches(cls, values):
-        if not values["password_confirm"] == values["password"]:
+    @validator("password_confirm")
+    def password_matches(cls, password_confirm, values):
+        if not check_password_hash(values["password"], password_confirm):
             raise ValueError("Passwords doesn't match")
-        return values
+        return password_confirm
 
 
 class UserOwner(User):
