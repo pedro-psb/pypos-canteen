@@ -3,20 +3,43 @@
 <div class="form-floating">
     {% if errors %}
     {% if errors[name] %}
-    <input type={{ type }} class="form-control is-invalid" id="{{ name }}_input" name={{ name }} placeholder={{
-        placeholder }}>
+    <input type="{{ type }}" class="form-control is-invalid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
+        placeholder }}">
     <div class="invalid-feedback m-2">
         {% for error in errors[name] %}
         <span>{{ error }}</span>
         {% endfor %}
     </div>
     {% else %}
-    <input type={{ type }} class="form-control is-valid" id="{{ name }}_input" name={{ name }} placeholder={{
-        placeholder }}>
+    <input type="{{ type }}" class="form-control is-valid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
+        placeholder }}">
     {% endif %}
     {% else %}
-    <input type={{ type }} class="form-control" id="{{ name }}_input" name={{ name }} placeholder={{ placeholder }}>
+    <input type="{{ type }}" class="form-control" id="{{ name }}_input" name="{{ name }}"
+        placeholder="{{ placeholder }}">
     {% endif %}
     <label for="{{ name }}_input">{{ label }}</label>
+</div>
+{%- endmacro %}
+{% macro regular_input(name, label, type="text", placeholder="") %}
+<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
+<div class="col-12 mb-3">
+    <label for="{{ name }}_input" class="form-label">{{ label }}</label>
+    {% if errors %}
+    {% if errors[name] %}
+    <input type="{{ type }}" class="form-control is-invalid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
+        placeholder }}">
+    <div class="invalid-feedback m-2">
+        {% for error in errors[name] %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% else %}
+    <input type="{{ type }}" class="form-control is-valid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
+        placeholder }}">
+    {% endif %}
+    {% else %}
+    <input type="{{ type }}" class=form-control id={{ name }}_input name="{{ name }}" placeholder="{{ placeholder }}">
+    {% endif %}
 </div>
 {%- endmacro %}

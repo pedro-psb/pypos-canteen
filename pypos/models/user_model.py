@@ -1,4 +1,5 @@
 import re
+from multiprocessing.sharedctypes import Value
 from typing import Optional
 
 from pydantic import BaseModel, ConstrainedStr, root_validator, validator
@@ -21,6 +22,12 @@ class User(BaseModel):
     canteen_name: Optional[str]
     canteen_id: Optional[int] = 1
     username: NotEmptyString
+
+    @validator("username")
+    def username_forbidden_chars(cls, value):
+        if not value.isalnum():
+            raise ValueError("Username must contain only alphanumberic characters")
+        return value
 
     @validator("email")
     def email_must_match_pattern(cls, email):

@@ -21,7 +21,14 @@ def insert_product(db: Cursor, product: Product) -> Cursor:
     return db
 
 
-def insert_category(db: Cursor, product: ProductCategory) -> Cursor:
+def insert_category(product: ProductCategory):
+    con = get_db()
+    db = con.cursor()
+    _insert_category(db=db, product=product)
+    con.commit()
+
+
+def _insert_category(db: Cursor, product: ProductCategory) -> Cursor:
     query = """INSERT INTO product_category(name, description)
     VALUES (?,?);"""
     db.execute(
@@ -46,13 +53,13 @@ def get_product_by_name(product_name: str) -> str:
     return product
 
 
-def get_category_by_name(category_name: str) -> str:
-    """Gets a category by it's name"""
+def get_all_categories():
+    """Get all categories"""
     db = get_db()
-    query = """SELECT * FROM product_category WHERE name=?"""
-    product = db.execute(query, [category_name]).fetchone()
-    product = product[0] if product else ""
-    return product
+    query = "SELECT * FROM product_category;"
+    result = db.execute(query).fetchall()
+    result = [dict(item) for item in result]
+    return result
 
 
 def get_product_list_by_canteen_id(canteen_id: int) -> List:

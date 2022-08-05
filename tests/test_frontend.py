@@ -4,7 +4,7 @@ from flask import url_for
 
 @pytest.mark.parametrize(
     ("page"),
-    (("page.index"), ("page.register_client"), ("page.choose_role"), ("page.login")),
+    (("page.index"), ("page.register_client"), ("page.login")),
 )
 def test_pages_dont_require_auth(client, app, page):
     with app.test_request_context():

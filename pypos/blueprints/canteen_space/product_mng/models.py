@@ -1,23 +1,30 @@
 from datetime import date
-from unicodedata import name
+from typing import Optional
+
+from pydantic import BaseModel, PrivateAttr, validator
+from pypos.db import get_db
 
 from .errors import *
 
 
-class ProductCategory:
-    def __init__(self, name, description, id=None) -> None:
-        self.id = id
-        self.name = name.strip()
-        self.description = description
+class ProductCategory(BaseModel):
+    name: str
+    description: Optional[str] = ""
+    # TODO find out how to not show private att on the IDE hints
+    _id: str = PrivateAttr()
 
-    def validate(self):
-        if not self.name:
-            return ADD_PRODUCT_GENERIC_ERROR
-        if isinstance(self.description, str):
-            self.description = self.description.strip()
+    @validator("name")
+    def unique_name(cls, value):
+        db = get_db()
+        category = db.execute(
+            "SELECT * FROM product_category WHERE name=?", [value]
+        ).fetchall()
+        if category:
+            raise ValueError("Category name already taken")
+        return value
 
-    def __str__(self) -> str:
-        return self.name
+    class Config:
+        anystr_strip_whitespace = True
 
 
 class Product:

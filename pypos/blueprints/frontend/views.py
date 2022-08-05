@@ -3,7 +3,7 @@ from pprint import pprint
 
 from flask import render_template, session
 from pypos.blueprints.auth.util import get_db, login_required, public_acess_only
-from pypos.models import dao, dao_products
+from pypos.models import dao, dao_acess_control, dao_products
 from pypos.models.client_transaction_model import ClientTransaction
 from pypos.models.dao_reports import ReportSummary
 from pypos.models.transactions_dao import (
@@ -55,15 +55,15 @@ def register_client():
     return render_template("public/register_client.html")
 
 
-@bp.route("/register_employee")
-def register_employee():
-    return render_template("public/register_employee.html")
+# @bp.route("/register_employee")
+# def register_employee():
+#     return render_template("public/register_employee.html")
 
 
-@bp.route("/register_canteen")
-@public_acess_only
-def register_canteen():
-    return render_template("public/register_canteen.html")
+# @bp.route("/register_canteen")
+# @public_acess_only
+# def register_canteen():
+#     return render_template("public/register_canteen.html")
 
 
 @bp.route("/login")
@@ -107,13 +107,13 @@ def manage_employees():
 
 @bp.route("/canteen/add-employee")
 def manage_employees_add():
-    data = {"roles": get_all_roles()}
+    data = {"roles": dao_acess_control.get_all_roles()}
     return render_template("user/management_employees_add.html", data=data)
 
 
 @bp.route("/canteen/update-employee/<int:id>")
 def manage_employees_update(id):
-    data = {"employee": get_user_by_id(id), "roles": get_all_roles()}
+    data = {"employee": get_user_by_id(id), "roles": dao_acess_control.get_all_roles()}
     return render_template("user/management_employees_update.html", data=data)
 
 
@@ -335,32 +335,15 @@ def client_deposit():
     return render_template("user/client_deposit.html", data=data)
 
 
-def select_non_employee_roles():
-    # select employee roles based on fixed non-emplyed roles
-    not_employee_roles = ["owner", "client", "client_dependent", "temporary_client"]
-    not_employee_roles = map(lambda x: f"'{x}'", not_employee_roles)
-    not_employee_roles = f"({','.join(not_employee_roles)})"
-    return not_employee_roles
-
-
 def get_all_employees():
     db = get_db()
-    not_employee_roles = select_non_employee_roles()
+    not_employee_roles = dao_acess_control.select_non_employee_roles()
     query = (
         f"SELECT * FROM user WHERE role_name NOT IN {not_employee_roles} AND active=1;"
     )
     all_employees = db.execute(query).fetchall()
     all_employees = [dict(employee) for employee in all_employees]
     return all_employees
-
-
-def get_all_roles():
-    db = get_db()
-    not_employee_roles = select_non_employee_roles()
-    query = f"SELECT * FROM role WHERE name NOT IN {not_employee_roles};"
-    all_roles = db.execute(query).fetchall()
-    all_roles = [dict(role) for role in all_roles]
-    return all_roles
 
 
 def get_user_by_id(id):

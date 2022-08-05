@@ -1,8 +1,10 @@
-from flask import redirect, request, session, url_for
+from flask import redirect, render_template, request, session, url_for
 from pydantic import ValidationError
 from pypos.db import get_db
+from pypos.models import dao, dao_acess_control
 from pypos.models.dao_users import insert_user
 from pypos.models.user_model import User, UserUpdate
+from pypos.utils.data_util import parse_errors
 
 from . import bp
 
@@ -16,8 +18,12 @@ def add():
         employee = User(**form_data)
         insert_user(employee)
     except ValidationError as e:
-        print(e)
-        return redirect(url_for("page.manage_employees_add"))
+        errors = parse_errors(e.errors(), User)
+        data = {"roles": dao_acess_control.get_all_roles()}
+        print(errors)
+        return render_template(
+            "user/management_employees_add.html", data=data, errors=errors
+        )
     return redirect(url_for("page.manage_employees"))
 
 

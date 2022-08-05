@@ -1,6 +1,7 @@
 import sqlite3
 
-from flask import Blueprint, flash, redirect, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from pydantic import ValidationError
 from pypos.db import get_db
 from pypos.models import dao_products
 
@@ -64,23 +65,23 @@ def remove_product():
 
 @bp.route("/add_category", methods=["POST"])
 def add_category():
-    category = ProductCategory(
-        request.form.get("name"), request.form.get("description")
-    )
-    error = category.validate()
-    if not error:
-        try:
-            con = get_db()
-            db = con.cursor()
-            dao_products.insert_category(db, category)
-            con.commit()
-            flash("Sucefully added product category")
-            return redirect(url_for("page.manage_products"))
-        except:  # FIXME
-            print("some error ocurred")
-            error = ADD_PRODUCT_GENERIC_ERROR
+    form_data = request.form
+    try:
+        category = ProductCategory(
+            name=request.form.get("name"),
+            description=request.form.get("description"),
+        )
+        dao_products.insert_category(category)
+        flash("Sucefully added product category")
+        return redirect(url_for("page.manage_products"))
+    except ValidationError as e:
+        print(e.errors())
+        errors = e.errors()
+        return render_template(
+            "user/management_products_add_category.html", errors=errors
+        )
 
-    flash(error)
+    # flash(error)
     return redirect(url_for("page.manage_products_add_category"))
 
 
