@@ -1,8 +1,10 @@
 from datetime import date
 from typing import Optional
+from unicodedata import category
 
-from pydantic import BaseModel, PrivateAttr, validator
+from pydantic import BaseModel, PrivateAttr, ValidationError, validator
 from pypos.db import get_db
+from pypos.models import dao_products
 
 from .errors import *
 
@@ -32,7 +34,7 @@ class Product:
         self.id = id
         self.name = name
         self.price = price
-        self.category = category
+        self.category_id = category
 
     def validate(self):
         # Name
@@ -52,9 +54,9 @@ class Product:
 
         # Category
         try:
-            if self.category != "None":
-                self.category = int(self.category)
-                if self.category <= 0:
+            if self.category_id != "None":
+                self.category_id = int(self.category_id)
+                if self.category_id <= 0:
                     return ADD_PRODUCT_INVALID_CATEGORY_ERROR
         except ValueError:
             return ADD_PRODUCT_INVALID_CATEGORY_ERROR

@@ -31,9 +31,9 @@ def test_products_setup_works(app):
     """When setup product data, should add product/category sample data to db"""
     with app.app_context():
         setup.setup_product_data()
-        assert dao_products.get_product_by_name("Big Meal")
-        assert dao_products.get_product_by_name("Pizza Slice")
-        assert dao_products.get_product_by_name("Orange Juice")
+        assert dao_products.get_product_id_by_name("Big Meal")
+        assert dao_products.get_product_id_by_name("Pizza Slice")
+        assert dao_products.get_product_id_by_name("Orange Juice")
         assert dao_products.get_category_by_name("Lunch")
         assert dao_products.get_category_by_name("Breakfast")
         assert dao_products.get_category_by_name("Juice")

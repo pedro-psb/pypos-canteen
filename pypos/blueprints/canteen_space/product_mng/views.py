@@ -28,7 +28,7 @@ def add_product():
     # Database Dependent Validation
     if error is None:
         try:
-            dao_products.insert_product(db=db, product=product)
+            dao_products._insert_product(db=db, product=product)
             db.commit()
             return redirect(url_for("page.manage_products"))
         except sqlite3.OperationalError:  # TODO handle this better
@@ -128,10 +128,11 @@ def update_product():
     # Database Dependent Validation
     if error is None:
         try:
-            if product.category != "None":
+            if product.category_id != "None":
                 query = "UPDATE product SET name=?, price=?, category=? WHERE id=?;"
                 db.execute(
-                    query, (product.name, product.price, product.category, product.id)
+                    query,
+                    (product.name, product.price, product.category_id, product.id),
                 )
             else:
                 query = "UPDATE product SET name=?, price=?, category=NULL WHERE id=?;"

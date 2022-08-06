@@ -1,6 +1,3 @@
-from abc import ABC
-
-import werkzeug
 from pydantic import BaseModel, validator
 from pypos.models import dao
 from werkzeug.security import check_password_hash

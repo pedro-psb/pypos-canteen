@@ -9,21 +9,23 @@ from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCa
 from pypos.db import get_db
 from pypos.models import dao, dao_products
 
+valid_product_form = {
+    "name": "name",
+    "price": "10",
+    "category": "1",
+}
 
-def test_add_product(client, app, auth):
+
+def test_add_product(client, app):
     # TODO: test validations
-    form_data = {
-        "name": "name",
-        "price": "10",
-        "category": "1",
-    }
 
     with app.app_context(), app.test_request_context():
-        auth.login()
         db = get_db()
         product_count_before = db.execute("SELECT COUNT(*) FROM product").fetchone()[0]
 
-        response = client.post(url_for("canteen.product.add_product"), data=form_data)
+        response = client.post(
+            url_for("canteen.product.add_product"), data=valid_product_form
+        )
 
         product_count_after = db.execute("SELECT COUNT(*) FROM product").fetchone()[0]
 
@@ -173,4 +175,4 @@ def test_update_product(client, app, name, price, category):
         assert response.status_code == 302
         assert product_before.name != product_after.name
         assert product_before.price != product_after.price
-        assert product_before.category != product_after.category
+        assert product_before.category_id != product_after.category_id

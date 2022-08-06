@@ -1,6 +1,6 @@
 from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCategory
 from pypos.db import get_db
-from pypos.models.dao_products import insert_category, insert_product
+from pypos.models.dao_products import insert_category, _insert_product
 from pypos.models.dao_users import (
     insert_client_child_no_commit,
     insert_user_account_no_commit,
@@ -65,7 +65,7 @@ def setup_product_data():
     # Insert Products
     for product in sample_products:
         product = Product(**product)
-        insert_product(db, product)
+        _insert_product(db, product)
     con.commit()
 
 
