@@ -1,10 +1,10 @@
-import sqlite3
-
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from pydantic import ValidationError
 from pypos.db import get_db
 from pypos.models import dao_products
-from pypos.models.forms.product_forms import AddProductForm
+from pypos.models.forms.category_forms import UpdateCategoryForm
+from pypos.models.forms.product_forms import AddProductForm, UpdateProductForm
+from pypos.utils.data_util import parse_errors
 
 from .errors import (
     ADD_PRODUCT_GENERIC_ERROR,
@@ -22,10 +22,10 @@ def add_product():
     try:
         product = AddProductForm(**form_data)
         dao_products.insert_product(product=product)
-        flash("Product added sucesfully")
+        flash("Product added sucesfully", category="success")
         return redirect(url_for("page.manage_products"))
     except ValidationError as e:
-        errors = e.errors()
+        errors = parse_errors(e.errors(), AddProductForm)
         data = {"categories": dao_products.get_all_categories()}
         return render_template(
             "user/management_products_add_product.html", data=data, errors=errors
@@ -61,22 +61,16 @@ def remove_product():
 def add_category():
     form_data = request.form
     try:
-        category = ProductCategory(
-            name=request.form.get("name"),
-            description=request.form.get("description"),
-        )
+        category = ProductCategory(**form_data)
         dao_products.insert_category(category)
-        flash("Sucefully added product category")
+        flash("Sucefully added product category", category="success")
         return redirect(url_for("page.manage_products"))
     except ValidationError as e:
         print(e.errors())
-        errors = e.errors()
+        errors = parse_errors(e.errors(), ProductCategory)
         return render_template(
             "user/management_products_add_category.html", errors=errors
         )
-
-    # flash(error)
-    return redirect(url_for("page.manage_products_add_category"))
 
 
 @bp.route("/remove_category", methods=["POST"])
@@ -110,56 +104,39 @@ def remove_category():
 @bp.route("/update_product", methods=["POST"])
 def update_product():
     """Allows updating price, category, name, etc"""
-    db = get_db()
-    product_id = int(request.form.get("id"))
-    product = Product(
-        request.form.get("name"),
-        request.form.get("price"),
-        request.form.get("category"),
-        id=product_id,
-    )
-    error = product.validate()
-    # Database Dependent Validation
-    if error is None:
-        try:
-            if product.category_id != "None":
-                query = "UPDATE product SET name=?, price=?, category=? WHERE id=?;"
-                db.execute(
-                    query,
-                    (product.name, product.price, product.category_id, product.id),
-                )
-            else:
-                query = "UPDATE product SET name=?, price=?, category=NULL WHERE id=?;"
-                db.execute(query, (product.name, product.price, product.id))
-            db.commit()
-            return redirect(url_for("page.manage_products"))
-        except:
-            print("some error ocurred")
-            print(product.id, product.name)
-            error = ADD_PRODUCT_INTEGRITY_ERROR
-    flash(error)
-    return redirect(url_for("page.manage_products_update_product", id=product_id))
+    form_data = request.form
+    try:
+        product = UpdateProductForm(**form_data)
+        dao_products.update_product(product=product)
+        flash("Product updated sucesfully", category="success")
+        return redirect(url_for("page.manage_products"))
+    except ValidationError as e:
+        errors = parse_errors(e.errors(), UpdateProductForm)
+        data = {
+            "categories": dao_products.get_all_categories(),
+            "product": dao_products.get_product_by_id(form_data["product_id"]),
+        }
+        print(errors)
+        return render_template(
+            "user/management_products_update_product.html", data=data, errors=errors
+        )
 
 
 @bp.route("/update_category", methods=["POST"])
 def update_category():
     """Allows updating name and description"""
-    db = get_db()
-    category = ProductCategory(
-        id=request.form.get("id"),
-        name=request.form.get("name"),
-        description=request.form.get("description"),
-    )
-    error = category.validate()
-    # Database Dependent Validation
-    if error is None:
-        try:
-            query = """UPDATE product_category SET name=?, description=? WHERE id=?;"""
-            db.execute(query, (category.name, category.description, category.id))
-            db.commit()
-            return redirect(url_for("page.manage_products"))
-        except:
-            print("some error ocurred")
-            error = ADD_PRODUCT_INTEGRITY_ERROR
-    flash(error)
-    return redirect(url_for("page.manage_products_update_category", id=category.id))
+    form_data = request.form
+    try:
+        category = UpdateCategoryForm(**form_data)
+        dao_products.update_category(category=category)
+        flash("Product updated sucesfully", category="success")
+        return redirect(url_for("page.manage_products"))
+    except ValidationError as e:
+        errors = parse_errors(e.errors(), UpdateCategoryForm)
+        data = {
+            "category": dao_products.get_category_by_id(form_data["category_id"]),
+        }
+        print(errors)
+        return render_template(
+            "user/management_products_update_category.html", data=data, errors=errors
+        )

@@ -4,6 +4,8 @@ from typing import Dict, List
 
 from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCategory
 from pypos.db import get_db
+from pypos.models.forms.category_forms import UpdateCategoryForm
+from pypos.models.forms.product_forms import UpdateProductForm
 
 
 # INSERT
@@ -17,16 +19,25 @@ def insert_product(product: Product) -> int | None:
 
 
 def _insert_product(db: Cursor, product: Product) -> int | None:
-    query = """INSERT INTO product(name, price, category, canteen_id)
-    VALUES (?,?,?,1);"""
-    db.execute(
-        query,
-        [
-            product.name,
-            product.price,
-            product.category_id,
-        ],
-    )
+    if product.category_id:
+        db.execute(
+            """INSERT INTO product(name, price, category)
+        VALUES (?,?,?);""",
+            [
+                product.name,
+                product.price,
+                product.category_id,
+            ],
+        )
+    else:
+        db.execute(
+            """INSERT INTO product(name, price)
+        VALUES (?,?);""",
+            [
+                product.name,
+                product.price,
+            ],
+        )
     return db.lastrowid
 
 
@@ -47,7 +58,45 @@ def _insert_category(db: Cursor, product: ProductCategory) -> Cursor:
     return db
 
 
+def update_product(product: UpdateProductForm):
+    """Updates a product"""
+    con = get_db()
+    db = con.cursor()
+    db.execute(
+        """UPDATE product SET name=:name, category=:category_id, price=:price
+    WHERE id=:product_id;""",
+        product.dict(),
+    )
+    con.commit()
+    return db.lastrowid
+
+
+def update_category(category: UpdateCategoryForm):
+    """Updates a category"""
+    con = get_db()
+    db = con.cursor()
+    db.execute(
+        """UPDATE product_category SET name=:name, description=:description
+    WHERE id=:category_id;""",
+        category.dict(),
+    )
+    con.commit()
+    return db.lastrowid
+
+
 # GET
+
+
+def get_product_by_id(product_id: int) -> Dict:
+    """Gets a product by it's id"""
+    db = get_db()
+    query = """SELECT p.id, p.name, p.price, c.name,
+    c.id AS category_id
+    FROM product p LEFT JOIN product_category c ON
+    p.category = c.id WHERE p.id=?"""
+    product = db.execute(query, [product_id]).fetchone()
+    product = dict(product) if product else None
+    return product
 
 
 def get_product_by_name(product_name: str) -> Dict:

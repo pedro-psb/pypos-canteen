@@ -1,6 +1,5 @@
 from datetime import date
 from typing import Optional
-from unicodedata import category
 
 from pydantic import BaseModel, PrivateAttr, ValidationError, validator
 from pypos.db import get_db

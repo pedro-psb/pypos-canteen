@@ -6,6 +6,7 @@ from pypos.blueprints.canteen_space.product_mng.errors import *
 from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCategory
 from pypos.db import get_db
 from pypos.models import dao_products
+from pypos.models.forms.product_forms import UpdateProductForm
 
 valid_product_form = {
     "name": "name",
@@ -132,44 +133,32 @@ def test_remove_product_category(app, client):
         assert rows_after == rows_before - 1
 
 
+# TODO turn category_id=NULL (on sqlite) to '0' for consistency
 @pytest.mark.parametrize(
-    ("name", "price", "category"),
+    ("name", "price", "category_id"),
     [
         ("foo", "1.2", "2"),
-        ("foo", "1.2", "None"),
+        ("foo", "1.2", "0"),  # category_id = 0 means No category
+        ("torta", "1.2", "0"),  # category_id = 0 means No category
     ],
 )
-def test_update_product(client, app, name, price, category):
-    # TODO: test validations
-    foo_id = 1
-    form_data = {
-        "id": foo_id,
-        "name": name,
-        "price": price,
-        "category": category,
-    }
-
-    with app.app_context(), app.test_request_context():
-        db = get_db()
-        get_product_query = "SELECT name, price, category FROM product WHERE id=?"
-        product_before_query = db.execute(get_product_query, (1,)).fetchone()
-        product_before = Product(
-            name=product_before_query["name"],
-            price=product_before_query["price"],
-            category=product_before_query["category"],
+def test_update_product_valid(app, name, price, category_id):
+    product_id = 1
+    with app.app_context():
+        product = UpdateProductForm(
+            name=name, price=price, category_id=category_id, product_id=product_id
         )
-        response = client.post(
-            url_for("canteen.product.update_product"), data=form_data
-        )
+        dao_products.update_product(product)
+        product_after = dao_products.get_product_by_id(product_id)
+        assert product_after["name"] == product.name
+        assert product_after["price"] == product.price
+        assert bool(product_after["category_id"]) == bool(product.category_id)
 
-        product_after_query = db.execute(get_product_query, (foo_id,)).fetchone()
-        product_after = Product(
-            name=product_after_query["name"],
-            price=product_after_query["price"],
-            category=product_after_query["category"],
-        )
 
-        assert response.status_code == 302
-        assert product_before.name != product_after.name
-        assert product_before.price != product_after.price
-        assert product_before.category_id != product_after.category_id
+def test_update_product_unique_name_constrain_invalid(app):
+    product_id = 2
+    with app.app_context():
+        with pytest.raises(ValidationError):
+            UpdateProductForm(
+                name="torta", price=10, category_id=1, product_id=product_id
+            )

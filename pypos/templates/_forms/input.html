@@ -1,6 +1,9 @@
 {% macro input(name, label, type="text", placeholder="") %}
 <!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
-<div class="form-floating">
+
+<div class="col-12 mb-3">
+
+    <label class="form-label text-left  " for="{{ name }}_input">{{ label }}</label>
     {% if errors %}
     {% if errors[name] %}
     <input type="{{ type }}" class="form-control is-invalid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
@@ -18,10 +21,35 @@
     <input type="{{ type }}" class="form-control" id="{{ name }}_input" name="{{ name }}"
         placeholder="{{ placeholder }}">
     {% endif %}
-    <label for="{{ name }}_input">{{ label }}</label>
 </div>
 {%- endmacro %}
-{% macro regular_input(name, label, type="text", placeholder="") %}
+
+{% macro input_textarea(name, label, type="text", placeholder="", update="product") %}
+<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
+
+<div class="col-12 mb-3">
+
+    <label class="form-label" for="{{ name }}_input">{{ label }}</label>
+    {% if errors %}
+    {% if errors[name] %}
+    <textarea id="{{ name }}_input" name="{{ name }}" class="form-control is-invalid" style="height:200px;"></textarea>
+    <div class="invalid-feedback m-2">
+        {% for error in errors[name] %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% else %}
+    <textarea id="{{ name }}_input" name="{{ name }}" class="form-control is-valid" style="height:200px;"></textarea>
+    {% endif %}
+    {% else %}
+    <textarea id="{{ name }}_input" name="{{ name }}" class="form-control"
+        style="height:200px;">{% if data and data[update] -%}{{ data[update][name] }}{%- endif %}</textarea>
+    {% endif %}
+
+</div>
+{%- endmacro %}
+
+{% macro regular_input(name, label, type="text", placeholder="", update="product") %}
 <!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
 <div class="col-12 mb-3">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
@@ -39,7 +67,8 @@
         placeholder }}">
     {% endif %}
     {% else %}
-    <input type="{{ type }}" class=form-control id={{ name }}_input name="{{ name }}" placeholder="{{ placeholder }}">
+    <input type="{{ type }}" class=form-control id={{ name }}_input name="{{ name }}" placeholder="{{ placeholder }}" {%
+        if data and data[update] %}value="{{ data[update][name] }}" {% endif %}>
     {% endif %}
 </div>
 {%- endmacro %}

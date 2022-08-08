@@ -1,24 +1,19 @@
 {% extends "base_user.html" %}
+{% import "_forms/input.html" as forms with context %}
 {% block title %}Manage Products{% endblock %}
 {% block content %}
 <h1>Manage Products</h1>
 <hr class="p-3">
 
-<div class="container text-center">
-    <h2>Update Category</h2>
-    <div class="form-body text-center">
-        <div class="form-add-category w-100 m-auto">
+<div class="container">
+    <h2 class="text-center">Update Category</h2>
+    <div class="form-body">
+        <div class="form-add-category w-100 m-auto text-left">
             <form class="" method="post" action="{{ url_for('canteen.product.update_category') }}">
-                <input type="hidden" value="{{ data.category.id }}" name="id">
-                <div class="form-floating mb-3">
-                    <input type="text" id="name" name="name" class="form-control" value="{{ data.category.name }}">
-                    <label class="form-label" for="category_name">Name</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <textarea id="category_description" name="description" class="form-control" style="height:200px;"
-                        value="{{ data.category.description }}">{{ data.category.description }}</textarea>
-                    <label class="form-label" for="category_description">Description</label>
-                </div>
+                <input type="hidden" value="{{ data.category.id }}" name="category_id">
+                {{ forms.regular_input(name="name", label="Name", placeholder="Category Name", update="category")}}
+                {{ forms.input_textarea(name="description", label="Description", placeholder="Description of your
+                category", update="category")}}
                 <button class="btn btn-primary" type="submit">Update category</button>
             </form>
         </div>

@@ -167,24 +167,12 @@ def manage_products_add_category():
     return render_template("user/management_products_add_category.html")
 
 
-@bp.route("/canteen/manage-products/update_product/<int:id>")
+@bp.route("/canteen/manage-products/update_product/<int:product_id>")
 @login_required(permissions=["acess_product_management"])
-def manage_products_update_product(id):
-    db = get_db()
-    canteen_id = session.get("canteen_id")
-
-    get_product_query = (
-        "SELECT id, name, price, category FROM product WHERE id=? AND canteen_id=?"
-    )
-    get_category_query = (
-        "SELECT id, name FROM product_category WHERE active=1 AND canteen_id=?;"
-    )
-
-    product = db.execute(get_product_query, (id, canteen_id)).fetchone()
-    all_categories = db.execute(get_category_query, (canteen_id,)).fetchall()
+def manage_products_update_product(product_id):
     data = {
-        "product": dict(product),
-        "categories": [dict(cat) for cat in all_categories],
+        "product": dao_products.get_product_by_id(product_id),
+        "categories": dao_products.get_all_categories(),
     }
     return render_template("user/management_products_update_product.html", data=data)
 
@@ -192,17 +180,8 @@ def manage_products_update_product(id):
 @bp.route("/canteen/manage-products/update_category/<int:id>")
 @login_required(permissions=["acess_product_management"])
 def manage_products_update_category(id):
-    db = get_db()
-    canteen_id = session.get("canteen_id")
-
-    get_category_query = """
-        SELECT id, name, description FROM product_category
-        WHERE id=? AND canteen_id=?;
-    """
-    category = db.execute(get_category_query, (id, canteen_id)).fetchone()
-    data = {
-        "category": dict(category),
-    }
+    data = {"category": dao_products.get_category_by_id(id)}
+    print(data)
     return render_template("user/management_products_update_category.html", data=data)
 
 
