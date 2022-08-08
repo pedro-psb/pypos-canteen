@@ -157,16 +157,7 @@ def manage_products():
 @bp.route("/canteen/manage-products/add_product")
 @login_required(permissions=["acess_product_management"])
 def manage_products_add_product():
-    db = get_db()
-    canteen_id = session.get("canteen_id")
-
-    categories_query = (
-        "SELECT name, id, active FROM product_category WHERE canteen_id=?;"
-    )
-    all_categories = db.execute(categories_query, (canteen_id,))
-    data = {
-        "categories": [dict(cat) for cat in all_categories],
-    }
+    data = {"categories": dao_products.get_all_categories()}
     return render_template("user/management_products_add_product.html", data=data)
 
 

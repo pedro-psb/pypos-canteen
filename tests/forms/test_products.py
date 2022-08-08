@@ -34,8 +34,7 @@ def test_invalid_add_product_form(app, name, price, category_id):
 
 def test_unique_name_constrain(app):
     with app.app_context():
+        product_a = AddProductForm(name="valid_name", price=10, category_id=1)
+        dao_products.insert_product(product_a)
         with pytest.raises(ValidationError):
-            product_a = AddProductForm(name="valid_name", price=10, category_id=1)
-            dao_products.insert_product(product_a)
-            with pytest.raises(ValidationError):
-                AddProductForm(name="valid_name", price=10, category_id=1)
+            AddProductForm(name="valid_name", price=10, category_id=1)

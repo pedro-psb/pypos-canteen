@@ -10,6 +10,7 @@ from pypos.demo_setup import setup
 from pypos.models import dao, dao_products
 
 
+@pytest.mark.skip(reason="posponed")
 def test_employee_setup_works(app):
     with app.app_context():
         # TODO make this test more efficient
@@ -27,6 +28,7 @@ def test_employee_setup_works(app):
         assert client_child_user
 
 
+@pytest.mark.skip(reason="posponed")
 def test_products_setup_works(app):
     """When setup product data, should add product/category sample data to db"""
     with app.app_context():

@@ -58,7 +58,7 @@ def get_product_by_name(product_name: str) -> Dict:
     FROM product p LEFT JOIN product_category c ON
     p.category = c.id WHERE p.name=?"""
     product = db.execute(query, [product_name]).fetchone()
-    product = dict(product) if len(product) else None
+    product = dict(product) if product else None
     return product
 
 

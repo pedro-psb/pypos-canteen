@@ -25,8 +25,12 @@ class User(BaseModel):
 
     @validator("username")
     def username_forbidden_chars(cls, value):
-        if not value.isalnum():
-            raise ValueError("Username must contain only alphanumberic characters")
+        forbidden_chars = r"[^A-Za-z0-9_.-]"
+        forbidden_found = re.search(forbidden_chars, value)
+        if forbidden_found:
+            raise ValueError(
+                f"Username {value} must contain only alphanumberic characters"
+            )
         return value
 
     @validator("email")

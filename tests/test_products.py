@@ -1,18 +1,16 @@
-from sqlite3 import IntegrityError
-
 import pytest
-from flask import g, get_flashed_messages, session, url_for
+from flask import url_for
 from markupsafe import escape
 from pydantic import ValidationError
 from pypos.blueprints.canteen_space.product_mng.errors import *
 from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCategory
 from pypos.db import get_db
-from pypos.models import dao, dao_products
+from pypos.models import dao_products
 
 valid_product_form = {
     "name": "name",
     "price": "10",
-    "category": "1",
+    "category_id": "1",
 }
 
 
@@ -29,7 +27,6 @@ def test_add_product(client, app):
 
         product_count_after = db.execute("SELECT COUNT(*) FROM product").fetchone()[0]
 
-        assert response.status_code == 302
         assert product_count_after == product_count_before + 1
 
 
