@@ -284,9 +284,8 @@ def client_manage_add():
 @bp.route("/client/manage/update_dependent/<int:user_id>")
 @login_required(permissions=["acess_client_dashboard"])
 def client_manage_update(user_id):
-    user_data = dao.get_user_by_id(user_id)
-    user_data = stringify_nones_in_dict(user_data)
-    return render_template("user/client_manage_update.html", data=user_data)
+    data = {"user_child": dao.get_user_by_id(user_id)}
+    return render_template("user/client_manage_update.html", data=data)
 
 
 def stringify_nones_in_dict(data: dict) -> dict:

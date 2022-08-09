@@ -102,9 +102,6 @@ class UserRecharge(BaseModel):
             raise ValueError("ID Code can't be empty")
         return timestamp_code
 
-    def get_all(self):
-        pass
-
     def save(self):
         conn = get_db()
         db = conn.cursor()

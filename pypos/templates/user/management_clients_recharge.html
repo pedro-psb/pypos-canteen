@@ -1,4 +1,5 @@
 {% extends "base_user.html" %}
+{% import "_forms/input.html" as forms with context %}
 {% block title %}Manage Clients{% endblock %}
 {% block content %}
 <h1>Manage Clients</h1>
@@ -7,11 +8,9 @@
     <div class="mb-3">
         <h2>Recharge Client's Account</h2>
     </div>
-    <form method='post' action="{{ url_for('canteen.manage_clients.add_user_recharge_from_pos') }}" class="w-100 m-auto form-signin row g-3" style="max-width:400px;">
-        <div>
-            <label for="total" class="form-label">Deposit Value</label>
-            <input type="number" class="form-control" name="total" placeholder="20.00">
-        </div>
+    <form method='post' action="{{ url_for('canteen.manage_clients.add_user_recharge_from_pos') }}"
+        class="w-100 m-auto form-signin row g-3" style="max-width:400px;">
+        {{ forms.regular_input(name="total", label="Deposit Value", placeholder="20.00") }}
         <div>
             <label for="payment_method" class="form_label">Deposit Method</label>
             <select class="form-select" id="payment_method" name="payment_method">

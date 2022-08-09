@@ -39,10 +39,12 @@ def user_child_insert():
 
         user_data = UserChildCreateForm(**form_data)
         dao_users.create_user_child(user_data)
-    except ValueError as e:
-        print(e)
-        return redirect(url_for("page.client_manage_add"))
-    return redirect(url_for("page.client_manage"))
+        flash("Created dependent user successfully", category="success")
+        return redirect(url_for("page.client_manage"))
+    except ValidationError as e:
+        errors = parse_errors(e.errors(), UserChildCreateForm)
+        print(errors)
+        return render_template("user/client_manage_add.html", errors=errors)
 
 
 def remove_empty_fields(form_data: dict):
@@ -56,14 +58,18 @@ def remove_empty_fields(form_data: dict):
 @bp.route("/user_child_update", methods=["POST"])
 def user_child_update():
     form_data = dict(request.form)
-    user_data = dao.get_user_by_id(form_data["id"])
-    if not form_data["password"]:
-        form_data["password"] = user_data["password"]
-    form_data = remove_empty_fields(form_data)
-    user_data.update(form_data)
-    user_data = UserChildUpdateForm(**user_data)
-    dao_users.update_user_child(user_data)
-    return redirect(url_for("page.client_manage"))
+    try:
+        user = UserChildUpdateForm(**form_data)
+        dao_users.update_user_child(user)
+        flash("User Dependent updated successfully", category="success")
+        return redirect(url_for("page.client_manage"))
+    except ValidationError as e:
+        errors = parse_errors(e.errors(), UserChildUpdateForm)
+        data = {"user_child": dao.get_user_by_id(form_data["id"])}
+        print(errors)
+        return render_template(
+            "user/client_manage_update.html", data=data, errors=errors
+        )
 
 
 @bp.route("/user_child_remove", methods=["POST"])

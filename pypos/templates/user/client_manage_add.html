@@ -1,4 +1,5 @@
 {% extends "base_user.html" %}
+{% import "_forms/input.html" as forms with context %}
 {% block title %}Client Account Management{% endblock %}
 {% block content %}
 <h1>Client Account Management</h1>
@@ -18,28 +19,14 @@
         <!-- fields -->
         <div class="col-9 w-50">
             <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="username" placeholder="My Name">
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="foo@bar.com">
-                </div>
-                <div class="col-12 mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="password">
-                </div>
-                <div class="col-6 mb-3">
-                    <label for="age" class="form-label">Age</label>
-                    <input type="text" class="form-control" id="age" name="age" placeholder="7">
-                </div>
-                <div class="col-6 mb-3">
-                    <label for="grade" class="form-label">Grade</label>
-                    <input type="text" class="form-control" id="grade" name="grade" placeholder="2nd grade">
-                </div>
+                {{ forms.regular_input(name="username", label="Name", placeholder="my_name") }}
+                {{ forms.regular_input(name="email", label="Email", placeholder="foo@bar.com") }}
+                {{ forms.regular_input(name="password", label="Password", placeholder="********") }}
+                {{ forms.regular_input(name="age", label="Age", placeholder="7", class="col-6 mb-3") }}
+                {{ forms.regular_input(name="grade", label="Grade", placeholder="2nd grade", class="col-6 mb-3") }}
                 <div class="text-center">
-                    <a class="btn btn-secondary w-auto align-bottom" href="{{ url_for('page.client_manage') }}">Cancel</a>
+                    <a class="btn btn-secondary w-auto align-bottom"
+                        href="{{ url_for('page.client_manage') }}">Cancel</a>
                     <button class="btn btn-primary w-auto align-bottom" type="submit">Add Dependent</button>
                 </div>
             </div>

@@ -262,13 +262,13 @@ def get_user_count(canteen_id=1):
     return user_count
 
 
-def get_user_by_id(user_id):
+def get_user_by_id(user_id) -> Dict:
     con = get_db()
     db = con.cursor()
     query = """SELECT * FROM user u INNER JOIN user_child uc ON u.id=uc.user_id
     WHERE u.id=?;"""
     user_data = db.execute(query, [user_id]).fetchone()
-    user_data = dict(user_data)
+    user_data = dict(user_data) if user_data else {}
     return user_data
 
 

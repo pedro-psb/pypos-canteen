@@ -1,9 +1,10 @@
 import re
 from multiprocessing.sharedctypes import Value
-from typing import Optional
+from typing import Dict, Optional
 
-from pydantic import BaseModel, ConstrainedStr, root_validator, validator
+from pydantic import BaseModel, ConstrainedStr, PrivateAttr, root_validator, validator
 from pypos.db import get_db
+from pypos.models import dao, dao_users
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -22,6 +23,7 @@ class User(BaseModel):
     canteen_name: Optional[str]
     canteen_id: Optional[int] = 1
     username: NotEmptyString
+    _original_user: Dict = PrivateAttr()
 
     @validator("username")
     def username_forbidden_chars(cls, value):
@@ -110,11 +112,9 @@ class UserUpdate(User):
     def username_doesnt_exist(cls, username, values):
         """TODO needs some special validation:
         - if username is already taken (expeting the original username), shouln't pass"""
-        # db = get_db()
-        # query = "SELECT * FROM user WHERE username=?;"
-        # user_exist = db.execute(query, (username,)).fetchone()
-        # if not user_exist:
-        #     raise ValueError("username doesn't exist")
+        original_user = dao.get_user_by_id(values["id"]).get("username")
+        if original_user and original_user != username:
+            raise ValueError("Username must be unique")
         return username
 
     @validator("email")
@@ -169,6 +169,14 @@ class UserChildCreateForm(User):
 class UserChildUpdateForm(UserUpdate):
     age: Optional[int]
     grade: Optional[str]
+
+    @validator("password", pre=True)
+    def optional_password(cls, password, values):
+        """If password is not given/is empty, should not update user password"""
+        print(password)
+        if not password:
+            password = dao.get_user_by_id(values["id"])["password"]
+        return password
 
 
 # TODO implement this later

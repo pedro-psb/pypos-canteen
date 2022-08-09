@@ -49,9 +49,9 @@
 </div>
 {%- endmacro %}
 
-{% macro regular_input(name, label, type="text", placeholder="", update="product") %}
+{% macro regular_input(name, label, type="text", placeholder="", update="product", class="col-12 mb-3") %}
 <!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
-<div class="col-12 mb-3">
+<div class="{{ class }}">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
     {% if errors %}
     {% if errors[name] %}
@@ -64,7 +64,7 @@
     </div>
     {% else %}
     <input type="{{ type }}" class="form-control is-valid" id="{{ name }}_input" name="{{ name }}" placeholder="{{
-        placeholder }}">
+        placeholder }}" {% if data and data[update] %}value="{{ data[update][name] }}" {% endif %}>
     {% endif %}
     {% else %}
     <input type="{{ type }}" class=form-control id={{ name }}_input name="{{ name }}" placeholder="{{ placeholder }}" {%

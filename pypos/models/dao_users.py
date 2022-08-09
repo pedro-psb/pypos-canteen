@@ -68,7 +68,7 @@ def update_user_child(form_data: UserChildUpdateForm):
 
     # update regular user
     query = """UPDATE user SET username=:username, password=:password, email=:email,
-    phone_number=:phone_number, role_name=:role_name
+    phone_number=:phone_number
     WHERE id=:id;"""
     db.execute(query, form_data.dict())
 
