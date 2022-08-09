@@ -36,24 +36,27 @@ def add_product():
 def remove_product():
     error = None
     id = request.form.get("id")
-    db = get_db()
     # sqlite3 doesn't raise error if the id doesn't exit.
     # How do I catch the error here? (without using another query)
-    id_exist = db.execute("SELECT id FROM product WHERE id=?", (id,)).fetchall()
-    id_exist = len(id_exist)
+    product = dao_products.get_product_by_id(id)
 
-    if not id_exist:
+    # TODO refactor this
+    if not product:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-
-    if not error:
-        try:
-            db.execute("UPDATE product SET active=0 WHERE id=?", (id,))
-            db.commit()
-            return redirect(url_for("page.manage_products"))
-        except:
-            print("some error has ocurred")
-            error = ADD_PRODUCT_GENERIC_ERROR
-    flash(error)
+    else:
+        if not error:
+            try:
+                db = get_db()
+                db.execute("UPDATE product SET active=0 WHERE id=?", (id,))
+                db.commit()
+                flash(
+                    message=f"Removed {product['name']} succesfuly", category="success"
+                )
+                return redirect(url_for("page.manage_products"))
+            except:
+                print("Some error has ocurred")
+                error = ADD_PRODUCT_GENERIC_ERROR
+    flash("Some error has occurred. Unable to remove product", category="danger")
     return redirect(url_for("page.manage_products"))
 
 
@@ -78,26 +81,24 @@ def remove_category():
     error = None
     id = request.form.get("id")
     id = int(id)
-    db = get_db()
-    # sqlite3 doesn't raise error if the id doesn't exit.
-    # How do I catch the error here? (without using another query)
-    id_exist = db.execute(
-        "SELECT id FROM product_category WHERE id=?", (id,)
-    ).fetchall()
-    id_exist = len(id_exist)
-    if not id_exist:
+    category = dao_products.get_category_by_id(id)
+    if not category:
         error = REMOVE_PRODUCT_INVALID_PRODUCT_ID
-
-    if not error:
-        try:
-            db.execute("UPDATE product_category SET active=0 WHERE id=?", (id,))
-            db.execute("UPDATE product SET category=NULL WHERE category=?", (id,))
-            db.commit()
-            return redirect(url_for("page.manage_products"))
-        except:
-            print("some error has ocurred")
-            error = ADD_PRODUCT_GENERIC_ERROR
-    flash(error)
+    else:
+        db = get_db()
+        if not error:
+            try:
+                db.execute("UPDATE product_category SET active=0 WHERE id=?", (id,))
+                db.execute("UPDATE product SET category=NULL WHERE category=?", (id,))
+                db.commit()
+                flash(
+                    message=f"Removed {category['name']} succesfuly", category="success"
+                )
+                return redirect(url_for("page.manage_products"))
+            except:
+                print("some error has ocurred")
+                error = ADD_PRODUCT_GENERIC_ERROR
+        flash(error, category="danger")
     return redirect(url_for("page.manage_products"))
 
 
