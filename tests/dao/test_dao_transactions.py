@@ -105,7 +105,7 @@ def test_user_recharge_model(app):
         assert transaction
 
         # calculated values
-        assert transaction.canteen_account_id == 1
+        assert transaction._canteen_account_id == 1
         assert transaction.user_account_id == 1
 
         # test pending-timestamp_code dependency

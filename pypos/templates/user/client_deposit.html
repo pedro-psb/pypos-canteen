@@ -1,4 +1,5 @@
 {% extends "base_user.html" %}
+{% import "_forms/input.html" as forms with context %}
 {% block title %}Client{% endblock %}
 {% block content %}
 <h1>Manual Deposit</h1>
@@ -6,17 +7,9 @@
 <div class="container">
     <form method='post' action="{{ url_for('user_space.add_user_recharge') }}" class="w-100 m-auto form-signin row g-3"
         style="max-width:400px;">
-        <p>Please inform the value you have deposited and the timestamp, so the canteen staff can check it on the
-            system.</p>
-        <div>
-            <label for="total" class="form-label">Deposit Value</label>
-            <input type="number" class="form-control" name="total" placeholder="20.00">
-        </div>
-        <div>
-            <label for="timestamp_code" class="form_label">Timestamp</label>
-            <input type="text" class="form-control" id="timestamp_code" name="timestamp_code"
-                placeholder="01-01-2022-19:23">
-        </div>
+        <p>Please inform the value you have deposited and the id_code (like a timestamp). </p>
+        {{ forms.regular_input(name="total", label="Deposit Value", placeholder="20.00") }}
+        {{ forms.regular_input(name="timestamp_code", label="ID Code", placeholder="01-01-2022-19:23") }}
         <div>
             <label for="timestamp" class="form_label">Deposit Method</label>
             <select class="form-select" name="payment_method">
@@ -29,6 +22,7 @@
                 {% endfor %}
             </select>
         </div>
+        <p>Obs: Deposit will be pending until accepted by the staff.</p>
         <button class="btn btn-primary" type="submit">Send payment voucher</button>
         <a href="{{ url_for('page.client_index') }}" class="btn btn-secondary" type="submit">Cancel</a>
     </form>

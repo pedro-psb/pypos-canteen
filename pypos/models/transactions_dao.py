@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from flask import session
-from pydantic import BaseModel, PositiveFloat, root_validator
+from pydantic import BaseModel, PositiveFloat, root_validator, validator
 from pypos.db import get_db
 from pypos.models import dao
 
@@ -96,13 +96,11 @@ class UserRecharge(BaseModel):
             values["user_account_id"] = user_account_id
         return values
 
-    @root_validator()
-    def timestamp_required_on_pending(cls, values):
-        if values.get("pending") and not values.get("timestamp_code"):
-            raise ValueError(
-                "If transaction is pending, timestamp_code must be informed"
-            )
-        return values
+    @validator("timestamp_code")
+    def timestamp_required_on_pending(cls, timestamp_code, values):
+        if values.get("pending") and not timestamp_code:
+            raise ValueError("ID Code can't be empty")
+        return timestamp_code
 
     def get_all(self):
         pass
