@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 def parse_errors(errors: List[Dict], model: BaseModel) -> Dict[str, List]:
     """Format errors from errors.loc[fields] to [field.error]"""
+    # TODO create a modified BaseModel class with this method
     # TODO fix typecheck error in the parameters
     # get fields from pydantic datamodel
     model_schema = model.schema()["properties"]

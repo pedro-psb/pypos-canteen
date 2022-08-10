@@ -3,13 +3,13 @@ from sqlite3 import Cursor
 from typing import Dict, List, Optional
 
 from flask import flash, redirect, render_template, request, session, url_for
-from pydantic import BaseModel, Field, ValidationError, validator
+from pydantic import ValidationError
 from pypos.db import get_db
 from pypos.models import dao
 from pypos.models.dao_users import insert_user, insert_user_account
 from pypos.models.forms.client_forms import LoginForm
 from pypos.models.user_model import UserClient, UserOwner
-from pypos.utils.data_util import parse_errors
+from pypos.utils.data_utils import parse_errors
 
 from . import bp
 

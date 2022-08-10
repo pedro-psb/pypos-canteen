@@ -4,7 +4,7 @@ from pypos.db import get_db
 from pypos.models import dao, dao_acess_control
 from pypos.models.dao_users import insert_user
 from pypos.models.user_model import User, UserUpdate
-from pypos.utils.data_util import parse_errors
+from pypos.utils.data_utils import parse_errors
 
 from . import bp
 

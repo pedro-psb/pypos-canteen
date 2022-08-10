@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 from pypos.models.forms.client_forms import LoginForm
-from pypos.utils.data_util import parse_errors
+from pypos.utils.data_utils import parse_errors
 
 
 @pytest.mark.parametrize(

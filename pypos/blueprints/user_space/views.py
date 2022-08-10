@@ -6,7 +6,7 @@ from pypos.blueprints.frontend.views import PAYMENT_METHODS_NO_USER
 from pypos.models import dao, dao_users
 from pypos.models.transactions_dao import UserRecharge
 from pypos.models.user_model import UserChildCreateForm, UserChildUpdateForm
-from pypos.utils.data_util import parse_errors
+from pypos.utils.data_utils import parse_errors
 
 from . import bp
 

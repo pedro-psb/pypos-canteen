@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from pypos.db import get_db
 from pypos.models import PAYMENT_METHODS_NO_USER, transactions_dao
 from pypos.models.transactions_dao import UserRecharge
-from pypos.utils.data_util import parse_errors
+from pypos.utils.data_utils import parse_errors
 
 from . import bp
 
