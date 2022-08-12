@@ -8,6 +8,7 @@ class AddProductForm(BaseModel):
     name: str
     price: float
     category_id: int
+    filepath: Optional[str]
 
     @validator("name", "price")
     def not_empty_field(cls, value):

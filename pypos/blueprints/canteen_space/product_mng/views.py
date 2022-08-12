@@ -5,6 +5,7 @@ from pypos.models import dao_products
 from pypos.models.forms.category_forms import UpdateCategoryForm
 from pypos.models.forms.product_forms import AddProductForm, UpdateProductForm
 from pypos.utils.data_utils import parse_errors
+from pypos.utils.form_handler import FormWithFileHandler
 
 from .errors import ADD_PRODUCT_GENERIC_ERROR, REMOVE_PRODUCT_INVALID_PRODUCT_ID
 from .models import ProductCategory
@@ -14,10 +15,11 @@ bp = Blueprint("product", __name__, url_prefix="/product")
 
 @bp.route("/add_product", methods=["POST"])
 def add_product():
-    form_data = request.form
-    file_data = request.files.get("file")
     try:
-        product = AddProductForm(**form_data)
+        # product = AddProductForm(**form_data)
+        product = FormWithFileHandler(
+            FormModel=AddProductForm, request=request
+        ).valid_form
         dao_products.insert_product(product=product)
         flash("Product added sucesfully", category="success")
         return redirect(url_for("page.manage_products"))

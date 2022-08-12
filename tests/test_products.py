@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pytest
-from flask import url_for
+from flask import Flask, url_for
+from flask.testing import FlaskClient
 from markupsafe import escape
 from pydantic import ValidationError
 from pypos.blueprints.canteen_space.product_mng.errors import *
@@ -8,27 +11,25 @@ from pypos.db import get_db
 from pypos.models import dao_products
 from pypos.models.forms.product_forms import UpdateProductForm
 
+resources = Path(__file__).parent / "_resources"
 valid_product_form = {
-    "name": "name",
+    "name": "new_name",
     "price": "10",
     "category_id": "1",
+    "file": (resources / "valid_image.jpeg").open("rb"),
 }
 
 
-def test_add_product(client, app):
-    # TODO: test validations
-
-    with app.app_context(), app.test_request_context():
-        db = get_db()
-        product_count_before = db.execute("SELECT COUNT(*) FROM product").fetchone()[0]
-
-        response = client.post(
-            url_for("canteen.product.add_product"), data=valid_product_form
+def test_add_product(client: FlaskClient, app: Flask):
+    with app.test_request_context():
+        client.post(
+            url_for("canteen.product.add_product"),
+            data=valid_product_form,
+            follow_redirects=True,
         )
 
-        product_count_after = db.execute("SELECT COUNT(*) FROM product").fetchone()[0]
-
-        assert product_count_after == product_count_before + 1
+        product_name = valid_product_form["name"]
+        assert dao_products.get_product_by_name(product_name)
 
 
 @pytest.mark.skip(reason="no way of currently testing this")

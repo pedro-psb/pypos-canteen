@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple
 
 from flask import current_app
+from pydantic import BaseModel
 
 
 class FilesizeLimitError(Exception):

@@ -25,6 +25,7 @@ CREATE TABLE canteen (
   adress TEXT,
   phone TEXT,
   email TEXT
+  filepath TEXT
 );
 
 CREATE TABLE user (
@@ -35,6 +36,7 @@ CREATE TABLE user (
   phone_number TEXT,
   role_name TEXT NOT NULL,
   active INTEGER DEFAULT 1 NOT NULL,
+  filepath TEXT,
   canteen_id INTEGER DEFAULT 1,
   FOREIGN KEY(canteen_id) REFERENCES canteen(id)
 );
@@ -78,6 +80,7 @@ CREATE TABLE product (
   category NUMBER DEFAULT NULL,
   active INTEGER DEFAULT 1 NOT NULL,
   canteen_id INTEGER NOT NULL DEFAULT 1,
+  filepath TEXT,
   FOREIGN KEY(canteen_id) REFERENCES canteen(id)
 );
 

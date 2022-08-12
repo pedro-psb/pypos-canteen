@@ -5,11 +5,11 @@ from typing import Dict, List
 from pypos.blueprints.canteen_space.product_mng.models import Product, ProductCategory
 from pypos.db import get_db
 from pypos.models.forms.category_forms import UpdateCategoryForm
-from pypos.models.forms.product_forms import UpdateProductForm
+from pypos.models.forms.product_forms import AddProductForm, UpdateProductForm
 
 
 # INSERT
-def insert_product(product: Product) -> int | None:
+def insert_product(product: AddProductForm) -> int | None:
     """Insert product and return it's id"""
     con = get_db()
     db = con.cursor()
@@ -18,16 +18,12 @@ def insert_product(product: Product) -> int | None:
     return product_id
 
 
-def _insert_product(db: Cursor, product: Product) -> int | None:
+def _insert_product(db: Cursor, product: AddProductForm) -> int | None:
     if product.category_id:
         db.execute(
-            """INSERT INTO product(name, price, category)
-        VALUES (?,?,?);""",
-            [
-                product.name,
-                product.price,
-                product.category_id,
-            ],
+            """INSERT INTO product(name, price, category, filepath)
+        VALUES (?,?,?,?);""",
+            [product.name, product.price, product.category_id, product.filepath],
         )
     else:
         db.execute(

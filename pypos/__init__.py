@@ -12,7 +12,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY="ieouwer09832njflçasdf983",
         DATABASE=os.path.join(app.instance_path, "pypos.sqlite"),
-        UPLOAD_FOLDER="/uploads",  # understand better how this path works
+        UPLOAD_FOLDER="uploads",  # understand better how this path works
         MAX_CONTENT_LENGTH=5 * 1000 * 1000,  # max upload size 5mb
     )
     if test_config is None:

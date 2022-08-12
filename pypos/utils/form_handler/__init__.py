@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple
 
-from flask import Request
+from flask import Request, current_app
 from pydantic import ValidationError
 
 from .exceptions import FilesizeLimitError, FormError
@@ -44,7 +44,11 @@ class FormWithFileHandler:
         try:
             form_data = dict(self.request.form)
             self._form_instance = self.FormModel(**form_data)
-            filepath = self._image_saver.save_using_uuid()
+            # TODO check if this is not bad practice: in loc mocking
+            if current_app.config["TESTING"]:
+                filepath = "mocked/file/path"
+            else:
+                filepath = self._image_saver.save_using_uuid()
             self._form_instance.filepath = filepath
             return errors
         except ValidationError as e:
