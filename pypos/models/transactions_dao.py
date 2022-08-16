@@ -60,6 +60,7 @@ class UserRecharge(BaseModel):
     presentation: Optional[dict]
 
     @root_validator()
+    @classmethod
     def set_presentation(cls, values):
         if values.get("pending"):
             values["presentation"] = dao.transaction_type_map["user_recharge_pending"][
@@ -73,6 +74,7 @@ class UserRecharge(BaseModel):
 
     # One or the other cases
     @root_validator()
+    @classmethod
     def canteen_id_or_canteen_account_id_required(cls, values):
         if not values.get("canteen_id") and not values.get("canteen_account_id"):
             raise ValueError("Must provide canteen_id or canteen_account_id")
@@ -87,6 +89,7 @@ class UserRecharge(BaseModel):
         return values
 
     @root_validator()
+    @classmethod
     def user_id_or_user_account_id_required(cls, values):
         if not values.get("user_id") and not values.get("user_account_id"):
             raise ValueError("Must provide user_id or user_account_id")
@@ -97,6 +100,7 @@ class UserRecharge(BaseModel):
         return values
 
     @validator("timestamp_code")
+    @classmethod
     def timestamp_required_on_pending(cls, timestamp_code, values):
         if values.get("pending") and not timestamp_code:
             raise ValueError("ID Code can't be empty")
@@ -191,6 +195,7 @@ class RegularPurchase(BaseModel):
     user_account_id: Optional[int]
 
     @root_validator()
+    @classmethod
     def canteen_id_or_canteen_account_id_required(cls, values):
         if not values.get("canteen_id") and not values.get("canteen_account_id"):
             raise ValueError("Must provide canteen_id or canteen_account_id")

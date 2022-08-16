@@ -1,10 +1,10 @@
 """File Handling utilities for flask"""
 import os
-from typing import Set
+from typing import Any, Optional, Set
 
 import shortuuid
 from flask import Request, current_app
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, root_validator, validator
 from werkzeug import datastructures
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
@@ -15,25 +15,27 @@ from .exceptions import FilesizeLimitError
 class RequestChecker(BaseModel):
     """Pydantic Model to validate `flask.Request`, in particular the `request.files` field."""
 
-    request: Request
+    file: Request
     _ALLOWED_EXTENSIONS: Set = {"png", "jpg", "jpeg"}
 
-    @validator("request")
+    # TODO move this validation to the Fileupload form, as it is related with field validation choices
+    @validator("file")
     @classmethod
-    def file_isnt_empty(cls, request: Request):
+    def check_file_limit(cls, request: Request):
         try:
-            filename = request.files["file"].filename
-            if filename == "" or not request:
-                raise TypeError("Must select a file")
+            request.files["file"].filename
         except RequestEntityTooLarge as e:
             raise FilesizeLimitError(loc="file") from e
         return request
 
-    @validator("request")
+    @validator("file")
     @classmethod
     def file_extension_is_valid(cls, request: Request):
         # TODO add real image validation
-        file_extension = get_file_extension(request.files["file"].filename)
+        filename = request.files["file"].filename
+        file_extension = get_file_extension(filename)
+        if not filename:
+            return request
         if file_extension in cls._ALLOWED_EXTENSIONS:  # type: ignore
             return request
         raise TypeError("Extension must be png, jpg or jpeg")

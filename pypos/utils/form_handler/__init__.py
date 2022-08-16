@@ -18,8 +18,7 @@ class FormWithFileHandler:
     _image_saver: ImageFileSaver = None
     _form_instance: Any = None
 
-    @property
-    def valid_form(self) -> Any:
+    def get_valid_form(self) -> Any:
         errors: List[Dict[str, str | Tuple]] = []
         errors = self.validate_request_and_files(errors)
         errors = self.validate_form_model(errors)
@@ -30,7 +29,7 @@ class FormWithFileHandler:
 
     def validate_request_and_files(self, errors) -> List[Dict[str, str | Tuple]]:
         try:
-            RequestChecker(request=self.request)
+            RequestChecker(file=self.request)
             file_data = self.request.files["file"]
             self._image_saver = ImageFileSaver(file=file_data)
             return errors
@@ -49,7 +48,7 @@ class FormWithFileHandler:
                 filepath = "mocked/file/path"
             else:
                 filepath = self._image_saver.save_using_uuid()
-            self._form_instance.filepath = filepath
+            self._form_instance.file = filepath
             return errors
         except ValidationError as e:
             return errors + e.errors()

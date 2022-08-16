@@ -6,6 +6,7 @@ from pypos.models.forms.category_forms import UpdateCategoryForm
 from pypos.models.forms.product_forms import AddProductForm, UpdateProductForm
 from pypos.utils.data_utils import parse_errors
 from pypos.utils.form_handler import FormWithFileHandler
+from pypos.utils.form_handler.exceptions import FormError
 
 from .errors import ADD_PRODUCT_GENERIC_ERROR, REMOVE_PRODUCT_INVALID_PRODUCT_ID
 from .models import ProductCategory
@@ -16,15 +17,15 @@ bp = Blueprint("product", __name__, url_prefix="/product")
 @bp.route("/add_product", methods=["POST"])
 def add_product():
     try:
-        # product = AddProductForm(**form_data)
         product = FormWithFileHandler(
             FormModel=AddProductForm, request=request
-        ).valid_form
+        ).get_valid_form()
         dao_products.insert_product(product=product)
         flash("Product added sucesfully", category="success")
         return redirect(url_for("page.manage_products"))
-    except ValidationError as e:
-        errors = parse_errors(e.errors(), AddProductForm)
+    except FormError as e:
+        errors = e.errors_by_field
+        print(errors)
         data = {"categories": dao_products.get_all_categories()}
         return render_template(
             "user/management_products_add_product.html", data=data, errors=errors
@@ -34,10 +35,10 @@ def add_product():
 @bp.route("/remove_product", methods=["POST"])
 def remove_product():
     error = None
-    id = request.form.get("id")
+    product_id = request.form.get("id")
     # sqlite3 doesn't raise error if the id doesn't exit.
     # How do I catch the error here? (without using another query)
-    product = dao_products.get_product_by_id(id)
+    product = dao_products.get_product_by_id(product_id)
 
     # TODO refactor this
     if not product:
@@ -46,7 +47,7 @@ def remove_product():
         if not error:
             try:
                 db = get_db()
-                db.execute("UPDATE product SET active=0 WHERE id=?", (id,))
+                db.execute("UPDATE product SET active=0 WHERE id=?", (product_id,))
                 db.commit()
                 flash(
                     message=f"Removed {product['name']} succesfuly", category="success"

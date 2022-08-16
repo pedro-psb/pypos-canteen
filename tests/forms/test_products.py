@@ -1,6 +1,5 @@
 import pytest
 from pydantic import ValidationError
-from pypos.db import get_db
 from pypos.models import dao_products
 from pypos.models.forms.product_forms import AddProductForm
 

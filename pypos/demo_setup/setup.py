@@ -13,6 +13,7 @@ from pypos.models.transactions_dao import (
 )
 from pypos.models.user_model import User, UserChildCreateForm
 
+from ..models.forms.product_forms import AddProductForm
 from .sample_product_data import sample_categories, sample_products
 from .sample_transaction_data import (
     sample_regular_purchase,
@@ -64,7 +65,7 @@ def setup_product_data():
 
     # Insert Products
     for product in sample_products:
-        product = Product(**product)
+        product = AddProductForm(**product)
         _insert_product(db, product)
     con.commit()
 

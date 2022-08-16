@@ -23,7 +23,7 @@ def _insert_product(db: Cursor, product: AddProductForm) -> int | None:
         db.execute(
             """INSERT INTO product(name, price, category, filepath)
         VALUES (?,?,?,?);""",
-            [product.name, product.price, product.category_id, product.filepath],
+            [product.name, product.price, product.category_id, product.file],
         )
     else:
         db.execute(

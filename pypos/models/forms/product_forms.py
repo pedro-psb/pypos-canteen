@@ -7,22 +7,25 @@ from pypos.models import dao_products
 class AddProductForm(BaseModel):
     name: str
     price: float
-    category_id: int
-    filepath: Optional[str]
+    category_id: Optional[int]
+    file: Optional[str]
 
     @validator("name", "price")
+    @classmethod
     def not_empty_field(cls, value):
         if not value:
             raise ValueError("Enter a valid value")
         return value
 
     @validator("price")
+    @classmethod
     def positive_value(cls, value):
         if value < 0:
             raise ValueError("Price must be positive")
         return value
 
     @validator("category_id")
+    @classmethod
     def category_exist(cls, value):
         if value:
             category_exist = dao_products.get_category_by_id(value)
@@ -31,6 +34,7 @@ class AddProductForm(BaseModel):
         return value
 
     @validator("name")
+    @classmethod
     def name_already_taken(cls, value):
         product_exist = dao_products.get_product_by_name(value)
         if product_exist:
@@ -47,6 +51,7 @@ class UpdateProductForm(AddProductForm):
     name: str
 
     @root_validator
+    @classmethod
     def product_id_exist(cls, values):
         product_data = dao_products.get_product_by_id(values["product_id"])
         if not product_data:
@@ -55,10 +60,12 @@ class UpdateProductForm(AddProductForm):
         return values
 
     @validator("name")
+    @classmethod
     def name_already_taken(cls, value):
         return value
 
     @root_validator
+    @classmethod
     def name_except_original(cls, values):
         """Overrides name_already_taken() validator to accept update with same name as before"""
         product_exist = dao_products.get_product_by_name(values["name"])

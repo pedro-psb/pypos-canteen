@@ -3,7 +3,6 @@ import os
 from flask import Flask
 
 from pypos.blueprints import user_space
-from pypos.demo_setup.setup import setup_sample_data
 
 
 def create_app(test_config=None):
@@ -13,7 +12,7 @@ def create_app(test_config=None):
         SECRET_KEY="ieouwer09832njflçasdf983",
         DATABASE=os.path.join(app.instance_path, "pypos.sqlite"),
         UPLOAD_FOLDER="uploads",  # understand better how this path works
-        MAX_CONTENT_LENGTH=5 * 1000 * 1000,  # max upload size 5mb
+        MAX_CONTENT_LENGTH=1 * 1000 * 1000,  # max upload size 5mb
     )
     if test_config is None:
         # load the instance config, if it exists, when not testing

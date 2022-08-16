@@ -1,10 +1,6 @@
-from pydantic import ValidationError
-import pytest
 from pypos.models.user_model import UserChildCreateForm, UserChildUpdateForm
-from .fake_forms.form_user_child import (
-    create_form_valid,
-    update_form_valid
-)
+
+from ._fake_forms.form_user_child import create_form_valid, update_form_valid
 
 
 def test_model_user_child_create_valid(app):

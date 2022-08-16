@@ -4,7 +4,7 @@ from pypos.db import get_db
 from pypos.models import dao, dao_users
 from pypos.models.user_model import UserChildCreateForm, UserChildUpdateForm
 
-from .fake_forms.form_user_child import create_form_valid, update_form_valid
+from ._fake_forms.form_user_child import create_form_valid, update_form_valid
 
 
 def test_user_child_create(app):
@@ -41,8 +41,8 @@ def test_user_child_update(app):
 
         user_after = dao.get_user_by_id(user_id)
         assert form
-        assert user_before['username'] == user_after['username']
-        assert user_before['age'] != user_after['age']
+        assert user_before["username"] == user_after["username"]
+        assert user_before["age"] != user_after["age"]
 
 
 # def test_user_child_update_fail(app):
@@ -56,10 +56,10 @@ def test_user_child_delete(app):
         # create user before update
         form = UserChildCreateForm(**create_form_valid)
         user_id = dao_users.create_user_child(form)
-        user_active_before = dao.get_user_by_id(user_id)['active']
+        user_active_before = dao.get_user_by_id(user_id)["active"]
 
         dao_users.delete_user(user_id)
-        user_active = dao.get_user_by_id(user_id)['active']
+        user_active = dao.get_user_by_id(user_id)["active"]
         assert user_active_before == 1
         assert user_active == 0
 
