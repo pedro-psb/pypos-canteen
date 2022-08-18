@@ -29,7 +29,11 @@
                     {% for transaction in data.transactions %}
                     <tr>
                         <td>{{ transaction.date_time }}</td>
-                        <td>{{ transaction.transaction_type }}</td>
+                        <td>
+                            <span class="badge {{ transaction.presentation.badge }}">
+                                {{ transaction.presentation.name }}
+                            </span>
+                        </td>
                         <td>{{ transaction.payment_method }}</td>
                         <td>{{ transaction.total }}</td>
                         <td>{{ transaction.row_total }}</td>

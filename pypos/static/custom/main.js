@@ -25,7 +25,7 @@ function add_item_to_order(id, price, name) {
         var row_quantity = current_row.dataset.quantity;
         var row_price = current_row.dataset.price;
         var row_total = parseFloat((parseInt(row_quantity) + 1) * row_price);
-        row_total = row_total.toFixed(2);
+        row_total = parseFloat(row_total).toFixed(2);
         row_quantity = parseInt(row_quantity) + 1;
 
         current_row.querySelector('.row_quantity').value = row_quantity;
@@ -109,13 +109,13 @@ function update_order_total() {
     // calculate total
     let total = 0.0;
     for (item of order_items) {
-        total = total + parseFloat(item.dataset.total);
+        total = (total + parseFloat(item.dataset.total));
     }
-    total = (total - discount).toFixed(2);
+    total = parseFloat(total - discount).toFixed(2);
     if (total > 0) {
         document.querySelector('#final_total').innerHTML = `$${total}`;
     } else {
-        document.querySelector('#final_total').innerHTML = "$0";
+        document.querySelector('#final_total').innerHTML = "$0.00";
     }
 }
 

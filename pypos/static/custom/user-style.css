@@ -235,7 +235,7 @@ body {
 }
 
 .card:hover {
-    opacity: 70%;
+    opacity: 80%;
     transition-duration: 75ms;
 }
 

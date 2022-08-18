@@ -153,13 +153,18 @@ def get_all_transactions(canteen_id=1):
             all_transactions[i] = dict(transaction)
 
             # get transaction_type_data based on user account and canteen acount operations
-            transaction_type_map = get_transaction_type(
+            this_transaction_type_map = get_transaction_type(
                 uat_add=transaction["uat_add"], cat_add=transaction["cat_add"]
             )
-            row_total_calculator = transaction_type_map["row_total_calculator"]
+            row_total_calculator = this_transaction_type_map["row_total_calculator"]
 
             row_total = row_total_calculator(row_total, transaction["total"])
-            all_transactions[i]["transaction_type"] = transaction_type_map["print_name"]
+            all_transactions[i]["presentation"] = this_transaction_type_map[
+                "presentation"
+            ]
+            all_transactions[i]["transaction_type"] = this_transaction_type_map[
+                "print_name"
+            ]
             all_transactions[i]["row_total"] = row_total
 
     return all_transactions
@@ -383,7 +388,7 @@ transaction_type_map = {
         "cat_add": None,
         "row_total_calculator": lambda x, y: x + y,
         "row_total_calculator_user": lambda x, y: x + y,
-        "presentation": {"name": "recharge", "badge": "bg-danger"},
+        "presentation": {"name": "user recharge", "badge": "bg-success"},
         "presentation_user": {"name": "recharge", "badge": "bg-success"},
     },
     "user_recharge_pending": {
@@ -392,7 +397,7 @@ transaction_type_map = {
         "cat_add": None,
         "row_total_calculator": lambda x, y: x,
         "row_total_calculator_user": lambda x, y: x,
-        "presentation": {"name": "recharge (pending)", "badge": "bg-warning"},
+        "presentation": {"name": "recharge (pending)", "badge": "bg-secondary"},
         "presentation_user": {"name": "recharge (pending)", "badge": "bg-secondary"},
     },
     "user_account_purchase": {
@@ -401,8 +406,8 @@ transaction_type_map = {
         "cat_add": None,
         "row_total_calculator": lambda x, y: x,
         "row_total_calculator_user": lambda x, y: x - y,
-        "presentation": {"name": "purchase", "badge": "bg-secondary"},
-        "presentation_user": {"name": "purchase", "badge": "bg-danger"},
+        "presentation": {"name": "account purchase", "badge": "bg-secondary"},
+        "presentation_user": {"name": "account purchase", "badge": "bg-danger"},
     },
     "regular_purchase": {
         "print_name": "Regular Purchase",
@@ -410,8 +415,8 @@ transaction_type_map = {
         "cat_add": 1,
         "row_total_calculator": lambda x, y: x + y,
         "row_total_calculator_user": lambda x, y: x,
-        "presentation": {"name": "recharge", "badge": "bg-danger"},
-        "presentation_user": {"name": "recharge", "badge": "bg-secondary"},
+        "presentation": {"name": "purchase", "badge": "bg-success"},
+        "presentation_user": {"name": "purchase", "badge": "bg-danger"},
     },
     "canteen_withdraw": {
         "print_name": "Canteen Withdraw",
@@ -419,8 +424,8 @@ transaction_type_map = {
         "cat_add": -1,
         "row_total_calculator": lambda x, y: x - y,
         "row_total_calculator_user": lambda x, y: x,
-        "presentation": {"name": "purchase", "badge": "bg-danger"},
-        "presentation_user": {"name": "purchase", "badge": "bg-secondary"},
+        "presentation": {"name": "withdraw", "badge": "bg-danger"},
+        "presentation_user": {"name": "withdraw", "badge": "bg-secondary"},
     },
 }
 

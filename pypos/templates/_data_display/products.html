@@ -51,7 +51,7 @@
 {% for product in data.products %}
 <div class="col-auto product p-1" data-name="{{ product.name }}" data-price="{{ product.price }}"
     data-id="{{ product.id }}">
-    <div class="card shadow-sm no-hover pb-3" style="width: 12rem;">
+    <div class="card shadow-sm {% if is_editable %}no-hover{% endif %} pb-3" style="width: 12rem;">
         <div id="pos_product_thumbnail">
             <img src="{{ url_for('get_product_img', filename=product.filepath) }}" alt="" id="img_preview">
         </div>
