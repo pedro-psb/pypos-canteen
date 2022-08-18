@@ -80,7 +80,7 @@ CREATE TABLE product (
   category NUMBER DEFAULT NULL,
   active INTEGER DEFAULT 1 NOT NULL,
   canteen_id INTEGER NOT NULL DEFAULT 1,
-  filepath TEXT,
+  filepath TEXT NOT NULL DEFAULT "default_product.jpg",
   FOREIGN KEY(canteen_id) REFERENCES canteen(id)
 );
 

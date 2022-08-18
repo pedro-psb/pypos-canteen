@@ -34,11 +34,11 @@ class RequestChecker(BaseModel):
         # TODO add real image validation
         filename = request.files["file"].filename
         file_extension = get_file_extension(filename)
-        if not filename:
-            return request
-        if file_extension in cls._ALLOWED_EXTENSIONS:  # type: ignore
-            return request
-        raise TypeError("Extension must be png, jpg or jpeg")
+        if filename:
+            if file_extension in cls._ALLOWED_EXTENSIONS:  # type: ignore
+                return request
+            raise TypeError("Extension must be png, jpg or jpeg")
+        return request
 
     class Config:
         arbitrary_types_allowed = True
@@ -49,17 +49,17 @@ class ImageFileSaver(BaseModel):
 
     file: datastructures.FileStorage
 
-    def save_using_uuid(self) -> str:
+    def save_using_uuid(self, basepath: str) -> str:
         """Save file using uuid4 on base56 and return the file path"""
-        filepath = self.save_as(shortuuid.uuid())
-        return filepath
+        filename = self.save_as(filename=shortuuid.uuid(), basepath=basepath)
+        return filename
 
-    def save_as(self, filename: str):
+    def save_as(self, filename: str, basepath: str):
         """Save file using a custom filename (extension is added automatically)"""
         file_extension = get_file_extension(self.file.filename)
         filename = secure_filename(f"{filename}.{file_extension}")
-        filename = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
-        self.file.save(filename)
+        filepath = os.path.join("pypos", basepath, filename)
+        self.file.save(filepath)
         return filename
 
     class Config:

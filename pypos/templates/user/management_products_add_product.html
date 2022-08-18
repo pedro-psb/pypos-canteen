@@ -1,7 +1,7 @@
 {% extends "base_user.html" %}
 {% import "_forms/input.html" as forms with context %}
-{% block custom_header %}
-<link href="{{ url_for('static', filename='') }}" rel="stylesheet" />
+{% block custom_scripts %}
+<script src="{{ url_for('static', filename='custom/form_utils.js') }}"></script>
 {% endblock %}
 {% block title %}Manage Products{% endblock %}
 {% block content %}

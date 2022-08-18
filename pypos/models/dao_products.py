@@ -19,6 +19,7 @@ def insert_product(product: AddProductForm) -> int | None:
 
 
 def _insert_product(db: Cursor, product: AddProductForm) -> int | None:
+    # TODO refactor this so it doesn't use ifs
     if product.category_id:
         db.execute(
             """INSERT INTO product(name, price, category, filepath)
@@ -27,11 +28,12 @@ def _insert_product(db: Cursor, product: AddProductForm) -> int | None:
         )
     else:
         db.execute(
-            """INSERT INTO product(name, price)
-        VALUES (?,?);""",
+            """INSERT INTO product(name, price, filepath)
+        VALUES (?,?,?);""",
             [
                 product.name,
                 product.price,
+                product.file,
             ],
         )
     return db.lastrowid
@@ -58,9 +60,14 @@ def update_product(product: UpdateProductForm):
     """Updates a product"""
     con = get_db()
     db = con.cursor()
+    if product.file:
+        query = """UPDATE product SET name=:name, category=:category_id, price=:price, filepath=:file
+        WHERE id=:product_id;"""
+    else:
+        query = """UPDATE product SET name=:name, category=:category_id, price=:price
+        WHERE id=:product_id;"""
     db.execute(
-        """UPDATE product SET name=:name, category=:category_id, price=:price
-    WHERE id=:product_id;""",
+        query,
         product.dict(),
     )
     con.commit()
@@ -86,7 +93,7 @@ def update_category(category: UpdateCategoryForm):
 def get_product_by_id(product_id: int) -> Dict:
     """Gets a product by it's id"""
     db = get_db()
-    query = """SELECT p.id, p.name, p.price, c.name,
+    query = """SELECT p.id, p.name, p.price, c.name, filepath,
     c.id AS category_id
     FROM product p LEFT JOIN product_category c ON
     p.category = c.id WHERE p.id=?"""
@@ -98,7 +105,7 @@ def get_product_by_id(product_id: int) -> Dict:
 def get_product_by_name(product_name: str) -> Dict:
     """Gets a product by it's name"""
     db = get_db()
-    query = """SELECT p.id, p.name, p.price, c.name,
+    query = """SELECT p.id, p.name, p.price, c.name, p.filepath,
     c.id AS category_id
     FROM product p LEFT JOIN product_category c ON
     p.category = c.id WHERE p.name=?"""

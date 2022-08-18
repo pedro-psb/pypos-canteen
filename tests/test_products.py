@@ -25,7 +25,6 @@ def test_add_product(client: FlaskClient, app: Flask):
         client.post(
             url_for("canteen.product.add_product"),
             data=valid_product_form,
-            follow_redirects=True,
         )
 
         product_name = valid_product_form["name"]

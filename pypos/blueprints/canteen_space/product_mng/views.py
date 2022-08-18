@@ -1,4 +1,12 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from pydantic import ValidationError
 from pypos.db import get_db
 from pypos.models import dao_products
@@ -17,8 +25,11 @@ bp = Blueprint("product", __name__, url_prefix="/product")
 @bp.route("/add_product", methods=["POST"])
 def add_product():
     try:
+        # TODO make saving the img and saving to db an atomic transaction
         product = FormWithFileHandler(
-            FormModel=AddProductForm, request=request
+            FormModel=AddProductForm,
+            request=request,
+            basepath=current_app.config["PRODUCT_IMG_FOLDER"],
         ).get_valid_form()
         dao_products.insert_product(product=product)
         flash("Product added sucesfully", category="success")
@@ -105,17 +116,20 @@ def remove_category():
 @bp.route("/update_product", methods=["POST"])
 def update_product():
     """Allows updating price, category, name, etc"""
-    form_data = request.form
     try:
-        product = UpdateProductForm(**form_data)
+        product = FormWithFileHandler(
+            FormModel=UpdateProductForm,
+            request=request,
+            basepath=current_app.config["PRODUCT_IMG_FOLDER"],
+        ).get_valid_form()
         dao_products.update_product(product=product)
         flash("Product updated sucesfully", category="success")
         return redirect(url_for("page.manage_products"))
-    except ValidationError as e:
-        errors = parse_errors(e.errors(), UpdateProductForm)
+    except FormError as e:
+        errors = e.errors_by_field
         data = {
             "categories": dao_products.get_all_categories(),
-            "product": dao_products.get_product_by_id(form_data["product_id"]),
+            "product": dao_products.get_product_by_id(request.form["product_id"]),
         }
         print(errors)
         return render_template(

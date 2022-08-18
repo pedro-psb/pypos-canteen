@@ -72,14 +72,11 @@
                 {% if product.active == 1 %}
                 <tr>
                     <td>
-                        {% if not product.image %}
-                        <svg class="bd-placeholder-img card-img-top" width="60" height="80"
-                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                            preserveAspectRatio="xMidYMid slice" focusable="false">
-                            <title>Placeholder</title>
-                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                                dy=".3em">img</text>
-                        </svg>
+
+                        {% if product.filepath %}
+                        <div id="product_thumbnail"><img
+                                src="{{ url_for('get_product_img', filename=product.filepath) }}" alt=""
+                                id="img_preview"></div>
                         {% else %}
                         <svg class="bd-placeholder-img card-img-top" width="60" height="80"
                             xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"

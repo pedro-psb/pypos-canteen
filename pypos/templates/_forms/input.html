@@ -73,11 +73,13 @@
 </div>
 {%- endmacro %}
 
-{% macro fileupload_input(name="file", label="", update="file") %}
+{% macro fileupload_input(name="file", label="", update="product") %}
 <!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
 <div class="col-3">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
-    <div id="preview"><img src="{{ url_for('static', filename='img/octocat.jpg') }}" id="img_preview"></div>
+    <div id="preview">
+        <img src="{{ url_for('get_product_img', filename=data[update]['filepath']) }}" id="img_preview">
+    </div>
     {% if errors %}
     {% if errors[name] %}
     <input type="file" class="form-control is-invalid" id="{{ name }}_input" name="{{ name }}">

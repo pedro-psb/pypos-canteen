@@ -1,17 +1,7 @@
-import json
-from pprint import pprint
-
-from flask import render_template, session
+from flask import current_app, render_template, send_from_directory, session
 from pypos.blueprints.auth.util import get_db, login_required, public_acess_only
 from pypos.models import dao, dao_acess_control, dao_products
-from pypos.models.client_transaction_model import ClientTransaction
 from pypos.models.dao_reports import ReportSummary
-from pypos.models.transactions_dao import (
-    Product,
-    RegularPurchase,
-    UserAccountPurchase,
-    UserRecharge,
-)
 
 from . import bp
 
@@ -133,7 +123,8 @@ def manage_products():
     canteen_id = session.get("canteen_id")
 
     products_query = """
-        SELECT p.id, p.name, p.price, p.active, pc.name as category_name
+        SELECT p.id, p.name, p.price, p.active, pc.name as category_name,
+        p.filepath
         FROM product p LEFT JOIN product_category pc ON p.category = pc.id
         WHERE p.canteen_id=?;
     """
@@ -151,6 +142,7 @@ def manage_products():
         "products": [dict(prod) for prod in all_products],
         "categories": [dict(cat) for cat in all_categories],
     }
+    print(data)
     return render_template("user/management_products.html", data=data)
 
 

@@ -19,7 +19,7 @@ build/
 TODO.md
 /instance
 
-uploads/*
+**/uploads/*
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

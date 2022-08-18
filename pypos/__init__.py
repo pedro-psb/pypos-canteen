@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, current_app, send_from_directory
 
 from pypos.blueprints import user_space
 
@@ -11,8 +11,9 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY="ieouwer09832njflçasdf983",
         DATABASE=os.path.join(app.instance_path, "pypos.sqlite"),
-        UPLOAD_FOLDER="uploads",  # understand better how this path works
-        MAX_CONTENT_LENGTH=1 * 1000 * 1000,  # max upload size 5mb
+        PRODUCT_IMG_FOLDER="uploads/product",
+        AVATAR_IMG_FOLDER="uploads/avatar",
+        MAX_CONTENT_LENGTH=5 * 1000 * 1000,  # max upload size 5mb
     )
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -45,7 +46,7 @@ def create_app(test_config=None):
     return app
 
 
-def register_blueprints(app):
+def register_blueprints(app: Flask):
     from .blueprints import auth, canteen_space, frontend
 
     app.register_blueprint(auth.bp)
@@ -59,6 +60,14 @@ def register_views(app):
     @app.route("/hello")
     def hello():
         return "Hello, World!"
+
+    @app.route("/img/product/<filename>")
+    def get_product_img(filename):
+        return send_from_directory(current_app.config["PRODUCT_IMG_FOLDER"], filename)
+
+    @app.route("/img/avatar/<filename>")
+    def get_avatar_img(filename):
+        return send_from_directory(current_app.config["AVATAR_IMG_FOLDER"], filename)
 
 
 # Sitemap helper
