@@ -263,7 +263,7 @@ class RegularPurchase(BaseModel):
         # add to cash/bank balance in canteen account
         canteen_account_id = cls.canteen_account_id
 
-        canteen_account_type = payment_options[cls.payment_method]
+        canteen_account_type = payment_options.get(cls.payment_method, "cash_balance")
         query = f"UPDATE canteen_account SET {canteen_account_type}={canteen_account_type}+? WHERE id=?;"
         db.execute(query, (cls.total, canteen_account_id))
 

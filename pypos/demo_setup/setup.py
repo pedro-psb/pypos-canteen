@@ -64,7 +64,7 @@ def setup_product_data():
         _insert_category(db, category)
 
     # Insert Products
-    for product in sample_products:
+    for product in sample_products():
         product = AddProductForm(**product)
         _insert_product(db, product)
     con.commit()

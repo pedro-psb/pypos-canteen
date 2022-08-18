@@ -5,20 +5,19 @@
 <hr class="p-3">
 
 <div class="container">
-    <h2 class="text-center mb-3">Update Employee</h2>
-
-    <!-- img -->
-    <div class="row g-5">
-        <div class="col-3">
+    <div id="form_container" class="col-4 m-auto">
+        <h2 class="text-center mb-3">Update Employee</h2>
+        <!-- img -->
+        <!-- <div class="col-3">
             <div id="profile_image" class="mb-3">
                 <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="300" height="300">
             </div>
             <div class="">
                 <input disabled type="file" class="form-control" id="description" name="file" placeholder="bar">
             </div>
-        </div>
+        </div> -->
         <!-- fields -->
-        <div class="col-9 w-50">
+        <div class="">
             <div class="row">
                 <form method="post" action="{{ url_for('canteen.manage_employee.update') }}">
                     <input hidden name="id" value="{{ data.employee.id }}">
@@ -56,7 +55,7 @@
                         </select>
                     </div>
                     <div class="text-center">
-                        <a class="btn btn-primary w-auto align-bottom"
+                        <a class="btn btn-secondary w-auto align-bottom"
                             href="{{ url_for('page.manage_employees') }}">Cancel</a>
                         <button class="btn btn-primary w-auto align-bottom" type="submit">Update Role</button>
                     </div>

@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, current_app, send_from_directory
+from flask import Flask, current_app, send_from_directory, url_for
+from werkzeug.exceptions import NotFound
 
 from pypos.blueprints import user_space
 
@@ -63,7 +64,14 @@ def register_views(app):
 
     @app.route("/img/product/<filename>")
     def get_product_img(filename):
-        return send_from_directory(current_app.config["PRODUCT_IMG_FOLDER"], filename)
+        """Looks in the `uploads` Folder then the `static/img/products` Folder"""
+        try:
+            serve_response = send_from_directory(
+                current_app.config["PRODUCT_IMG_FOLDER"], filename
+            )
+        except NotFound:
+            serve_response = send_from_directory("static/img/products", filename)
+        return serve_response
 
     @app.route("/img/avatar/<filename>")
     def get_avatar_img(filename):

@@ -17,14 +17,15 @@ def add_transaction_product():
         else:
             transaction = UserAccountPurchase(**form_data)
         transaction.save()
+        flash(
+            f"Transaction was successfull.",
+            category="success",
+        )
+        return redirect(url_for("page.pos_main"))
     except ValidationError as e:
         flash("Invalid transaction", category="danger")
+        print(e)
         return redirect(url_for("page.pos_main"))
-    flash(
-        f"Transaction was successfull.",
-        category="success",
-    )
-    return redirect(url_for("page.pos_main"))
 
 
 @bp.route("/accept_pending_recharge", methods=["POST"])

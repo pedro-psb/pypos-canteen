@@ -143,7 +143,7 @@ def get_category_by_name(category_name: str) -> Dict:
 def get_all_categories() -> List[Dict]:
     """Get all categories"""
     db = get_db()
-    query = "SELECT * FROM product_category;"
+    query = "SELECT * FROM product_category WHERE active=1;"
     result = db.execute(query).fetchall()
     result = [dict(item) for item in result] if result else []
     return result

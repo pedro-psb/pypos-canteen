@@ -6,14 +6,18 @@
 <hr class="p-3">
 
 <div class="container">
-    <h2 class="text-center">Add Category</h2>
     <div class="form-body">
         <div class="form-add-category w-100 m-auto text-left">
+            <h2 class="text-center">Add Category</h2>
             <form class="" method="post" action="{{ url_for('canteen.product.add_category') }}">
                 {{ forms.input(name="name", label="Name", placeholder="Category Name") }}
                 {{ forms.input_textarea(name="description", label="Description", placeholder="Description of your
                 category")}}
-                <button class="btn btn-primary" type="submit">Add category</button>
+                <div class="text-center">
+                    <a class="btn btn-secondary w-auto align-bottom"
+                        href="{{ url_for('page.manage_products') }}">Cancel</a>
+                    <button class="btn btn-primary w-auto align-bottom" type="submit">Add Category</button>
+                </div>
             </form>
         </div>
     </div>

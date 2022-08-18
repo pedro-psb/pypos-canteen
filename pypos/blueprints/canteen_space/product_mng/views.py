@@ -36,7 +36,6 @@ def add_product():
         return redirect(url_for("page.manage_products"))
     except FormError as e:
         errors = e.errors_by_field
-        print(errors)
         data = {"categories": dao_products.get_all_categories()}
         return render_template(
             "user/management_products_add_product.html", data=data, errors=errors

@@ -120,7 +120,6 @@ def canteen_settings():
 @login_required(permissions=["acess_product_management"])
 def manage_products():
     db = get_db()
-    canteen_id = session.get("canteen_id")
 
     products_query = """
         SELECT p.id, p.name, p.price, p.active, pc.name as category,
@@ -131,11 +130,11 @@ def manage_products():
     categories_query = """
         SELECT pc.id, pc.name, pc.description, pc.active, COUNT(*) as products_inside
         FROM product_category pc INNER JOIN product p ON p.category = pc.id
-        GROUP BY pc.id
+        GROUP BY pc.id HAVING pc.active=1
         UNION
         SELECT pc.id, pc.name, pc.description, pc.active, '0' as products_inside
         FROM product_category pc LEFT JOIN product p ON p.category = pc.id
-        WHERE p.id IS NULL;
+        WHERE p.id IS NULL AND pc.active=1;
     """
     all_products = db.execute(products_query)
     all_categories = db.execute(categories_query)
@@ -143,7 +142,6 @@ def manage_products():
         "products": [dict(prod) for prod in all_products],
         "categories": [dict(cat) for cat in all_categories],
     }
-    print(data)
     return render_template("user/management_products.html", data=data)
 
 
@@ -209,7 +207,7 @@ def pos_reports():
     canteen_balance = dao.get_canteen_balance()
     data = {
         "cash_balance": canteen_balance.get("cash_balance"),
-        "bank_balance": canteen_balance.get("bank_balance"),
+        "bank_balance": canteen_balance.get("bank_account_balance"),
         "transactions": regular_transactions,
         "pending_transactions": pending_transactions,
         "summary": summary_data,

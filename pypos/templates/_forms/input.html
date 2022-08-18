@@ -71,7 +71,11 @@
 <div class="col-3">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
     <div id="preview">
+        {% if data[update] %}
         <img src="{{ url_for('get_product_img', filename=data[update]['filepath']) }}" id="img_preview">
+        {% else %}
+        <img src="{{ url_for('get_product_img', filename='default_product.jpg') }}" id="img_preview">
+        {% endif %}
     </div>
     {% if errors %}
     {% if errors[name] %}

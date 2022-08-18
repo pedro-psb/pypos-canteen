@@ -28,10 +28,11 @@
                         <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endif %}
                         {% endfor %}
-                        <option>-- Add a category--</option>
                     </select>
                 </div>
                 <div class="text-center">
+                    <a class="btn btn-secondary w-auto align-bottom"
+                        href="{{ url_for('page.manage_products') }}">Cancel</a>
                     <button class="btn btn-primary w-auto align-bottom" type="submit">Add Product</button>
                 </div>
             </div>
