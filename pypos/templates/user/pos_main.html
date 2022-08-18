@@ -47,13 +47,10 @@
                 <div class="col-auto product" data-name="{{ product.name }}" data-price="{{ product.price }}"
                     data-id="{{ product.id }}">
                     <div class="card shadow-sm" style="width: 12rem;">
-                        <svg class="bd-placeholder-img card-img-top" width="100%" height="150px"
-                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                            preserveAspectRatio="xMidYMid slice" focusable="false">
-                            <title>Placeholder</title>
-                            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                                dy=".3em">Thumbnail</text>
-                        </svg>
+                        <div id="pos_product_thumbnail">
+                            <img src="{{ url_for('get_product_img', filename=product.filepath) }}" alt=""
+                                id="img_preview">
+                        </div>
 
                         <p class="text-left small p-2 pb-0"><span class="badge bg-secondary ">{{ product.category
                                 }}</span></span></p>
@@ -122,7 +119,8 @@
                         {% if not user.user_provider_name %}
                         <option value="{{ user.id }}">({{ user.balance }}) {{ user.username }}</option>
                         {% else %}
-                        <option value="{{ user.id }}">({{user.balance }}) {{ user.user_provider_name }} | {{ user.username }}</option>
+                        <option value="{{ user.id }}">({{user.balance }}) {{ user.user_provider_name }} | {{
+                            user.username }}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -131,7 +129,8 @@
                 <!-- buttons -->
                 <div class="d-flex justify-content-end">
                     <div class="col">
-                        <button id="clear_order_button" class="m-2 btn btn-danger" data-mdb-ripple="False" type="reset">Cancel</button>
+                        <button id="clear_order_button" class="m-2 btn btn-danger" data-mdb-ripple="False"
+                            type="reset">Cancel</button>
                     </div>
                     <div class="col">
                         <input id="form_products" hidden name="products">

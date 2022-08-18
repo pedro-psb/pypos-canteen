@@ -183,10 +183,8 @@ def manage_products_update_category(id):
 @bp.route("/canteen/point-of-sale")
 @login_required(permissions=["acess_pos"])
 def pos_main():
-    db = get_db()
-    canteen_id: int = session.get("canteen_id")  # type: ignore
     data = {
-        "products": dao_products.get_product_list_by_canteen_id(canteen_id),
+        "products": dao_products.get_product_list_by_canteen_id(),
         "payment_methods": PAYMENT_METHODS,
         "user_list": dao.get_clients_list(),
     }

@@ -149,13 +149,13 @@ def get_all_categories() -> List[Dict]:
     return result
 
 
-def get_product_list_by_canteen_id(canteen_id: int) -> List:
+def get_product_list_by_canteen_id(canteen_id: int = 1) -> List:
     """Gets a client or client_dependent from a canteen"""
     con = get_db()
     db = con.cursor()
-    query = """SELECT p.name, p.id, p.price, pc.name as category
+    query = """SELECT p.name, p.id, p.price, pc.name as category, p.filepath
     FROM product p LEFT JOIN product_category pc ON p.category = pc.id
-    WHERE p.active=1 AND p.canteen_id=?;"""
-    product_list = db.execute(query, [canteen_id]).fetchall()
+    WHERE p.active=1 AND p.canteen_id=1;"""
+    product_list = db.execute(query).fetchall()
     product_list = [dict(product) for product in product_list]
     return product_list
