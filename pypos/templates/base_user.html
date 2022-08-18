@@ -223,7 +223,10 @@
                 <div class="dropdown p-3 mb-3" style="position: absolute; bottom: 0;">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                         id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="32" height="32">
+                        <!-- <img src="https://github.com/mdo.png" alt="" class="rounded-circle me-2" width="32" height="32"> -->
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#tools"></use>
+                        </svg>
                         <strong>{{ g.user['username'] }}</strong>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1"

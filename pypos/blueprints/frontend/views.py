@@ -123,21 +123,22 @@ def manage_products():
     canteen_id = session.get("canteen_id")
 
     products_query = """
-        SELECT p.id, p.name, p.price, p.active, pc.name as category_name,
+        SELECT p.id, p.name, p.price, p.active, pc.name as category,
         p.filepath
         FROM product p LEFT JOIN product_category pc ON p.category = pc.id
-        WHERE p.canteen_id=?;
+        WHERE p.active=1;
     """
     categories_query = """
         SELECT pc.id, pc.name, pc.description, pc.active, COUNT(*) as products_inside
         FROM product_category pc INNER JOIN product p ON p.category = pc.id
-        GROUP BY pc.id HAVING p.canteen_id=? UNION
+        GROUP BY pc.id
+        UNION
         SELECT pc.id, pc.name, pc.description, pc.active, '0' as products_inside
         FROM product_category pc LEFT JOIN product p ON p.category = pc.id
-        WHERE p.id IS NULL AND pc.canteen_id=?;
+        WHERE p.id IS NULL;
     """
-    all_products = db.execute(products_query, (canteen_id,))
-    all_categories = db.execute(categories_query, (canteen_id, canteen_id))
+    all_products = db.execute(products_query)
+    all_categories = db.execute(categories_query)
     data = {
         "products": [dict(prod) for prod in all_products],
         "categories": [dict(cat) for cat in all_categories],

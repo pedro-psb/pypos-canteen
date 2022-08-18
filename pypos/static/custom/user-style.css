@@ -231,9 +231,18 @@ body {
 .card {
     opacity: 100%;
     transition-duration: 150ms;
+    /* background-color: rgb(247, 251, 255); */
 }
 
 .card:hover {
     opacity: 70%;
     transition-duration: 75ms;
+}
+
+.table {
+    /* background-color: rgb(247, 251, 255); */
+}
+
+.no-hover:hover {
+    opacity: 100%;
 }

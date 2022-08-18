@@ -22,7 +22,6 @@
         <tbody>
             {% for child in data.user_child_list %}
             <tr>
-
                 <td>{{ child.username }}</td>
                 <td>{{ child.email }}</td>
                 <td>{{ child.grade }}</td>
@@ -30,9 +29,9 @@
                 <td>
                     <form action="{{ url_for('user_space.user_child_remove') }}" method="post">
                         <input hidden type="integer" name="id" value="{{ child.id }}">
-                        <button type="submit" class="btn btn-secondary"
+                        <button type="submit" class="btn btn-outline-danger"
                             href="{{ url_for('page.client_manage', user_id=1) }}">Delete</button>
-                        <a class="btn btn-primary"
+                        <a class="btn btn-outline-success"
                             href="{{ url_for('page.client_manage_update', user_id=child.id) }}">Update</a>
                     </form>
                 </td>

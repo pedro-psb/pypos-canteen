@@ -1,8 +1,5 @@
 {% macro input(name, label, type="text", placeholder="") %}
-<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
-
 <div class="col-12 mb-3">
-
     <label class="form-label text-left  " for="{{ name }}_input">{{ label }}</label>
     {% if errors %}
     {% if errors[name] %}
@@ -25,8 +22,6 @@
 {%- endmacro %}
 
 {% macro input_textarea(name, label, type="text", placeholder="", update="product") %}
-<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
-
 <div class="col-12 mb-3">
 
     <label class="form-label" for="{{ name }}_input">{{ label }}</label>
@@ -50,7 +45,6 @@
 {%- endmacro %}
 
 {% macro regular_input(name, label, type="text", placeholder="", update="product", class="col-12 mb-3") %}
-<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
 <div class="{{ class }}">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
     {% if errors %}
@@ -74,7 +68,6 @@
 {%- endmacro %}
 
 {% macro fileupload_input(name="file", label="", update="product") %}
-<!-- TODO keep valid field values on form reload. In fact, this should be done in JS or HTMX -->
 <div class="col-3">
     <label for="{{ name }}_input" class="form-label">{{ label }}</label>
     <div id="preview">
