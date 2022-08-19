@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 import click
 from flask import current_app, g
@@ -31,6 +32,14 @@ def init_db():
         db.executescript(f.read().decode("utf8"))
     with current_app.open_resource("initial_data.sql") as f:
         db.executescript(f.read().decode("utf8"))
+    clear_uploaded_files()
+
+
+def clear_uploaded_files():
+    uploaded_files = Path("pypos/uploads").glob("**/[!.]*")
+    for file in uploaded_files:
+        if file.is_file():
+            file.unlink()
 
 
 def populate_db():
