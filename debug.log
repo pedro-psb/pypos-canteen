@@ -1,0 +1,239 @@
+Retrieving logs...
+============= i-0fcd550f10971e5f4 ==============
+----------------------------------------
+/var/log/eb-engine.log
+----------------------------------------
+2022/08/19 14:46:42.628195 [INFO] Executing instruction: RunAppDeployPreDeployHooks
+2022/08/19 14:46:42.628212 [INFO] Executing platform hooks in .platform/hooks/predeploy/
+2022/08/19 14:46:42.628228 [INFO] The dir .platform/hooks/predeploy/ does not exist
+2022/08/19 14:46:42.628232 [INFO] Finished running scripts in /var/app/staging/.platform/hooks/predeploy
+2022/08/19 14:46:42.628239 [INFO] Executing instruction: stop X-Ray
+2022/08/19 14:46:42.628242 [INFO] stop X-Ray ...
+2022/08/19 14:46:42.628254 [INFO] Running command /bin/sh -c systemctl show -p PartOf xray.service
+2022/08/19 14:46:42.634841 [WARN] stopProcess Warning: process xray is not registered 
+2022/08/19 14:46:42.634861 [INFO] Running command /bin/sh -c systemctl stop xray.service
+2022/08/19 14:46:42.643176 [INFO] Executing instruction: stop proxy
+2022/08/19 14:46:42.643197 [INFO] Running command /bin/sh -c systemctl show -p PartOf httpd.service
+2022/08/19 14:46:42.650934 [WARN] deregisterProcess Warning: process httpd is not registered, skipping...
+
+2022/08/19 14:46:42.650957 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/08/19 14:46:42.655992 [INFO] Running command /bin/sh -c systemctl is-active nginx.service
+2022/08/19 14:46:42.659626 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/08/19 14:46:42.663732 [INFO] Running command /bin/sh -c systemctl stop nginx.service
+2022/08/19 14:46:47.894365 [INFO] Running command /bin/sh -c systemctl disable nginx.service
+2022/08/19 14:46:47.986203 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/08/19 14:46:48.085111 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/08/19 14:46:48.089521 [INFO] Executing instruction: FlipApplication
+2022/08/19 14:46:48.089535 [INFO] Fetching environment variables...
+2022/08/19 14:46:48.089693 [INFO] Purge old process...
+2022/08/19 14:46:48.089710 [INFO] Running command /bin/sh -c systemctl stop eb-app.target
+2022/08/19 14:46:48.095411 [INFO] Running command /bin/sh -c systemctl show -p ConsistsOf eb-app.target | cut -d= -f2
+2022/08/19 14:46:48.100251 [INFO] web.service
+
+2022/08/19 14:46:48.100268 [INFO] Running command /bin/sh -c systemctl show -p PartOf web.service
+2022/08/19 14:46:48.104477 [INFO] Running command /bin/sh -c systemctl is-active web.service
+2022/08/19 14:46:48.107793 [INFO] Running command /bin/sh -c systemctl disable web.service
+2022/08/19 14:46:48.209987 [INFO] Removed symlink /etc/systemd/system/multi-user.target.wants/web.service.
+
+2022/08/19 14:46:48.210080 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/08/19 14:46:48.301140 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/08/19 14:46:48.305362 [INFO] Removing /var/app/current/ if it exists
+2022/08/19 14:46:48.312148 [INFO] Renaming /var/app/staging/ to /var/app/current/
+2022/08/19 14:46:48.312201 [INFO] Register application processes...
+2022/08/19 14:46:48.312208 [INFO] Registering the proc: web
+
+2022/08/19 14:46:48.312222 [INFO] Running command /bin/sh -c systemctl show -p PartOf web.service
+2022/08/19 14:46:48.319971 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/08/19 14:46:48.405248 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/08/19 14:46:48.409512 [INFO] Running command /bin/sh -c systemctl is-enabled eb-app.target
+2022/08/19 14:46:48.413102 [INFO] Running command /bin/sh -c systemctl enable eb-app.target
+2022/08/19 14:46:48.496472 [INFO] Running command /bin/sh -c systemctl start eb-app.target
+2022/08/19 14:46:48.501772 [INFO] Running command /bin/sh -c systemctl enable web.service
+2022/08/19 14:46:48.590264 [INFO] Created symlink from /etc/systemd/system/multi-user.target.wants/web.service to /etc/systemd/system/web.service.
+
+2022/08/19 14:46:48.590297 [INFO] Running command /bin/sh -c systemctl show -p PartOf web.service
+2022/08/19 14:46:48.595557 [INFO] Running command /bin/sh -c systemctl is-active web.service
+2022/08/19 14:46:48.598951 [INFO] Running command /bin/sh -c systemctl start web.service
+2022/08/19 14:46:48.943283 [INFO] Executing instruction: start X-Ray
+2022/08/19 14:46:48.943298 [INFO] X-Ray is not enabled.
+2022/08/19 14:46:48.943303 [INFO] Executing instruction: start proxy with new configuration
+2022/08/19 14:46:48.943323 [INFO] Running command /bin/sh -c /usr/sbin/nginx -t -c /var/proxy/staging/nginx/nginx.conf
+2022/08/19 14:46:48.961020 [INFO] nginx: the configuration file /var/proxy/staging/nginx/nginx.conf syntax is ok
+nginx: configuration file /var/proxy/staging/nginx/nginx.conf test is successful
+
+2022/08/19 14:46:48.961259 [INFO] Running command /bin/sh -c cp -rp /var/proxy/staging/nginx/* /etc/nginx
+2022/08/19 14:46:48.968258 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/08/19 14:46:48.982196 [INFO] Running command /bin/sh -c systemctl daemon-reload
+2022/08/19 14:46:49.099681 [INFO] Running command /bin/sh -c systemctl reset-failed
+2022/08/19 14:46:49.104224 [INFO] Running command /bin/sh -c systemctl show -p PartOf nginx.service
+2022/08/19 14:46:49.116370 [INFO] Running command /bin/sh -c systemctl is-active nginx.service
+2022/08/19 14:46:49.124808 [INFO] Running command /bin/sh -c systemctl start nginx.service
+2022/08/19 14:46:49.193712 [INFO] Executing instruction: configureSqsd
+2022/08/19 14:46:49.193727 [INFO] This is a web server environment instance, skip configure sqsd daemon ...
+2022/08/19 14:46:49.193732 [INFO] Executing instruction: startSqsd
+2022/08/19 14:46:49.193736 [INFO] This is a web server environment instance, skip start sqsd daemon ...
+2022/08/19 14:46:49.193740 [INFO] Executing instruction: Track pids in healthd
+2022/08/19 14:46:49.193744 [INFO] This is an enhanced health env...
+2022/08/19 14:46:49.193757 [INFO] Running command /bin/sh -c systemctl show -p ConsistsOf aws-eb.target | cut -d= -f2
+2022/08/19 14:46:49.204229 [INFO] healthd.service nginx.service cfn-hup.service
+
+2022/08/19 14:46:49.204250 [INFO] Running command /bin/sh -c systemctl show -p ConsistsOf eb-app.target | cut -d= -f2
+2022/08/19 14:46:49.215736 [INFO] web.service
+
+2022/08/19 14:46:49.215879 [INFO] Executing instruction: RunAppDeployPostDeployHooks
+2022/08/19 14:46:49.215891 [INFO] Executing platform hooks in .platform/hooks/postdeploy/
+2022/08/19 14:46:49.215919 [INFO] The dir .platform/hooks/postdeploy/ does not exist
+2022/08/19 14:46:49.215923 [INFO] Finished running scripts in /var/app/current/.platform/hooks/postdeploy
+2022/08/19 14:46:49.215929 [INFO] Executing cleanup logic
+2022/08/19 14:46:49.216039 [INFO] CommandService Response: {"status":"SUCCESS","api_version":"1.0","results":[{"status":"SUCCESS","msg":"Engine execution has succeeded.","returncode":0,"events":[{"msg":"Instance deployment successfully used commands in the 'Procfile' to start your application.","timestamp":1660920400694,"severity":"INFO"},{"msg":"Instance deployment completed successfully.","timestamp":1660920409215,"severity":"INFO"}]}]}
+
+2022/08/19 14:46:49.217027 [INFO] Platform Engine finished execution on command: app-deploy
+
+2022/08/19 15:17:58.688513 [INFO] Starting...
+2022/08/19 15:17:58.688559 [INFO] Starting EBPlatform-PlatformEngine
+2022/08/19 15:17:58.688588 [INFO] reading event message file
+2022/08/19 15:17:58.688732 [INFO] Engine received EB command cfn-hup-exec
+
+2022/08/19 15:17:58.775190 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-qskv9gcqxz-stack/3d8faca0-0cea-11ed-a2a7-0614ac109365 -r AWSEBAutoScalingGroup --region us-west-2
+2022/08/19 15:17:59.086428 [INFO] Running command /bin/sh -c /opt/aws/bin/cfn-get-metadata -s arn:aws:cloudformation:us-west-2:732200827545:stack/awseb-e-qskv9gcqxz-stack/3d8faca0-0cea-11ed-a2a7-0614ac109365 -r AWSEBBeanstalkMetadata --region us-west-2
+2022/08/19 15:17:59.375379 [INFO] checking whether command tail-log is applicable to this instance...
+2022/08/19 15:17:59.375394 [INFO] this command is applicable to the instance, thus instance should execute command
+2022/08/19 15:17:59.375398 [INFO] Engine command: (tail-log)
+
+2022/08/19 15:17:59.375447 [INFO] Executing instruction: GetTailLogs
+2022/08/19 15:17:59.375453 [INFO] Tail Logs...
+2022/08/19 15:17:59.375699 [INFO] Running command /bin/sh -c tail -n 100 /var/log/eb-engine.log
+
+
+----------------------------------------
+/var/log/eb-hooks.log
+----------------------------------------
+
+
+----------------------------------------
+/var/log/nginx/access.log
+----------------------------------------
+172.31.46.24 - - [19/Aug/2022:14:47:44 +0000] "GET / HTTP/1.1" 502 157 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/getting-started" "Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0" "189.13.173.90"
+172.31.46.24 - - [19/Aug/2022:14:47:45 +0000] "GET /favicon.ico HTTP/1.1" 502 157 "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/" "Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0" "189.13.173.90"
+172.31.29.33 - - [19/Aug/2022:14:58:34 +0000] "GET /.env HTTP/1.1" 502 559 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" "185.254.196.115"
+172.31.29.33 - - [19/Aug/2022:14:58:34 +0000] "POST / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" "185.254.196.115"
+172.31.46.24 - - [19/Aug/2022:15:15:41 +0000] "GET /.env HTTP/1.1" 502 559 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" "185.254.196.115"
+172.31.46.24 - - [19/Aug/2022:15:15:42 +0000] "POST / HTTP/1.1" 502 559 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36" "185.254.196.115"
+
+
+----------------------------------------
+/var/log/nginx/error.log
+----------------------------------------
+2022/08/19 14:47:44 [error] 3995#3995: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.46.24, server: , request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com", referrer: "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/getting-started"
+2022/08/19 14:47:45 [error] 3995#3995: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.46.24, server: , request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com", referrer: "http://pypos-env.eba-vnvdpu3c.us-west-2.elasticbeanstalk.com/"
+2022/08/19 14:58:34 [error] 3995#3995: *240 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.29.33, server: , request: "GET /.env HTTP/1.1", upstream: "http://127.0.0.1:8000/.env", host: "44.236.240.164"
+2022/08/19 14:58:34 [error] 3995#3995: *240 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.29.33, server: , request: "POST / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "44.236.240.164"
+2022/08/19 15:15:41 [error] 3995#3995: *601 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.46.24, server: , request: "GET /.env HTTP/1.1", upstream: "http://127.0.0.1:8000/.env", host: "54.70.81.94"
+2022/08/19 15:15:42 [error] 3995#3995: *601 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.46.24, server: , request: "POST / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "54.70.81.94"
+
+
+----------------------------------------
+/var/log/web.stdout.log
+----------------------------------------
+Aug 19 14:46:52 ip-172-31-9-201 web: [2022-08-19 14:46:52 +0000] [4059] [INFO] Starting gunicorn 20.1.0
+Aug 19 14:46:52 ip-172-31-9-201 web: [2022-08-19 14:46:52 +0000] [4059] [INFO] Listening at: http://127.0.0.1:8000 (4059)
+Aug 19 14:46:52 ip-172-31-9-201 web: [2022-08-19 14:46:52 +0000] [4059] [INFO] Using worker: gthread
+Aug 19 14:46:52 ip-172-31-9-201 web: [2022-08-19 14:46:52 +0000] [4065] [INFO] Booting worker with pid: 4065
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4065] [ERROR] Exception in worker process
+Aug 19 14:46:53 ip-172-31-9-201 web: Traceback (most recent call last):
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+Aug 19 14:46:53 ip-172-31-9-201 web: worker.init_process()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 92, in init_process
+Aug 19 14:46:53 ip-172-31-9-201 web: super().init_process()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/base.py", line 134, in init_process
+Aug 19 14:46:53 ip-172-31-9-201 web: self.load_wsgi()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+Aug 19 14:46:53 ip-172-31-9-201 web: self.wsgi = self.app.wsgi()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/base.py", line 67, in wsgi
+Aug 19 14:46:53 ip-172-31-9-201 web: self.callable = self.load()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+Aug 19 14:46:53 ip-172-31-9-201 web: return self.load_wsgiapp()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+Aug 19 14:46:53 ip-172-31-9-201 web: return util.import_app(self.app_uri)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/util.py", line 359, in import_app
+Aug 19 14:46:53 ip-172-31-9-201 web: mod = importlib.import_module(module)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/usr/lib64/python3.8/importlib/__init__.py", line 127, in import_module
+Aug 19 14:46:53 ip-172-31-9-201 web: return _bootstrap._gcd_import(name[level:], package, level)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/__init__.py", line 6, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints import user_space
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/user_space/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/user_space/views.py", line 5, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints.frontend.views import PAYMENT_METHODS_NO_USER
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/frontend/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/frontend/views.py", line 2, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints.auth.util import get_db, login_required, public_acess_only
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/auth/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/auth/views.py", line 8, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.models import dao
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/models/dao.py", line 49, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: def get_user_balance_by_id(user_id: int) -> float :
+Aug 19 14:46:53 ip-172-31-9-201 web: TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4065] [INFO] Worker exiting (pid: 4065)
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4059] [INFO] Shutting down: Master
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4059] [INFO] Reason: Worker failed to boot.
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4073] [INFO] Starting gunicorn 20.1.0
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4073] [INFO] Listening at: http://127.0.0.1:8000 (4073)
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4073] [INFO] Using worker: gthread
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4079] [INFO] Booting worker with pid: 4079
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4079] [ERROR] Exception in worker process
+Aug 19 14:46:53 ip-172-31-9-201 web: Traceback (most recent call last):
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/arbiter.py", line 589, in spawn_worker
+Aug 19 14:46:53 ip-172-31-9-201 web: worker.init_process()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/gthread.py", line 92, in init_process
+Aug 19 14:46:53 ip-172-31-9-201 web: super().init_process()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/base.py", line 134, in init_process
+Aug 19 14:46:53 ip-172-31-9-201 web: self.load_wsgi()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/workers/base.py", line 146, in load_wsgi
+Aug 19 14:46:53 ip-172-31-9-201 web: self.wsgi = self.app.wsgi()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/base.py", line 67, in wsgi
+Aug 19 14:46:53 ip-172-31-9-201 web: self.callable = self.load()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/wsgiapp.py", line 58, in load
+Aug 19 14:46:53 ip-172-31-9-201 web: return self.load_wsgiapp()
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+Aug 19 14:46:53 ip-172-31-9-201 web: return util.import_app(self.app_uri)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/venv/staging-LQM1lest/lib/python3.8/site-packages/gunicorn/util.py", line 359, in import_app
+Aug 19 14:46:53 ip-172-31-9-201 web: mod = importlib.import_module(module)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/usr/lib64/python3.8/importlib/__init__.py", line 127, in import_module
+Aug 19 14:46:53 ip-172-31-9-201 web: return _bootstrap._gcd_import(name[level:], package, level)
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+Aug 19 14:46:53 ip-172-31-9-201 web: File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/__init__.py", line 6, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints import user_space
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/user_space/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/user_space/views.py", line 5, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints.frontend.views import PAYMENT_METHODS_NO_USER
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/frontend/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/frontend/views.py", line 2, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.blueprints.auth.util import get_db, login_required, public_acess_only
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/auth/__init__.py", line 4, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from .views import *
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/blueprints/auth/views.py", line 8, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: from pypos.models import dao
+Aug 19 14:46:53 ip-172-31-9-201 web: File "/var/app/current/pypos/models/dao.py", line 49, in <module>
+Aug 19 14:46:53 ip-172-31-9-201 web: def get_user_balance_by_id(user_id: int) -> float :
+Aug 19 14:46:53 ip-172-31-9-201 web: TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4079] [INFO] Worker exiting (pid: 4079)
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4073] [INFO] Shutting down: Master
+Aug 19 14:46:53 ip-172-31-9-201 web: [2022-08-19 14:46:53 +0000] [4073] [INFO] Reason: Worker failed to boot.
+
+

@@ -43,7 +43,6 @@ def create_app(test_config=None):
             db.init_db()
             db.populate_db()
             print("done")
-
     return app
 
 

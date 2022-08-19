@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from flask import current_app
 from pydantic import BaseModel
@@ -11,7 +11,7 @@ class FilesizeLimitError(Exception):
         self.loc = loc
         super().__init__(msg)
 
-    def errors(self) -> List[Dict[str, str | Tuple]]:
+    def errors(self) -> List[Dict[str, Any]]:
         """Return error like pydantic `e.errors()` of type `List[DictErr]`"""
         filesize_limit = current_app.config["MAX_CONTENT_LENGTH"] / (1000 * 1000)
         return [

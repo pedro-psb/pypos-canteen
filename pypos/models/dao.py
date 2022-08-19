@@ -46,7 +46,7 @@ def get_user_account_by_user_id(user_id: int) -> Dict:
     return user_account
 
 
-def get_user_balance_by_id(user_id: int) -> float | None:
+def get_user_balance_by_id(user_id: int) -> float:
     """DEPRECATED. Use get_user_account_by_user_id() instead"""
     user_account = get_user_account_by_user_id(user_id)
     user_balance = user_account.get("balance")
@@ -71,7 +71,7 @@ def get_canteen_balance() -> Dict:
     return canteen_balance
 
 
-def get_generic_transaction_by_id(transaction_id: int) -> dict | None:
+def get_generic_transaction_by_id(transaction_id: int) -> dict:
     con = get_db()
     db = con.cursor()
     query = "SELECT * FROM generic_transaction WHERE id=?;"

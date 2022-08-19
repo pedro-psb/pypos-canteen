@@ -9,7 +9,7 @@ from pypos.models.forms.product_forms import AddProductForm, UpdateProductForm
 
 
 # INSERT
-def insert_product(product: AddProductForm) -> int | None:
+def insert_product(product: AddProductForm) -> int:
     """Insert product and return it's id"""
     con = get_db()
     db = con.cursor()
@@ -18,8 +18,12 @@ def insert_product(product: AddProductForm) -> int | None:
     return product_id
 
 
-def _insert_product(db: Cursor, product: AddProductForm) -> int | None:
-    # TODO refactor this so it doesn't use ifs
+def _insert_product(db: Cursor, product: AddProductForm) -> int:
+    # TODO refactor this so it doesn't use ifs and doesn't include null values
+    if not product.file:
+        # Remove this after refactoring. It's duplicated in the Sqlite DEFAULT
+        product.file = "default_product.jpg"
+
     if product.category_id:
         db.execute(
             """INSERT INTO product(name, price, category, filepath)

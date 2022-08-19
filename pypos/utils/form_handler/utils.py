@@ -66,7 +66,7 @@ class ImageFileSaver(BaseModel):
         arbitrary_types_allowed = True
 
 
-def get_file_extension(filename: str | None) -> str | None:
+def get_file_extension(filename: str) -> str:
     if filename and "." in filename:
         return filename.rsplit(".", 1)[1].lower()
     return None
